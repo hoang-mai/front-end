@@ -17,12 +17,12 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
     
     const pathname = usePathname();
     return (
-        <aside className={`fixed z-1 w-64 h-[calc(100vh-32px)] bg-gray-100 flex flex-col justify-between border border-(--border-color) shadow-2xl rounded-lg m-4 ${showLeftSidebar ? "translate-x-0" : "-translate-x-68"} transition-all duration-300`}>
+        <aside className={`fixed z-1 w-64 h-[calc(100vh-32px)] bg-gray-100 flex flex-col justify-between border border-(--border-color) shadow-2xl rounded-lg md:m-4 m-0 mt-4 ${showLeftSidebar ? "translate-x-0" : "-translate-x-68"} transition-all duration-300`}>
             <div>
                 <div className="p-4 flex flex-rơw items-center justify-between h-15">
                     <h1 className="text-xl font-bold">Left Sidebar</h1>
                     <button
-                        className={`bg-transparent hover:bg-gray-200 active:bg-gray-400 p-1 rounded transition-all duration-300 relative left-0 ${showLeftSidebar ? "" : "border border-gray-400 left-11"
+                        className={`bg-transparent hover:bg-gray-200 active:bg-gray-400 p-1 rounded transition-all duration-300 relative left-0 ${showLeftSidebar ? "" : "border border-gray-400 md:left-11 left-15"
                             }`}
                         onClick={() => setShowLeftSidebar((prev) => !prev)}
                     >

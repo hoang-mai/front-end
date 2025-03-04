@@ -42,7 +42,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     </div>
                     <div className='flex flex-col md:flex-row gap-2 mr-2'>
                         <label htmlFor="dob" className="text-lg md:w-1/3">Ngày sinh:</label>
-                        <DatePickerComponent value={null} onChange={(date) => console.log(date)} />
+                        <DatePickerComponent smWidth={"66.67%"} xsWidth={"100%"} value={null} onChange={(date) => console.log(date)} />
                     </div>
                     <div className='flex flex-col md:flex-row gap-2 mr-2'>
                         <label htmlFor="rank" className="text-lg md:w-1/3">Cấp bậc:</label>
@@ -62,7 +62,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     </div>
                     <div className='flex flex-col md:flex-row gap-2 mr-2'>
                         <label htmlFor="party" className="text-lg md:w-1/3">Đảng viên / Đoàn viên:</label>
-                        <SelectComponent selected={selected} setSelected={setSelected}/>
+                        <SelectComponent mdWidth="md:w-2/3" width="w-full" options={['Đảng viên','Đoàn viên','Không']} defaultOption="Đảng viên / Đoàn viên" opacity={true} selected={selected} setSelected={setSelected}/>
                     </div>
                     <div className='flex flex-col md:flex-row gap-2 mr-2'>
                         <label htmlFor="phoneNumber" className="text-lg md:w-1/3">Số điện thoại:</label>
@@ -82,7 +82,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                         </div>
                         <div className='flex flex-col md:flex-row gap-2 mr-2'>
                             <label htmlFor="fatherDob" className="text-lg md:w-1/3">Ngày sinh:</label>
-                            <DatePickerComponent value={null} onChange={(date) => console.log(date)} />
+                            <DatePickerComponent smWidth={"66.67%"} xsWidth={"100%"} value={null} onChange={(date) => console.log(date)} />
                         </div>
                         <div className='flex flex-col md:flex-row gap-2 mr-2'>
                             <label htmlFor="fatherPhoneNumber" className="text-lg md:w-1/3">Số điện thoại:</label>
@@ -107,7 +107,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                         </div>
                         <div className='flex flex-col md:flex-row gap-2 mr-2'>
                             <label htmlFor="motherDob" className="text-lg md:w-1/3">Ngày sinh:</label>
-                            <DatePickerComponent value={null} onChange={(date) => console.log(date)} />
+                            <DatePickerComponent smWidth={"66.67%"} xsWidth={"100%"} value={null} onChange={(date) => console.log(date)} />
                         </div>
                         <div className='flex flex-col md:flex-row gap-2 mr-2'>
                             <label htmlFor="motherPhoneNumber" className="text-lg md:w-1/3">Số điện thoại:</label>

@@ -8,9 +8,13 @@ import { FC } from "react";
 interface DatePickerComponentProps {
     value: Date | null;
     onChange: (date: Date | null) => void;
+    lgWidth?: string;
+    mdWidth?: string;
+    smWidth?: string;
+    xsWidth?: string;
 }
 
-const DatePickerComponent: FC<DatePickerComponentProps> = ({ value, onChange }) => {
+const DatePickerComponent: FC<DatePickerComponentProps> = ({ value, onChange, lgWidth, mdWidth,smWidth,xsWidth }) => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={vi}>
@@ -22,7 +26,7 @@ const DatePickerComponent: FC<DatePickerComponentProps> = ({ value, onChange }) 
                 slotProps={{
                     textField: {
                         sx: {
-                            width: { xs: "100%", sm: "66.67%" },
+                            width: { xs: xsWidth, sm: smWidth, md: mdWidth, lg: lgWidth },
                             "& .MuiOutlinedInput-notchedOutline": {
                                 height: "2.5rem",
                                 borderColor: "var(--border-color)",
