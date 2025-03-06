@@ -1,17 +1,12 @@
 'use client';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import LeftSidebar from './leftSidebar';
 interface ContextProps {
     readonly children: ReactNode;
 }
 
 export default function Context({ children }: ContextProps) {
-    const [showLeftSidebar, setShowLeftSidebar] = useState<boolean>(true);
-    useEffect(() => {
-        if (window.innerWidth < 768) {
-            setShowLeftSidebar(false);
-        }
-    }, []);
+    const [showLeftSidebar, setShowLeftSidebar] = useState<boolean>(window.innerWidth >= 768);
     return (
         <>
             <LeftSidebar showLeftSidebar={showLeftSidebar} setShowLeftSidebar={setShowLeftSidebar} />

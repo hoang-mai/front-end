@@ -17,7 +17,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
     
     const pathname = usePathname();
     return (
-        <aside className={`fixed z-1 w-64 xl:h-[650px] md:h-[550px] h-[500px] bg-gray-100 flex flex-col justify-between border border-(--border-color) shadow-2xl rounded-lg md:m-4 m-0 mt-4 ${showLeftSidebar ? "translate-x-0" : "-translate-x-68"} transition-all duration-300`}>
+        <aside className={`fixed z-1 w-64 h-[calc(100vh-32px)] bg-gray-100 flex flex-col justify-between border border-(--border-color) shadow-2xl rounded-lg md:m-4 m-0 mt-4 ${showLeftSidebar ? "translate-x-0" : "-translate-x-68"} transition-all duration-300`}>
             <div>
                 <div className="p-4 flex flex-rơw items-center justify-between h-15">
                     <h1 className="text-xl font-bold">Left Sidebar</h1>
