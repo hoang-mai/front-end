@@ -1,5 +1,5 @@
 # Yêu cầu hệ thống
-    next 15.2.0
+- next 15.2.0
 # Các bước cài đặt
 ## 1. Clone dự án
 ```bash

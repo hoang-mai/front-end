@@ -36,6 +36,7 @@ body {
   background-color: var(--background-button-active);
 }
 .btn-text:disabled{
+  cursor: not-allowed;
   background-color: var(--background-button-disabled);
 }
 .btn-text:disabled:hover{
@@ -46,4 +47,9 @@ body {
 }
 button{
   cursor: pointer; 
+}
+
+
+.z-modal{
+  z-index: 10000 !important;
 }
