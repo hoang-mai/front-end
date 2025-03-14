@@ -30,7 +30,14 @@ const LeftSidebar = () => {
         if (!localStorage.getItem("token")) {
             router.push("/admin/login");
         } else {
-            get(authTest).catch((err) => {
+            get(authTest).then((res) => {
+                if (res.data.user.role !== 'admin') {
+                    toast.error('Quyền truy cập không hợp lệ')
+                    router.push("/admin/login");
+                }
+            }
+            )
+            .catch((err) => {
                 toast.error("Phiên đăng nhập hết hạn");
                 localStorage.removeItem("token");
                 router.push("/admin/login");
@@ -113,7 +120,7 @@ const LeftSidebar = () => {
 
                 <hr className="mx-4 border border-gray-400" />
                 <Link href="/admin/profile" >
-                    <div className={`m-2 p-2 cursor-pointer flex items-center ${pathname === '/profile' ? "shadow rounded-lg shadow-gray-300" : ""} transition-all duration-300 active:scale-95`}>
+                    <div className={`m-2 p-2 cursor-pointer flex items-center ${pathname === '/admin/profile' ? "shadow rounded-lg shadow-gray-300" : ""} transition-all duration-300 active:scale-95`}>
                         <div className='relative flex items-center justify-center w-8 h-8'>
                             <Image fill src="/avatarDefault.svg" alt="profile" className="rounded-full border border-(--border-color)" />
                         </div>

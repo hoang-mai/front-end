@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 const RegisterPage: React.FC = () => {
-    const router= useRouter();
+    const router = useRouter();
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -59,7 +59,7 @@ const RegisterPage: React.FC = () => {
         setError('');
         validateConfirmPassword(e.target.value);
     }
-    const convertRole = (role: string):string => {
+    const convertRole = (role: string): string => {
         switch (role) {
             case 'Học viên':
                 return 'student';
@@ -75,23 +75,31 @@ const RegisterPage: React.FC = () => {
     const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
-            post(register, { name:name, email, password, role: convertRole(role) }),
+            post(register, { name: name, email, password, role: convertRole(role) }),
             {
-            success: "Đăng ký thành công",
-            error: "Đăng ký thất bại",
+                success: "Đăng ký thành công",
+                error: "Đăng ký thất bại",
             }
-        ).catch((err: Error) => {
-            setError(err.message);
-            if(err.message==='Unauthenticated.'){
-                toast.error('Phiên đăng nhập hết hạn')
-                localStorage.removeItem('token');
-                router.push('/admin/login')
-            }
-        });
+        )
+            .catch((err: Error) => {
+                setError(err.message);
+                if (err.message === 'Unauthenticated.') {
+                    toast.error('Phiên đăng nhập hết hạn')
+                    localStorage.removeItem('tokenAdmin');
+                    router.push('/admin/login')
+                }
+            }).finally(() => {
+                setName('');
+                setEmail('');
+                setPassword('');
+                setConfirmPassword('');
+                setError('');
+                setRole('Học viên');
+            });
     }
 
     return (
-        <div className='w-120 bg-white rounded-lg shadow-md p-4'>
+        <div className='lg:w-150 w-120 bg-white rounded-lg shadow-md p-4 px-16'>
             <h2 className="text-2xl font-bold mb-6 text-center text-(--color-text)">Đăng ký</h2>
             <form className="mb-4">
                 <div className="relative mb-4">

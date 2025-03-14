@@ -7,7 +7,7 @@ import { FC } from "react";
 
 interface DatePickerComponentProps {
     value: Date | null;
-    onChange: (date: Date | null) => void;
+    onChange: (date: Date) => void;
     lgWidth?: string;
     mdWidth?: string;
     smWidth?: string;
@@ -20,11 +20,19 @@ const DatePickerComponent: FC<DatePickerComponentProps> = ({ value, onChange, lg
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={vi}>
             <DatePicker
                 disableHighlightToday
-                value={value}
-                onChange={onChange}
+                onChange={(newValue) => {
+                    if (newValue) {
+                        onChange(newValue);
+                    }
+                }}
                 dayOfWeekFormatter={(day) => format(day, "eee", { locale: vi }).replace("Thứ ", "T")}
                 slotProps={{
                     textField: {
+                        inputProps: {
+                            readOnly: true,
+                            placeholder:"dd/mm/yyyy",
+                            value: value ? format(value, "dd/MM/yyyy") : "",
+                        },
                         sx: {
                             width: { xs: xsWidth, sm: smWidth, md: mdWidth, lg: lgWidth },
                             "& .MuiOutlinedInput-notchedOutline": {

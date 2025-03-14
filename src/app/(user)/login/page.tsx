@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEye, faEyeSlash, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { post } from '@/app/Services/callApi';
+import { post ,get} from '@/app/Services/callApi';
 import { authTest, login } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 
@@ -30,30 +30,34 @@ const LoginPage: React.FC = () => {
             setErrorEmail('')
         }
     }, [email])
-    const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        toast.promise(
-            post(login, { email, password, role: 'student' }),
-            {
-                pending: "Đang xử lý...",
-                success: "Đăng nhập thành công",
-                error: "Đăng nhập thất bại",
-            }
-        ).then((res) => {
-            console.log(res);
-            localStorage.setItem("token", res.data.token);
-            router.push("/");
-        })
-        .catch((err) => {
-            console.log(err);
-            setError(err.message);
-        });
-    }
-    useEffect(() => {
-        post(authTest, {}).then((res) => {
-            router.push("/");
-        });
-    }, [])
+        const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            toast.promise(
+                post(login, { email, password }).then((res) => {
+                    if(res.data.data.user.role !== 'student'){
+                        return Promise.reject(new Error('Quyền truy cập không hợp lệ'))
+                    }
+                    localStorage.setItem("token", res.data.data.token);
+                    router.push("/");
+                    }),
+                {
+                    pending: "Đang xử lý...",
+                    success:  "Đăng nhập thành công",
+                    error: "Đăng nhập thất bại",
+                }
+            )
+            .catch((err) => {
+                console.log(err);
+                setError(err.message);
+            });
+        }
+        useEffect(() => {
+            get(authTest, {}).then((res) => {
+                if(res.data.user.role === 'student'){
+                    router.push("/");
+                }
+            });
+        }, [])
     return (
         <div className="flex items-center justify-center min-h-screen bg-radial to-green-300 from-gray-300 from-30% " >
             <div className="w-full max-w-md p-8 space-y-6 border-gray-400 bg-gray-250 backdrop-blur-sm rounded-lg shadow-md border ">

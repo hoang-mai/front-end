@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEye, faEyeSlash, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { post } from '@/app/Services/callApi';
+import { post,get } from '@/app/Services/callApi';
 import { authTest, login } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 
@@ -33,25 +33,29 @@ const LoginPage: React.FC = () => {
     const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         toast.promise(
-            post(login, { email, password, role: 'manager' }),
+            post(login, { email, password }).then((res) => {
+                if(res.data.data.user.role !== 'manager'){
+                    return Promise.reject(new Error('Quyền truy cập không hợp lệ'))
+                }
+                localStorage.setItem("token", res.data.data.token);
+                router.push("/manager");
+                }),
             {
                 pending: "Đang xử lý...",
-                success: "Đăng nhập thành công",
+                success:  "Đăng nhập thành công",
                 error: "Đăng nhập thất bại",
             }
-        ).then((res) => {
-            console.log(res);
-            localStorage.setItem("token", res.data.token);
-            router.push("/manager");
-        })
+        )
         .catch((err) => {
             console.log(err);
             setError(err.message);
         });
     }
     useEffect(() => {
-        post(authTest, {}).then((res) => {
-            router.push("/manager");
+        get(authTest, {}).then((res) => {
+            if(res.data.user.role === 'manager'){
+                router.push("/manager");
+            }
         });
     }, [])
     return (
