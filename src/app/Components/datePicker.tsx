@@ -76,6 +76,7 @@ const DatePickerComponent: FC<DatePickerComponentProps> = ({ value, onChange, lg
                                 backgroundColor: "#16a34a",
                                 color: "white",
                             },
+                            zIndex:10001,
                         },
                     },
                 }}

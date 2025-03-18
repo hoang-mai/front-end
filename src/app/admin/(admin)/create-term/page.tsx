@@ -22,13 +22,13 @@ function CreateTerm() {
     const [errorGradeEntryDate, setErrorGradeEntryDate] = useState<string>('');
     const [error, setError] = useState<string>('');
     const handelOnChangeNameTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const regex =/20\d{2}[A-Z]/;
+        const regex = /20\d{2}[A-Z]/;
         setNameTerm(e.target.value);
-        if(!regex.exec(e.target.value)){
+        if (!regex.exec(e.target.value)) {
             setErrorNameTerm('Tên học kỳ không hợp lệ');
             return;
         }
-        
+
         setErrorNameTerm('');
     }
 
@@ -39,7 +39,7 @@ function CreateTerm() {
             setStartDate(null);
             return;
         }
-        if(rosterDeadline && date.getTime() > rosterDeadline.getTime()-14 * 24 * 60 * 60 * 1000){
+        if (rosterDeadline && date.getTime() > rosterDeadline.getTime() - 14 * 24 * 60 * 60 * 1000) {
             setErrorStartDate('Ngày bắt đầu phải cách ngày hết hạn đăng ký ít nhất 2 tuần');
             setStartDate(null);
             return;
@@ -94,7 +94,7 @@ function CreateTerm() {
             setRosterDeadline(null);
             return;
         }
-        if(date.getTime() < startDate.getTime() + 14 * 24 * 60 * 60 * 1000){
+        if (date.getTime() < startDate.getTime() + 14 * 24 * 60 * 60 * 1000) {
             setErrorRosterDeadline('Ngày hết hạn đăng ký lớp phải cách ngày bắt đầu ít nhất 2 tuần');
             setRosterDeadline(null);
             return;
@@ -129,7 +129,7 @@ function CreateTerm() {
             setGradeEntryDate(null);
             return;
         }
-        if(date.getTime()<endDate.getTime()+14*24*60*60*1000){
+        if (date.getTime() < endDate.getTime() + 14 * 24 * 60 * 60 * 1000) {
             setErrorGradeEntryDate('Ngày bắt đầu nhập điểm phải cách ngày kết thúc ít nhất 2 tuần');
             setGradeEntryDate(null);
             return;
@@ -137,26 +137,30 @@ function CreateTerm() {
         setGradeEntryDate(date);
         setErrorGradeEntryDate('');
     }
-    const handleOnSubmit = (e:React.MouseEvent<HTMLButtonElement>) => {
+    const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
-            post(term,{name:nameTerm,start_date:startDate,end_date:endDate,roster_deadline:rosterDeadline,grade_entry_date:gradeEntryDate}),
-            {   
+            post(term, { name: nameTerm, start_date: startDate, end_date: endDate, roster_deadline: rosterDeadline, grade_entry_date: gradeEntryDate }),
+            {
                 pending: "Đang xử lý...",
                 success: "Tạo học kỳ thành công",
                 error: "Tạo học kỳ thất bại",
             }
-        ).catch((err)=>{
-            setError(err.message);
-        }
-        ).finally(()=>{
+        ).then((res) => {
             setNameTerm('');
-            setStartDate(null);
-            setEndDate(null);
-            setRosterDeadline(null);
-            setGradeEntryDate(null);
-            setError('');
+
         })
+            .catch((err) => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+
+            }).finally(() => {
+                setStartDate(null);
+                setEndDate(null);
+                setRosterDeadline(null);
+                setGradeEntryDate(null);
+                setError('');
+            })
     }
     return (
         <div className="w-full h-full flex flex-col items-center bg-white rounded-lg shadow-md lg:p-6 md:p-4">
@@ -174,13 +178,13 @@ function CreateTerm() {
                 <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8" >
                     <div className="flex flex-col relative">
                         <label htmlFor="name" className="">Tên học kỳ</label>
-                        <input 
-                            placeholder={`${new Date().getFullYear()}A`} 
-                            value={nameTerm} 
-                            onChange={handelOnChangeNameTerm} 
-                            type="text" 
-                            id="name" 
-                            className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)" 
+                        <input
+                            placeholder={`${new Date().getFullYear()}A`}
+                            value={nameTerm}
+                            onChange={handelOnChangeNameTerm}
+                            type="text"
+                            id="name"
+                            className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)"
                         />
                         <p className='h-5 text-red-500 text-sm'>{errorNameTerm}</p>
                     </div>

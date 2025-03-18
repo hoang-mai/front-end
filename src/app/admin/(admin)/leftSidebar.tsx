@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { faHandFist, faHome, faSignOut, faExclamation, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faSignOut, faExclamation, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -64,34 +64,20 @@ const LeftSidebar = () => {
 
                         {pathname !== '/admin' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95 ${pathname !== "/admin/practice"
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/class"
                         ? "group relative"
                         : "bg-gradient-to-r from-green-300 to-gray-300"
                         }`}>
                         <Link
-                            href="/admin/practice"
-                            className={`p-2 w-full h-full block ${pathname !== "/admin/practice" ? "relative z-10" : ""}`}
+                            href="/admin/class"
+                            className={`p-2 w-full h-full block ${pathname !== "/admin/class" ? "relative z-10" : ""}`}
 
                         >
-                            <FontAwesomeIcon icon={faHandFist} className='mr-2' />
-                            Quản lý rèn luyện
+                            <Image src="/class.svg" alt="class" width={22} height={20} className="mr-2 inline " />
+                            Quản lý học phần
                         </Link>
 
-                        {pathname !== '/practice' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
-                    </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/violation"
-                        ? "group relative"
-                        : "bg-gradient-to-r from-green-300 to-gray-300"
-                        }`}>
-                        <Link
-                            href="/admin/violation"
-                            className={`p-2 w-full h-full block ${pathname !== "/admin/violation" ? "relative z-10" : ""}`}
-
-                        ><FontAwesomeIcon icon={faExclamation} className='mr-2' />
-                            Quản lý vi phạm
-                        </Link>
-
-                        {pathname !== "/admin/violation" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                        {pathname !== "/admin/class" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/register"
                         ? "group relative"

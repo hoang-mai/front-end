@@ -47,8 +47,8 @@ const LoginPage: React.FC = () => {
             }
         )
         .catch((err) => {
-            console.log(err);
-            setError(err.message);
+            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
         });
     }
     useEffect(() => {

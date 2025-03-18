@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEye, faEyeSlash, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { post,get } from '@/app/Services/callApi';
+import { post, get } from '@/app/Services/callApi';
 import { authTest, login } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 
@@ -34,26 +34,26 @@ const LoginPage: React.FC = () => {
         e.preventDefault();
         toast.promise(
             post(login, { email, password }).then((res) => {
-                if(res.data.data.user.role !== 'admin'){
+                if (res.data.data.user.role !== 'admin') {
                     return Promise.reject(new Error('Quyền truy cập không hợp lệ'))
                 }
                 localStorage.setItem("token", res.data.data.token);
                 router.push("/admin");
-                }),
+            }),
             {
                 pending: "Đang xử lý...",
-                success:  "Đăng nhập thành công",
+                success: "Đăng nhập thành công",
                 error: "Đăng nhập thất bại",
             }
         )
-        .catch((err) => {
-            console.log(err);
-            setError(err.message);
-        });
+            .catch((err) => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+            });
     }
     useEffect(() => {
         get(authTest, {}).then((res) => {
-            if(res.data.user.role === 'admin'){
+            if (res.data.user.role === 'admin') {
                 router.push("/admin");
             }
         });

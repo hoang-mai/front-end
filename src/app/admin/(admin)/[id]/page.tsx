@@ -8,11 +8,17 @@ import { useEffect, useState } from 'react'
 import LoaderLine from '@/app/Components/Loader/loaderLine'
 import LoaderTable from '@/app/Components/Loader/loaderTable'
 import { toast } from 'react-toastify';
-interface Courses {
+import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
+import EditTermModal from './editTermModal';
+import TableComponent from '@/app/Components/table';
+interface Courses extends Record<string, unknown> {
     id: number;
-    name: string;
+    subjectName: string;
     code: string;
-    credit: number;
+    enrollLimit: number;
+    midtermWeight:string;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date;
@@ -29,6 +35,29 @@ interface Term {
     deletedAt: Date;
     courses: Courses[];
 }
+interface HeadCell {
+    id: keyof Courses;
+    label: string;
+}
+const headCells: HeadCell[] = [
+    { id: 'code', label: 'Mã học phần', },
+    { id: 'subjectName', label: 'Tên học phần', },
+    { id: 'enrollLimit', label: 'Số lượng đăng ký tối đa', },
+    { id: 'midtermWeight', label: 'Trọng số giữa kỳ', },
+    { id: 'createdAt', label: 'Ngày tạo', },
+];
+function convertDataToClass(data: any): Courses {
+    return {
+        id: data.id,
+        code: data.code,
+        subjectName: data.subject_name,
+        enrollLimit: data.enroll_limit,
+        midtermWeight: data.midterm_weight,
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at),
+        deletedAt: new Date(data.deleted_at),
+    }
+}
 function convertDataToTerm(data: any): Term {
     return {
         id: data.id,
@@ -40,7 +69,7 @@ function convertDataToTerm(data: any): Term {
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
         deletedAt: new Date(data.deleted_at),
-        courses: data.courses
+        courses: data.courses.map((course: any) => convertDataToClass(course))
     }
 }
 function formatDate(date: Date): string {
@@ -50,18 +79,31 @@ function formatDate(date: Date): string {
     return `${day}/${month}/${year}`;
 }
 export default function TermDetail() {
-    const router =useRouter();
+    const router = useRouter();
     const params = useParams<{ id: string }>()
     const [termData, setTermData] = useState<Term>();
     const [error, setError] = useState<string>('');
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [showEdit, setShowEdit] = useState<boolean>(false);
+    const [reload, setReload] = useState<boolean>(false)
+    const [courses, setCourses] = useState<Courses[]>([])
+    const [search, setSearch] = useState<string>('');
     useEffect(() => {
+        if (!/^\d+$/.test(params.id)) {
+            router.push('/404');
+            return;
+        }
         get(term + '/' + params.id, {}).then((res) => {
-            setTermData(convertDataToTerm(res.data.data));
+            const term = convertDataToTerm(res.data.data);
+            setTermData(term);
+            setCourses(term.courses);
         }).catch((err) => {
-            setError(err.message);
+            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+            setError(firstValue);
+        }).finally(() => {
+            setReload(false)
         })
-    }, [params.id]);
+    }, [params.id, reload]);
     const handleOnConfirmDeleteTerm = () => {
         toast.promise(del(term + '/' + params.id, {}), {
             pending: "Đang xử lý...",
@@ -71,16 +113,20 @@ export default function TermDetail() {
             setShowModal(false);
             router.push('/admin')
         }).catch((err) => {
-            setError(err.message);
+            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+            setError(firstValue);
         })
 
     }
+    const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value);
+    }
     if (error) {
         return <div className='text-red-500'>{error}</div>
-    }
+    }    
     return (
         <div className='w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
-            {!termData ? (
+            {!termData || reload ? (
                 <>
                     <div className='w-full flex justify-center items-center mb-10'>
                         <LoaderLine height='h-7' width='w-50' />
@@ -96,7 +142,14 @@ export default function TermDetail() {
                     <LoaderTable />
                 </>
             ) : (
-                <>
+                <><div className="self-start">
+                    <Link href="/admin">
+                        <FontAwesomeIcon
+                            icon={faReply}
+                            className='text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
+                        />
+                    </Link>
+                </div>
                     <div className='w-full flex justify-center items-center'>
                         <h1 className='text-2xl font-bold mb-6 text-center text-(--color-text)'>Kỳ học: {termData.nameTerm}</h1>
                     </div>
@@ -106,14 +159,22 @@ export default function TermDetail() {
                         <p>Ngày hạn đăng ký: {formatDate(termData.rosterDeadline)}</p>
                         <p>Ngày nhập điểm: {formatDate(termData.gradeEntryDate)}</p>
                     </div>
-                    <div className='flex justify-end'>
-                        <button
-                            className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
-                            onClick={() => setShowModal(true)}
-                        >
-                            Xóa học kỳ
-                        </button>
+                    <div className='flex justify-between'>
+                        <div className='relative'>
+                                                <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
+                                                <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
+                                            </div>
+                        <div className='flex justify-end gap-5'>
+                            <button className='btn-text text-white h-10 w-30 rounded-lg' onClick={() => setShowEdit(true)}>Chỉnh sửa</button>
+                            <button
+                                className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
+                                onClick={() => setShowModal(true)}
+                            >
+                                Xóa học kỳ
+                            </button>
+                        </div>
                     </div>
+                    <TableComponent  dataCells={courses} headCells={headCells} search={search} onRowClick={(id)=>{router.push(`/admin/class/${id}`)}} />
                     <Modal open={showModal} onClose={() => setShowModal(false)}
                         className='flex items-center justify-center'
                     >
@@ -136,6 +197,14 @@ export default function TermDetail() {
                             </div>
                         </Box>
                     </Modal>
+                    {showEdit &&
+                        <EditTermModal
+                            termData={termData}
+                            setReload={setReload}
+                            showEdit={showEdit}
+                            setShowEdit={setShowEdit}
+
+                        />}
                 </>
             )}
         </div>

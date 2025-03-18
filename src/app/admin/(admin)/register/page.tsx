@@ -6,10 +6,15 @@ import SelectComponent from '@/app/Components/select';
 import { post } from '@/app/Services/callApi';
 import { register } from '@/app/Services/api';
 import { toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
+
+const options: Option[] = [
+    { id: '1', label: 'Học viên' },
+    { id: '2', label: 'Giáo viên' },
+    { id: '3', label: 'Quản trị viên' },
+];
 
 const RegisterPage: React.FC = () => {
-    const router = useRouter();
+
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -20,7 +25,7 @@ const RegisterPage: React.FC = () => {
     const [errorPassword, setErrorPassword] = useState<string>('');
     const [errorConfirmPassword, setErrorConfirmPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const [role, setRole] = useState<string>('Học viên');
+    const [role, setRole] = useState<Option>({id:'1',label:'Học viên'});
     const validateEmail = (email: string) => {
         const emailRegex = /@[a-zA-Z0-9]+\./;
         if (!emailRegex.exec(email) && email.length > 0) {
@@ -59,8 +64,8 @@ const RegisterPage: React.FC = () => {
         setError('');
         validateConfirmPassword(e.target.value);
     }
-    const convertRole = (role: string): string => {
-        switch (role) {
+    const convertRole = (role: Option): string => {
+        switch (role.label) {
             case 'Học viên':
                 return 'student';
             case 'Quản lý học viên':
@@ -80,21 +85,18 @@ const RegisterPage: React.FC = () => {
                 success: "Đăng ký thành công",
                 error: "Đăng ký thất bại",
             }
-        )
-            .catch((err: Error) => {
-                setError(err.message);
-                if (err.message === 'Unauthenticated.') {
-                    toast.error('Phiên đăng nhập hết hạn')
-                    localStorage.removeItem('tokenAdmin');
-                    router.push('/admin/login')
-                }
-            }).finally(() => {
-                setName('');
-                setEmail('');
-                setPassword('');
-                setConfirmPassword('');
-                setError('');
-                setRole('Học viên');
+        ).then(() => {
+            setName('');
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
+            setError('');
+            setRole({id:'1',label:'Học viên'});
+        })
+            .catch((err) => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+
             });
     }
 
@@ -172,7 +174,7 @@ const RegisterPage: React.FC = () => {
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="role">
                         Vai trò
                     </label>
-                    <SelectComponent selected={role} setSelected={setRole} defaultOption='Học viên' options={['Học viên', 'Quản lý học viên', 'Văn phòng trường']} />
+                    <SelectComponent selected={role} setSelected={setRole} defaultOption={{id:'1', label:'Học viên'} as Option} options={options} />
                 </div>
                 <p className='h-5 text-red-500 text-sm mt-2'>{error}</p>
                 <div className="flex items-center justify-center">

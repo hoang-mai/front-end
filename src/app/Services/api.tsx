@@ -7,4 +7,6 @@ export const authTest='/api/auth-test'
 //admin
 export const register='api/register'
 export const term='/api/terms'
+export const course='/api/courses'
+export const courseByTerm='/api/courses/getAllByTerm'
 //manager

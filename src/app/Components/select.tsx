@@ -4,10 +4,10 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { FC, useState, useEffect,useRef } from 'react';
 
 interface SelectProps {
-    selected: string;
-    setSelected: React.Dispatch<React.SetStateAction<string>>
-    options: string[];
-    defaultOption: string;
+    selected: Option;
+    setSelected: React.Dispatch<React.SetStateAction<Option>>
+    options: Option[];
+    defaultOption: Option;
     opacity?: boolean;
     mdWidth?: string;
     lgWidth?: string;
@@ -37,18 +37,18 @@ const SelectComponent: FC<SelectProps> = ({ selected, setSelected, options, defa
         } 
         className="relative h-10 w-full" >
                 <p
-                    className={`${(selected === defaultOption && opacity) ? "text-gray-500" : "text-black"}  flex items-center h-full w-full border rounded-lg border-(--border-color) px-2 outline-none hover:border-(--border-color-hover) focus:border-(--border-color-focus)`}
+                    className={`${(selected.label === defaultOption.label && opacity) ? "text-gray-500" : "text-black"}  flex items-center h-full w-full border rounded-lg border-(--border-color) px-2 outline-none hover:border-(--border-color-hover) focus:border-(--border-color-focus)`}
                 >
-                    {selected}
+                    {selected.label || defaultOption.label}
                 </p>
                 <FontAwesomeIcon icon={faChevronDown} className="absolute right-2 top-3 text-gray-400" />
             </button>
             {showSelect &&
-                <div className="absolute w-full bg-green-500 border border-(--border-color) rounded-lg z-10">
+                <div className="absolute w-full bg-green-100 border border-(--border-color) rounded-lg z-10">
                     <ul>
                         {options.map((option) =>
-                            <li key={option}>
-                                <button className="text-white hover:bg-green-600 rounded-lg p-2 hover:bg-gray-200 w-full text-left" onClick={() => { setSelected(option); setShowSelect(false) }}>{option}</button>
+                            <li key={option.id}>
+                                <button className=" hover:bg-green-300 rounded-lg p-2 w-full text-left" onClick={() => { setSelected(option); setShowSelect(false) }}>{option.label}</button>
                             </li>
                         )
                         }
