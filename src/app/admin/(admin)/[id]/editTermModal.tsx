@@ -20,22 +20,22 @@ interface Term {
     gradeEntryDate: Date;
 }
 interface EditTermModalProps {
-    termData: Term;
+    data: Term;
     showEdit: boolean;
     setReload: Dispatch<SetStateAction<boolean>>
     setShowEdit: (show: boolean) => void;
 }
 const EditTermModal = ({
-    termData,
+    data,
     showEdit,
     setReload,
     setShowEdit,
 }: EditTermModalProps) => {
-    const [nameTerm, setNameTerm] = useState<string>(termData.nameTerm);
-    const [startDate, setStartDate] = useState<Date | null>(termData.startDate);
-    const [endDate, setEndDate] = useState<Date | null>(termData.endDate);
-    const [rosterDeadline, setRosterDeadline] = useState<Date | null>(termData.rosterDeadline);
-    const [gradeEntryDate, setGradeEntryDate] = useState<Date | null>(termData.gradeEntryDate);
+    const [nameTerm, setNameTerm] = useState<string>(data.nameTerm);
+    const [startDate, setStartDate] = useState<Date | null>(data.startDate);
+    const [endDate, setEndDate] = useState<Date | null>(data.endDate);
+    const [rosterDeadline, setRosterDeadline] = useState<Date | null>(data.rosterDeadline);
+    const [gradeEntryDate, setGradeEntryDate] = useState<Date | null>(data.gradeEntryDate);
     const [errorNameTerm, setErrorNameTerm] = useState<string>('');
     const [errorStartDate, setErrorStartDate] = useState<string>('');
     const [errorEndDate, setErrorEndDate] = useState<string>('');
@@ -161,7 +161,7 @@ const EditTermModal = ({
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
-            put(term + '/' + termData.id, {}, { name: nameTerm, start_date: startDate, end_date: endDate, roster_deadline: rosterDeadline, grade_entry_date: gradeEntryDate }),
+            put(term + '/' + data.id, {}, { name: nameTerm, start_date: startDate, end_date: endDate, roster_deadline: rosterDeadline, grade_entry_date: gradeEntryDate }),
             {
                 pending: "Đang xử lý...",
                 success: "Cập nhật học kỳ thành công",
@@ -181,9 +181,9 @@ const EditTermModal = ({
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center z-modal"
+            className="flex items-center justify-center "
         >
-            <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%] h-[80%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
+            <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%] h-[82%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
                 <div className='relative w-full'>
                     <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa học kỳ</h2>
                     <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
@@ -245,7 +245,7 @@ const EditTermModal = ({
                         </div>
                     </div>
 
-                    <p className='h-5 text-red-500 text-sm my-2 h-fit'>{error}</p>
+                    <p className='h-5 text-red-500 text-sm my-2 '>{error}</p>
                 </form>
 
                 <div className='flex justify-center gap-4 w-full mt-4'>

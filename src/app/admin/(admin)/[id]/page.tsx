@@ -1,7 +1,7 @@
 'use client'
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import { term } from '@/app/Services/api'
+import { course, term } from '@/app/Services/api'
 import { del, get } from '@/app/Services/callApi'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -13,12 +13,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
 import EditTermModal from './editTermModal';
 import TableComponent from '@/app/Components/table';
+import EditClassModal from '../class/[id]/editClassModal';
 interface Courses extends Record<string, unknown> {
     id: number;
     subjectName: string;
     code: string;
     enrollLimit: number;
-    midtermWeight:string;
+    midtermWeight: string;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date;
@@ -46,6 +47,12 @@ const headCells: HeadCell[] = [
     { id: 'midtermWeight', label: 'Trọng số giữa kỳ', },
     { id: 'createdAt', label: 'Ngày tạo', },
 ];
+const modal = {
+    headTitle: 'Bạn có chắc chắn muốn xóa học phần này không?',
+    successMessage: 'Xóa học phần thành công',
+    errorMessage: 'Xóa học phần thất bại',
+    url: course,
+}
 function convertDataToClass(data: any): Courses {
     return {
         id: data.id,
@@ -85,7 +92,7 @@ export default function TermDetail() {
     const [error, setError] = useState<string>('');
     const [showModal, setShowModal] = useState<boolean>(false);
     const [showEdit, setShowEdit] = useState<boolean>(false);
-    const [reload, setReload] = useState<boolean>(false)
+    const [reload, setReload] = useState<boolean>(true);
     const [courses, setCourses] = useState<Courses[]>([])
     const [search, setSearch] = useState<string>('');
     useEffect(() => {
@@ -93,16 +100,18 @@ export default function TermDetail() {
             router.push('/404');
             return;
         }
-        get(term + '/' + params.id, {}).then((res) => {
-            const term = convertDataToTerm(res.data.data);
-            setTermData(term);
-            setCourses(term.courses);
-        }).catch((err) => {
-            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-            setError(firstValue);
-        }).finally(() => {
-            setReload(false)
-        })
+        if (reload) {
+            get(term + '/' + params.id, {}).then((res) => {
+                const term = convertDataToTerm(res.data.data);
+                setTermData(term);
+                setCourses(term.courses);
+            }).catch((err) => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+            }).finally(() => {
+                setReload(false)
+            })
+        }
     }, [params.id, reload]);
     const handleOnConfirmDeleteTerm = () => {
         toast.promise(del(term + '/' + params.id, {}), {
@@ -123,9 +132,9 @@ export default function TermDetail() {
     }
     if (error) {
         return <div className='text-red-500'>{error}</div>
-    }    
+    }
     return (
-        <div className='w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
+        <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
             {!termData || reload ? (
                 <>
                     <div className='w-full flex justify-center items-center mb-10'>
@@ -161,9 +170,9 @@ export default function TermDetail() {
                     </div>
                     <div className='flex justify-between'>
                         <div className='relative'>
-                                                <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
-                                                <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
-                                            </div>
+                            <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
+                            <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
+                        </div>
                         <div className='flex justify-end gap-5'>
                             <button className='btn-text text-white h-10 w-30 rounded-lg' onClick={() => setShowEdit(true)}>Chỉnh sửa</button>
                             <button
@@ -174,7 +183,7 @@ export default function TermDetail() {
                             </button>
                         </div>
                     </div>
-                    <TableComponent  dataCells={courses} headCells={headCells} search={search} onRowClick={(id)=>{router.push(`/admin/class/${id}`)}} />
+                    <TableComponent dataCells={courses} headCells={headCells} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} setReload={setReload} EditComponent={EditClassModal} modal={modal} />
                     <Modal open={showModal} onClose={() => setShowModal(false)}
                         className='flex items-center justify-center'
                     >
@@ -199,7 +208,7 @@ export default function TermDetail() {
                     </Modal>
                     {showEdit &&
                         <EditTermModal
-                            termData={termData}
+                            data={termData}
                             setReload={setReload}
                             showEdit={showEdit}
                             setShowEdit={setShowEdit}

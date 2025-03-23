@@ -4,15 +4,16 @@ import LoaderSelect from "@/app/Components/Loader/loaderSelect";
 import LoaderTable from "@/app/Components/Loader/loaderTable";
 import SelectComponent from "@/app/Components/select";
 import TableComponent from "@/app/Components/table";
-import { courseByTerm, term } from "@/app/Services/api";
+import { course, courseByTerm, term } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import EditClassModal from "./[id]/editClassModal";
 
-interface Class extends Record<string, unknown>{
+interface Class extends Record<string, unknown> {
     id: number;
     code: string;
     subjectName: string;
@@ -37,9 +38,14 @@ const headCells: HeadCell[] = [
     { id: 'enrollLimit', label: 'Số lượng đăng ký tối đa', },
     { id: 'midtermWeight', label: 'Trọng số giữa kỳ', },
     { id: 'createdAt', label: 'Ngày tạo', },
-    
-];
 
+];
+const modal = {
+    headTitle: 'Bạn có chắc chắn muốn xóa học phần này không?',
+    successMessage: 'Xóa học phần thành công',
+    errorMessage: 'Xóa học phần thất bại',
+    url: course,
+}
 function convertDataToClass(data: any): Class {
     return {
         id: data.id,
@@ -65,7 +71,7 @@ function convertDataToTerm(data: any): Option {
 }
 
 function Class() {
-    const router=useRouter();
+    const router = useRouter();
     const [search, setSearch] = useState<string>('');
     const [terms, setTerms] = useState<Option[]>([]);
     const [classes, setClasses] = useState<Class[]>([]);
@@ -85,19 +91,20 @@ function Class() {
         }).finally(() => setLoadingTerm(false));
     }, [])
     useEffect(() => {
-        if (selectedTerm.id) {
-            setLoadingClass(true);
+        if (selectedTerm.id || loadingClass) {
+
             get(courseByTerm, { termId: selectedTerm.id }).then((res) => {
                 setClasses(res.data.data.map((term: any) => convertDataToClass(term)));
             }).finally(() => setLoadingClass(false));
         }
-    }, [selectedTerm])
+
+    }, [selectedTerm, loadingClass])
     const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     }
 
     return (
-        <div className='w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
+        <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
             <h1 className='font-bold text-2xl text-center text-(--color-text)'>Quản lý học phần</h1>
             <div className='w-full flex justify-between items-center relative px-6'>
                 <div className='flex gap-4'>
@@ -116,7 +123,7 @@ function Class() {
                     </Link>}
             </div>
             {loadingClass ? <LoaderTable /> :
-                <TableComponent headCells={headCells} dataCells={classes} search={search} onRowClick={(id)=>{router.push(`/admin/class/${id}`)}}/>}
+                <TableComponent headCells={headCells} dataCells={classes} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} modal={modal} setReload={setLoadingClass} EditComponent={EditClassModal} />}
         </div>
     );
 }

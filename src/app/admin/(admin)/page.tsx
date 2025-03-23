@@ -9,6 +9,7 @@ import { term } from '@/app/Services/api';
 import LoaderTable from '@/app/Components/Loader/loaderTable';
 import { useRouter } from 'next/navigation';
 import TableComponent from '@/app/Components/table';
+import EditTermModal from './[id]/editTermModal';
 
 interface Term extends Record<string, unknown> {
   id: number;
@@ -47,23 +48,32 @@ const headCells: HeadCell[] = [
   { id: 'rosterDeadline', label: 'Hạn đăng ký lớp', },
   { id: 'gradeEntryDate', label: 'Ngày nhập điểm', },
 ];
+const modal = {
+  headTitle: 'Bạn có chắc chắn muốn xóa kỳ học này không?',
+  successMessage: 'Xóa học kỳ thành công',
+  errorMessage: 'Xóa học kỳ thất bại',
+  url: term,
+}
 export default function HomePage() {
-  const router=useRouter();
+  const router = useRouter();
   const [terms, setTerms] = useState<Term[]>([]);
   const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
-    get(term, {}).then((res) => {
-      setTerms(res.data.data.map((term: any) => convertDataToTerm(term)));
-    }).finally(() => setLoading(false));
-  }, [])
+    if (loading) {
+      get(term, {}).then((res) => {
+        setTerms(res.data.data.map((term: any) => convertDataToTerm(term)));
+      }).finally(() => setLoading(false));
+    }
+  }, [loading]);
   const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
 
   }
 
   return (
-    <div className='w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
+    <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
       <h1 className='font-bold text-2xl text-center text-(--color-text)'>Quản lý kỳ học</h1>
       <div className='w-full flex justify-between items-center relative px-6'>
         <div className='relative'>
@@ -75,7 +85,7 @@ export default function HomePage() {
         </Link>
       </div>
       {loading ? <LoaderTable />
-        : <TableComponent dataCells={terms} headCells={headCells} search={search} onRowClick={(id)=>{router.push(`admin/${id}`)}} />
+        : <TableComponent dataCells={terms} headCells={headCells} search={search} onRowClick={(id) => { router.push(`admin/${id}`) }} modal={modal} EditComponent={EditTermModal} setReload={setLoading} />
       }
     </div>
   );

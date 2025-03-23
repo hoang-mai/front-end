@@ -8,7 +8,7 @@ const ProfilePage: React.FC = () => {
 
     const [showEdit, setShowEdit] = React.useState<boolean>(false);
     return (
-        <div className='w-full flex flex-col gap-4 lg:gap-7'>
+        <div className='xl:w-[90%] md:w-full flex flex-col gap-4 lg:gap-7'>
 
             <section className='border border-(--border-color) rounded-lg p-4 md:p-7 shadow-lg bg-green-50'>
                 <div className='flex items-center gap-4'>

@@ -7,7 +7,6 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import { put } from '@/app/Services/callApi';
 import { course } from '@/app/Services/api';
-import { set } from 'date-fns';
 interface Class {
     id: number;
     code: string;
@@ -24,20 +23,20 @@ interface Class {
     }
 }
 interface EditClassModalProps {
-    readonly classDetail: Class;
+    readonly data: Class;
     readonly showEdit: boolean;
     readonly setReload: Dispatch<SetStateAction<boolean>>;
     readonly setShowEdit: (show: boolean) => void;
 }
 function EditClassModal({
-    classDetail,
+    data,
     setReload,
     showEdit,
     setShowEdit,
 }: EditClassModalProps) {
-    const [subjectName, setSubjectName] = useState<string>(classDetail.subjectName);
-    const [enrollLimit, setEnrollLimit] = useState<string>(classDetail.enrollLimit);
-    const [midtermWeight, setMidtermWeight] = useState<string>(classDetail.midtermWeight);
+    const [subjectName, setSubjectName] = useState<string>(data.subjectName);
+    const [enrollLimit, setEnrollLimit] = useState<string>(data.enrollLimit);
+    const [midtermWeight, setMidtermWeight] = useState<string>(data.midtermWeight);
     const [errorEnrollLimit, setErrorEnrollLimit] = useState<string>('');
     const [errorMidtermWeight, setErrorMidtermWeight] = useState<string>('');
     const [error, setError] = useState<string>('');
@@ -64,14 +63,12 @@ function EditClassModal({
     };
     const handelOnChangeMidtermWeight = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.trim();
-
         if (value === '') {
             setErrorMidtermWeight('Trường này không được để trống');
             setMidtermWeight('');
             return;
         }
-
-        const validFormat = /^0(\.\d{0,2})?$|^1$/;
+        const validFormat = /^0(\.\d{0,2})?$|^1(\.0{0,2})?$/;
 
         if (!validFormat.test(value)) {
             setErrorMidtermWeight('Chỉ nhập giá trị từ 0 đến 1, có tối đa 2 chữ số sau dấu phẩy');
@@ -80,10 +77,10 @@ function EditClassModal({
         setErrorMidtermWeight('');
         setMidtermWeight(value);
     }
-    const handleOnSubmit = (e:React.MouseEvent<HTMLButtonElement> ) => {
+    const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
-            put(course + '/' + classDetail.id, {
+            put(course + '/' + data.id, {
                 subject_name: subjectName,
                 enroll_limit: enrollLimit,
                 midterm_weight: midtermWeight
@@ -105,7 +102,7 @@ function EditClassModal({
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center z-modal"
+            className="flex items-center justify-center "
         >
             <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%] xl:h-[60%] h-[70%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
                 <div className='relative w-full'>
@@ -164,7 +161,7 @@ function EditClassModal({
                 </form>
 
                 <div className='flex justify-center gap-4 w-full mt-4'>
-                    <button disabled={!subjectName || !enrollLimit || !midtermWeight || !!errorMidtermWeight || !!errorEnrollLimit} className='btn-text text-white w-20 h-10 rounded-lg' onClick={handleOnSubmit}>Lưu</button>
+                    <button disabled={!subjectName || !enrollLimit || !midtermWeight} className='btn-text text-white w-20 h-10 rounded-lg' onClick={handleOnSubmit}>Lưu</button>
                     <button className='bg-red-700 text-white w-20 h-10 rounded-lg hover:bg-red-800 active:bg-red-900' onClick={() => setShowEdit(false)}>Hủy</button>
                 </div>
             </Box>

@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { faHome, faSignOut, faExclamation, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faSignOut, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';

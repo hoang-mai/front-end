@@ -9,4 +9,5 @@ export const register='api/register'
 export const term='/api/terms'
 export const course='/api/courses'
 export const courseByTerm='/api/courses/getAllByTerm'
+export const searchStudent='/api/search/student'
 //manager

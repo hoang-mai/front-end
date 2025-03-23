@@ -21,7 +21,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center z-modal" 
+            className="flex items-center justify-center "
         >
             <Box className='xl:w-[60%] lg:w-[70%] md:w-[80%] h-[90%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
                 <div className='relative w-full'>

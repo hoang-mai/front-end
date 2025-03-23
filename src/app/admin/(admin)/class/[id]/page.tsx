@@ -2,7 +2,7 @@
 import LoaderLine from "@/app/Components/Loader/loaderLine";
 import { course } from "@/app/Services/api";
 import { del, get } from "@/app/Services/callApi";
-import { faReply } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -11,6 +11,28 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { toast } from "react-toastify";
 import EditClassModal from "./editClassModal";
+import AddStudent from "./addStudent";
+import LoaderTable from "@/app/Components/Loader/loaderTable";
+
+import EnterGradeModal from "./enterGrade";
+import TableComponent from "@/app/Components/table";
+import EditStudentModal from "./editStudentModal";
+
+
+interface HeadCell {
+    id: keyof Student;
+    label: string;
+}
+const headCells: HeadCell[] = [
+    { id: 'name', label: 'Họ và tên', },
+    { id: 'email', label: 'Email', },
+    { id: 'midtermGrade', label: 'Điểm giữa kỳ', },
+    { id: 'finalGrade', label: 'Điểm cuối kỳ', },
+    { id: 'totalGrade', label: 'Điểm tổng kết', },
+    { id: 'status', label: 'Trạng thái', },
+    { id: 'notes', label: 'Ghi chú', },
+];
+
 interface Class {
     id: number;
     code: string;
@@ -24,6 +46,40 @@ interface Class {
     term: {
         id: number;
         name: string;
+    }
+}
+interface Student extends Record<string, unknown> {
+    id: number;
+    name: string;
+    email: string;
+    midtermGrade: string;
+    finalGrade: string;
+    totalGrade: string;
+    status: string;
+    notes: string;
+}
+function convertDataToStudent(data: any): Student {
+    return {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        midtermGrade: data.midterm_grade,
+        finalGrade: data.final_grade,
+        totalGrade: data.total_grade,
+        status: convertStatus(data.status),
+        notes: data.notes
+    }
+}
+function convertStatus(status: string): string {
+    switch (status) {
+        case 'enrolled':
+            return 'Đã đăng ký';
+        case 'failed':
+            return 'Trượt';
+        case 'completed':
+            return 'Hoàn thành';
+        default:
+            return status;
     }
 }
 function convertDataToClass(data: any): Class {
@@ -43,22 +99,51 @@ function convertDataToClass(data: any): Class {
         }
     }
 }
+
 function ClassDetail() {
     const router = useRouter();
     const params = useParams<{ id: string }>()
     const [classDetail, setClassDetail] = useState<Class>();
+    const [students, setStudents] = useState<Student[]>();
     const [showEdit, setShowEdit] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [reload, setReload] = useState<boolean>(false);
+    const [showEnterGrade, setShowEnterGrade] = useState<boolean>(false);
+    const [reload, setReload] = useState<boolean>(true);
+    const [reloadStudent, setReloadStudent] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
+    const [search, setSearch] = useState<string>('');
+    const [showAddStudent, setShowAddStudent] = useState<boolean>(false);
+    const modal = {
+        headTitle: 'Bạn có chắc chắn muốn xóa học viên này không?',
+        successMessage: 'Xóa học viên thành công',
+        errorMessage: 'Xóa học viên thất bại',
+        url: course +'/'+ params.id + '/students',
+    }
+    const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value);
+    }
     useEffect(() => {
+        if(reload){
         get(course + '/' + params.id).then(res => {
             setClassDetail(convertDataToClass(res.data.data));
         }).catch(err => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
             setError(firstValue);
         }).finally(() => setReload(false));
+    }
     }, [reload, params.id]);
+    useEffect(() => {
+        if (reloadStudent) {
+            get(course + '/' + params.id + '/students').then(res => {
+                setStudents(res.data.data.map((data: any) => convertDataToStudent(data)));
+            }
+            ).catch(err => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+            }
+            ).finally(() => setReloadStudent(false));
+        }
+    }, [reloadStudent, params.id]);
     const handleOnConfirmDeleteClass = () => {
         toast.promise(
             del(course + '/' + params.id),
@@ -79,7 +164,7 @@ function ClassDetail() {
         return <div className='text-red-500'>{error}</div>;
     }
     return (
-        <div className='w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
+        <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
             {!classDetail || reload ?
                 <>
                     <div className='w-full flex justify-center items-center mb-10'>
@@ -95,14 +180,15 @@ function ClassDetail() {
                     </div>
                 </>
                 :
-                <><div className="self-start">
-                    <Link href="/admin/class">
-                        <FontAwesomeIcon
-                            icon={faReply}
-                            className='text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
-                        />
-                    </Link>
-                </div>
+                <>
+                    <div className="self-start">
+                        <Link href="/admin/class">
+                            <FontAwesomeIcon
+                                icon={faReply}
+                                className='text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
+                            />
+                        </Link>
+                    </div>
                     <div className='w-full flex justify-center items-center'>
                         <h1 className='text-2xl font-bold mb-6 text-center text-(--color-text)'>Học phần: {classDetail.subjectName}</h1>
                     </div>
@@ -114,14 +200,31 @@ function ClassDetail() {
                     </div>
 
 
-                    <div className='flex justify-end gap-5'>
-                        <button className='btn-text text-white h-10 w-30 rounded-lg' onClick={() => setShowEdit(true)}>Chỉnh sửa</button>
-                        <button
-                            className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
-                            onClick={() => setShowModal(true)}
-                        >
-                            Xóa học phần
-                        </button>
+                    <div className='flex justify-between gap-5 lg:gap-3 xl:gap-5 lg:flex-row flex-col'>
+                        <div className='flex gap-5 lg:gap-3 xl:gap-5 '>
+                            <button className='btn-text text-white h-10 w-36 rounded-lg' onClick={() => setShowAddStudent(true)}>
+                                <FontAwesomeIcon icon={faPlus} className='mr-2' />
+                                Thêm học viên
+                            </button>
+                            <div className='relative'>
+                                <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
+                                <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='xl:w-auto lg:w-30 shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
+                            </div>
+                            <button className="btn-text text-white h-10 w-36 rounded-lg"
+                                onClick={() => setShowEnterGrade(true)}
+                            >
+                                Nhập điểm
+                            </button>
+                        </div>
+                        <div className='flex gap-5 lg:gap-3 xl:gap-5'>
+                            <button className='btn-text text-white h-10 w-30 rounded-lg' onClick={() => setShowEdit(true)}>Chỉnh sửa</button>
+                            <button
+                                className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
+                                onClick={() => setShowModal(true)}
+                            >
+                                Xóa học phần
+                            </button>
+                        </div>
                     </div>
 
                     <Modal open={showModal} onClose={() => setShowModal(false)}
@@ -148,16 +251,32 @@ function ClassDetail() {
                     </Modal>
                     {showEdit &&
                         <EditClassModal
-                            classDetail={classDetail}
+                            data={classDetail}
                             setReload={setReload}
                             showEdit={showEdit}
                             setShowEdit={setShowEdit}
 
                         />}
+                    {showAddStudent &&
+                        <AddStudent
+                            setReloadStudent={setReloadStudent}
+                            classId={classDetail.id}
+                            showAddStudent={showAddStudent}
+                            setShowAddStudent={setShowAddStudent}
+                        />
+                    }
+                    {!students || reloadStudent ? <LoaderTable /> :
+                        <>
+                            <TableComponent dataCells={students} headCells={headCells} search={search} onRowClick={() => { }} setReload={setReloadStudent} EditComponent={EditStudentModal} modal={modal} />
+                            {showEnterGrade && <EnterGradeModal classId={classDetail.id} midtermWeight={classDetail.midtermWeight} dataCells={students} showModal={showEnterGrade} setShowModal={setShowEnterGrade} setReloadStudent={setReloadStudent} />}
+                        </>
+                    }
                 </>
             }
+
         </div>
     );
 }
 
 export default ClassDetail;
+

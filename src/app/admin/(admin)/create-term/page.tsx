@@ -163,7 +163,7 @@ function CreateTerm() {
             })
     }
     return (
-        <div className="w-full h-full flex flex-col items-center bg-white rounded-lg shadow-md lg:p-6 md:p-4">
+        <div className=" xl:w-[60%] md:w-full h-full flex flex-col items-center bg-white rounded-lg shadow-md lg:p-6 md:p-4">
             <div className="self-start">
                 <Link href="/admin">
                     <FontAwesomeIcon

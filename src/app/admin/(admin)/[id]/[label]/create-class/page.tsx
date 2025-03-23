@@ -85,7 +85,7 @@ function CreateClass() {
         )
     }
     return (
-        <div className="w-full h-full flex flex-col items-center bg-white rounded-lg shadow-md lg:p-12 md:p-8 ">
+        <div className="xl:w-[60%] md:w-full h-full flex flex-col items-center bg-white rounded-lg shadow-md lg:p-12 md:p-8 ">
             <div className="self-start">
                 <Link href="/admin/class">
                     <FontAwesomeIcon

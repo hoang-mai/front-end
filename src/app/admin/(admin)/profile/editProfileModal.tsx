@@ -15,13 +15,13 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     showEdit,
     setShowEdit,
 }) => {
-    const [selected, setSelected] = React.useState<string>('Đảng viên / Đoàn viên');
+    const [selected, setSelected] = React.useState<Option>({ label: 'Đảng viên / Đoàn viên', id: 'Đảng viên / Đoàn viên' });
 
     return (
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center z-modal" 
+            className="flex items-center justify-center "
         >
             <Box className='xl:w-[60%] lg:w-[70%] md:w-[80%] h-[90%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
                 <div className='relative w-full'>
@@ -62,7 +62,19 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     </div>
                     <div className='flex flex-col md:flex-row gap-2 mr-2'>
                         <label htmlFor="party" className="text-lg md:w-1/3">Đảng viên / Đoàn viên:</label>
-                        <SelectComponent mdWidth="md:w-2/3" width="w-full" options={['Đảng viên', 'Đoàn viên', 'Không']} defaultOption="Đảng viên / Đoàn viên" opacity={true} selected={selected} setSelected={setSelected} />
+                        <SelectComponent 
+                            mdWidth="md:w-2/3" 
+                            width="w-full" 
+                            options={[
+                                { label: 'Đảng viên', id: 'Đảng viên' }, 
+                                { label: 'Đoàn viên', id: 'Đoàn viên' }, 
+                                { label: 'Không', id: 'Không' }
+                            ]} 
+                            defaultOption={{ label: 'Đảng viên / Đoàn viên', id: 'Đảng viên / Đoàn viên' }} 
+                            opacity={true} 
+                            selected={selected} 
+                            setSelected={setSelected} 
+                        />
                     </div>
                     <div className='flex flex-col md:flex-row gap-2 mr-2'>
                         <label htmlFor="phoneNumber" className="text-lg md:w-1/3">Số điện thoại:</label>

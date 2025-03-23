@@ -12,19 +12,37 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import { styled } from '@mui/material/styles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
+import Modal from '@mui/material/Modal';
+import { toast } from 'react-toastify';
+import { del } from '../Services/callApi';
 
 interface HeadCell<T> {
     id: keyof T & (number | string);
     label: string;
 }
-
+interface EditComponentProps {
+    data: any;
+    showEdit: boolean;
+    setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
+    setReload: React.Dispatch<React.SetStateAction<boolean>>;
+}
 interface TableComponentProps<T> {
     headCells: HeadCell<T>[]
     dataCells: T[];
     onRowClick: (id: number) => void;
     search?: string
+    modal: ModalProps;
+    EditComponent: React.FC<EditComponentProps>;
+    setReload: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
+interface ModalProps {
+    headTitle: string;
+    successMessage: string;
+    errorMessage: string;
+    url: string;
+}
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: 'rgba(0, 0, 0, 0.04)',
@@ -35,11 +53,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:last-child td, &:last-child th': {
         border: 0,
     },
-    ':hover': {
-        
-        boxShadow: 'inset 0px 0px 5px 1px rgba(0, 255, 0, 0.8)',
-        transition: 'all 0.3s ease-in-out',
-    }
 }));
 
 type Order = 'asc' | 'desc';
@@ -68,9 +81,11 @@ function getComparator<T>(
 const renderCellValue = <T extends Record<string, unknown>>(row: T, id: keyof T) => {
     const value = row[id];
 
-    if (value instanceof Date) return value.toLocaleDateString("vi-VN"); // Xử lý Date
-    if (value === null || value === undefined) return "-"; // Xử lý null, undefined
-    return String(value); // Chuyển thành string
+    if (value instanceof Date) return value.toLocaleDateString("vi-VN");
+    if (value === null || value === undefined) return "-";
+
+    const stringValue = String(value);
+    return stringValue.length > 20 ? stringValue.slice(0, 17) + "..." : stringValue;
 };
 
 const TableComponent = <T extends { id: number } & Record<string, unknown>>({
@@ -78,14 +93,20 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
     dataCells,
     onRowClick,
     search,
+    modal,
+    EditComponent,
+    setReload,
 }: TableComponentProps<T>) => {
 
 
     const [order, setOrder] = useState<Order | null>(null);
     const [orderBy, setOrderBy] = useState<keyof T | null>(null);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-
+    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+    const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+    const [confirmDeleteId, setConfirmDeleteId] = useState<number>(0);
+    const [edit, setEdit] = useState<boolean>(false);
+    const [editId, setEditId] = useState<number>(0);
     const handleRequestSort = (property: keyof T) => {
         if (orderBy !== property) {
             setOrder('asc');
@@ -164,12 +185,20 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                         </TableSortLabel>
                                     </TableCell>
                                 ))}
+                                <TableCell align='center' padding='normal' sx={{
+                                    paddingX: {
+                                        lg: '16px',
+                                        md: '4px',
+                                        sm: '0px',
+                                    }
+                                }}>
+                                    Hành động
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {visibleAndFilterRows.map((dataCell) => (
                                 <StyledTableRow
-                                    hover
                                     tabIndex={-1}
                                     key={dataCell.id}
                                     sx={{ cursor: 'pointer' }}
@@ -180,7 +209,28 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                             {renderCellValue(dataCell, headCell.id)}
                                         </TableCell>
                                     ))}
-
+                                    <TableCell onClick={(e) => e.stopPropagation()} align='center'>
+                                        <div className='flex gap-2'>
+                                            <button className=' flex-1 rounded-lg'
+                                                onClick={(e) => {
+                                                    
+                                                    setEdit(true);
+                                                    setEditId(dataCell.id);
+                                                }}
+                                            >
+                                                <FontAwesomeIcon icon={faPencil} />
+                                            </button>
+                                            <button className=' flex-1 rounded-lg'
+                                                onClick={(e) => {
+                                                    
+                                                    setConfirmDelete(true);
+                                                    setConfirmDeleteId(dataCell.id);
+                                                }}
+                                            >
+                                                <FontAwesomeIcon icon={faTrash} />
+                                            </button>
+                                        </div>
+                                    </TableCell>
                                 </StyledTableRow>
                             ))}
                             {emptyRows > 0 && (
@@ -206,6 +256,49 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     labelRowsPerPage='Số dòng trên trang:'
                 />
+                <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)}
+                    className='flex items-center justify-center'
+                >
+                    <Box className="p-8 bg-white rounded-md shadow-md">
+                        <h1 className="text-lg font-bold mb-4">{modal.headTitle}</h1>
+                        <div className="flex justify-center gap-10">
+                            <button
+                                className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
+                                onClick={() => {
+                                    toast.promise(del(modal.url + '/' + confirmDeleteId),
+                                        {
+                                            pending: "Đang xử lý...",
+                                            success: modal.successMessage,
+                                            error: modal.errorMessage,
+                                        }
+                                    ).then(() => {
+                                        setConfirmDelete(false);
+                                        setReload(true);
+                                    }).catch((err) => {
+                                        const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                                        toast.error(firstValue);
+                                    })
+                                }
+                                }
+                            >
+                                Đồng ý
+                            </button>
+                            <button
+                                className=' bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 active:bg-gray-500 transition-colors'
+                                onClick={() => setConfirmDelete(false)}
+                            >
+                                Không
+                            </button>
+                        </div>
+                    </Box>
+                </Modal>
+                {edit &&
+                <EditComponent
+                    data={dataCells.find((dataCell) => dataCell.id === editId)}
+                    showEdit={edit}
+                    setShowEdit={setEdit}
+                    setReload={setReload}
+                />}
 
             </Paper>
         </Box>
