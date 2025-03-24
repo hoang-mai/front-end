@@ -11,24 +11,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import DatePickerComponent from '@/app/Components/datePicker';
 
-interface Term {
-    id: number;
-    nameTerm: string;
-    startDate: Date;
-    endDate: Date;
-    rosterDeadline: Date;
-    gradeEntryDate: Date;
-}
+
 interface EditTermModalProps {
     data: Term;
     showEdit: boolean;
-    setReload: Dispatch<SetStateAction<boolean>>
+    setDatas?: Dispatch<SetStateAction<Term[]>>;
+    setData?: Dispatch<SetStateAction<Term>>;
     setShowEdit: (show: boolean) => void;
 }
 const EditTermModal = ({
     data,
     showEdit,
-    setReload,
+    setDatas,
+    setData,
     setShowEdit,
 }: EditTermModalProps) => {
     const [nameTerm, setNameTerm] = useState<string>(data.nameTerm);
@@ -168,7 +163,20 @@ const EditTermModal = ({
                 error: "Cập nhật học kỳ thất bại",
             }
         ).then((res) => {
-            setReload(true)
+            setDatas?.((prev) =>  prev.map((term) =>
+                    term.id === data.id && startDate && endDate && rosterDeadline && gradeEntryDate
+                        ? { ...term, nameTerm, startDate, endDate, rosterDeadline, gradeEntryDate }
+                        : term
+                
+            ));
+            setData?.((prev) => ({
+                ...prev,
+                nameTerm,
+                startDate: startDate ?? prev.startDate,
+                endDate: endDate ?? prev.endDate,
+                rosterDeadline: rosterDeadline ?? prev.rosterDeadline,
+                gradeEntryDate: gradeEntryDate ?? prev.gradeEntryDate,
+            }));
             setShowEdit(false);
         })
             .catch((err) => {

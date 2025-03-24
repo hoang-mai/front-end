@@ -80,22 +80,22 @@ interface EnterGradeModalProps {
     showModal: boolean;
     setShowModal: (show: boolean) => void;
     dataCells: Student[];
-    setReloadStudent: Dispatch<SetStateAction<boolean>>;
+    setStudents: Dispatch<SetStateAction<Student[]>>;
 }
 
 const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
-    setReloadStudent,
+    setStudents,
     classId,
     showModal,
     midtermWeight,
     setShowModal,
     dataCells,
 }) => {
-
+    
     const [midtermGrades, setMidtermGrades] = useState<string[]>(dataCells.map(s => (s.midtermGrade ) ));
     const [finalGrades, setFinalGrades] = useState< string[]>(dataCells.map(s => (s.finalGrade )));
     const [error, setError] = useState<string>('');
-    console.log(midtermGrades);
+
     const handleMidtermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         const value = e.target.value;
@@ -174,7 +174,13 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
         }
         ).then(() => {
             setShowModal(false);
-            setReloadStudent(true);
+            setStudents((prev) => prev.map((student, index) => ({
+                ...student,
+                midtermGrade: midtermGrades[index],
+                finalGrade: finalGrades[index],
+                totalGrade: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))).toFixed(2),
+                status: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))) >= 4 ? 'Hoàn thành' : 'Trượt',
+            })));
         }).catch((err) => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
             setError(firstValue);

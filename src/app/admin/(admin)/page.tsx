@@ -10,18 +10,8 @@ import LoaderTable from '@/app/Components/Loader/loaderTable';
 import { useRouter } from 'next/navigation';
 import TableComponent from '@/app/Components/table';
 import EditTermModal from './[id]/editTermModal';
+import { toast } from 'react-toastify';
 
-interface Term extends Record<string, unknown> {
-  id: number;
-  nameTerm: string;
-  startDate: Date;
-  endDate: Date;
-  rosterDeadline: Date;
-  gradeEntryDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
-}
 function convertDataToTerm(data: any): Term {
   return {
     id: data.id,
@@ -59,33 +49,37 @@ export default function HomePage() {
   const [terms, setTerms] = useState<Term[]>([]);
   const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [error, setError] = useState<string>('');
   useEffect(() => {
-    if (loading) {
-      get(term, {}).then((res) => {
-        setTerms(res.data.data.map((term: any) => convertDataToTerm(term)));
-      }).finally(() => setLoading(false));
-    }
-  }, [loading]);
+
+    get(term, {}).then((res) => {
+      setTerms(res.data.data.map((term: any) => convertDataToTerm(term)));
+    }).catch((res) => {
+      toast.error(res.data.message);
+      setError(res.data.message);
+    }).finally(() => setLoading(false));
+  }, []);
   const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
 
   }
-
+  if (error) {
+    return <div className='text-red-500'>{error}</div>
+  }
   return (
     <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
-      <h1 className='font-bold text-2xl text-center text-(--color-text)'>Quản lý kỳ học</h1>
+      <h1 className='font-bold text-2xl text-center text-(--color-text)'>Quản lý học kỳ</h1>
       <div className='w-full flex justify-between items-center relative px-6'>
         <div className='relative'>
           <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
           <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' /></div>
         <Link href={'/admin/create-term'} className='btn-text text-white py-2 px-4 w-40 rounded-md'>
           <FontAwesomeIcon icon={faPlus} className='mr-2' />
-          Thêm kỳ học
+          Thêm học kỳ
         </Link>
       </div>
       {loading ? <LoaderTable />
-        : <TableComponent dataCells={terms} headCells={headCells} search={search} onRowClick={(id) => { router.push(`admin/${id}`) }} modal={modal} EditComponent={EditTermModal} setReload={setLoading} />
+        : <TableComponent dataCells={terms} headCells={headCells} search={search} onRowClick={(id) => { router.push(`admin/${id}`) }} modal={modal} EditComponent={EditTermModal} setDatas={setTerms} />
       }
     </div>
   );

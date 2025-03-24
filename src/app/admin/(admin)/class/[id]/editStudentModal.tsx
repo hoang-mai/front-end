@@ -21,14 +21,16 @@ interface Student extends Record<string, unknown> {
 interface EditStudentModalProps {
     readonly data: Student;
     readonly showEdit: boolean;
-    readonly setReload: Dispatch<SetStateAction<boolean>>;
+    readonly setDatas: Dispatch<SetStateAction<Student[]>>;
     readonly setShowEdit: Dispatch<SetStateAction<boolean>>;
+    readonly midTermWeight?: string;
 }
 function EditStudentModal({
     data,
     showEdit,
-    setReload,
+    setDatas,
     setShowEdit,
+    midTermWeight,
 }: EditStudentModalProps) {
     const params = useParams<{ id: string }>();
     const [midtermGrade, setMidtermGrade] = useState<string>(data.midtermGrade);
@@ -84,7 +86,24 @@ function EditStudentModal({
             success: "Chỉnh sửa điểm thành công",
             error: "Chỉnh sửa điểm thất bại"
         }).then(() => {
-            setReload(true);
+            setDatas((prev) => prev.map((student) => {
+                if (student.id !== data.id) return student;
+
+                const midterm = Number(midtermGrade);
+                const final = Number(finalGrade);
+                const weight = Number(midTermWeight);
+                const total = (weight * midterm + (1 - weight) * final).toFixed(2);
+                const status = Number(total) >= 4 ? 'Hoàn thành' : 'Trượt';
+
+                return {
+                    ...student,
+                    midtermGrade,
+                    finalGrade,
+                    totalGrade: total.toString(),
+                    notes,
+                    status,
+                };
+            }));
             setShowEdit(false);
         }
         ).catch((err) => {

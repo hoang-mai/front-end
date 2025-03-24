@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 
 const options: Option[] = [
     { id: '1', label: 'Học viên' },
-    { id: '2', label: 'Giáo viên' },
+    { id: '2', label: 'Quản lý học viên' },
     { id: '3', label: 'Quản trị viên' },
 ];
 
@@ -69,9 +69,9 @@ const RegisterPage: React.FC = () => {
             case 'Học viên':
                 return 'student';
             case 'Quản lý học viên':
-                return 'admin';
-            case 'Văn phòng trường':
                 return 'manager';
+            case 'Quản trị viên':
+                return 'admin';
             default:
                 return 'student';
         }

@@ -16,15 +16,26 @@ interface Student {
     name: string;
     email: string;
 }
+interface AddStudentToCourse extends Record<string, unknown> {
+    id: number;
+    name: string;
+    email: string;
+    midtermGrade: string;
+    finalGrade: string;
+    totalGrade: string;
+    status: string;
+    notes: string;
+}
+
 interface AddStudentProps {
-    readonly setReloadStudent: Dispatch<SetStateAction<boolean>>;
+    readonly setAddStudentsToCourse: Dispatch<SetStateAction<AddStudentToCourse[]>>;
     readonly classId: number;
     readonly showAddStudent: boolean;
     readonly setShowAddStudent: Dispatch<SetStateAction<boolean>>;
 }
 function AddStudent({
     classId,
-    setReloadStudent,
+    setAddStudentsToCourse,
     showAddStudent,
     setShowAddStudent
 }: AddStudentProps) {
@@ -57,8 +68,24 @@ function AddStudent({
                 },
                 error: 'Thêm học viên thất bại'
             }
-        ).then(() => {
-            setReloadStudent(true);
+        ).then((res) => {
+            
+            setAddStudentsToCourse((prev: AddStudentToCourse[]) => {
+                const updatedStudents = res.data.data.success.map((studentId: number) => {
+                    const student = addStudents.find(s => s.id === studentId);
+                    return student
+                        && {
+                              ...student,
+                              midtermGrade: '',
+                              finalGrade: '',
+                              totalGrade: '',
+                              status: 'Đã đăng ký',
+                              notes: ''
+                          };
+                });
+
+                return [...prev, ...updatedStudents];
+            });
             setShowAddStudent(false);
         }).catch((err) => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
@@ -70,8 +97,10 @@ function AddStudent({
         if (debouncedQuery) {
             post(searchStudent, { query: debouncedQuery }).then(res => {
                 setStudents(res.data.data);
-            }
-            ).finally(() => {
+            }).catch((err) => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+            }).finally(() => {
                 setLoading(false);
             });
         }
@@ -177,6 +206,7 @@ function AddStudent({
                         ))}
                     </ul>
                 </div>
+                <p className='h-5 text-red-500 text-sm mt-2'>{error}</p>
                 <div className='flex justify-center gap-4 w-full mt-4'>
                     <button className='btn-text text-white p-2 rounded-lg w-40'
                         onClick={handleOnClickAddStudent}

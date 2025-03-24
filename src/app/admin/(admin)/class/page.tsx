@@ -12,41 +12,29 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import EditClassModal from "./[id]/editClassModal";
+import { toast } from "react-toastify";
+import { set } from "date-fns";
 
-interface Class extends Record<string, unknown> {
-    id: number;
-    code: string;
-    subjectName: string;
-    termId: number;
-    enrollLimit: string;
-    midtermWeight: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-    term: {
-        id: number;
-        name: string;
-    }
-}
+
 interface HeadCell {
-    id: keyof Class;
+    id: keyof Course;
     label: string;
 }
 const headCells: HeadCell[] = [
-    { id: 'code', label: 'Mã học phần', },
-    { id: 'subjectName', label: 'Tên học phần', },
+    { id: 'code', label: 'Mã lớp học', },
+    { id: 'subjectName', label: 'Tên lớp học', },
     { id: 'enrollLimit', label: 'Số lượng đăng ký tối đa', },
     { id: 'midtermWeight', label: 'Trọng số giữa kỳ', },
     { id: 'createdAt', label: 'Ngày tạo', },
 
 ];
 const modal = {
-    headTitle: 'Bạn có chắc chắn muốn xóa học phần này không?',
-    successMessage: 'Xóa học phần thành công',
-    errorMessage: 'Xóa học phần thất bại',
+    headTitle: 'Bạn có chắc chắn muốn xóa lớp học này không?',
+    successMessage: 'Xóa lớp học thành công',
+    errorMessage: 'Xóa lớp học thất bại',
     url: course,
 }
-function convertDataToClass(data: any): Class {
+function convertDataToClass(data: any): Course {
     return {
         id: data.id,
         code: data.code,
@@ -57,10 +45,6 @@ function convertDataToClass(data: any): Class {
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
         deletedAt: new Date(data.deleted_at),
-        term: {
-            id: data.term.id,
-            name: data.term.name
-        }
     }
 }
 function convertDataToTerm(data: any): Option {
@@ -74,10 +58,11 @@ function Class() {
     const router = useRouter();
     const [search, setSearch] = useState<string>('');
     const [terms, setTerms] = useState<Option[]>([]);
-    const [classes, setClasses] = useState<Class[]>([]);
+    const [classes, setClasses] = useState<Course[]>([]);
     const [selectedTerm, setSelectedTerm] = useState<Option>({ id: '', label: '' });
     const [loadingTerm, setLoadingTerm] = useState<boolean>(true);
     const [loadingClass, setLoadingClass] = useState<boolean>(true);
+    const [error, setError] = useState<string>('');
     useEffect(() => {
         get(term, {}).then((res) => {
             const fetchedTerms = res.data.data.map((term: any) => convertDataToTerm(term));
@@ -86,26 +71,26 @@ function Class() {
                 setSelectedTerm(fetchedTerms[0]);
                 get(courseByTerm, { termId: fetchedTerms[0].id }).then((res) => {
                     setClasses(res.data.data.map((term: any) => convertDataToClass(term)));
+                }).catch((res) => {
+                    toast.error(res.data.message);
+                    setError(res.data.message);
                 }).finally(() => setLoadingClass(false));
             }
+        }).catch((res) => {
+            toast.error(res.data.message);
+            setError(res.data.message);
         }).finally(() => setLoadingTerm(false));
     }, [])
-    useEffect(() => {
-        if (selectedTerm.id || loadingClass) {
-
-            get(courseByTerm, { termId: selectedTerm.id }).then((res) => {
-                setClasses(res.data.data.map((term: any) => convertDataToClass(term)));
-            }).finally(() => setLoadingClass(false));
-        }
-
-    }, [selectedTerm, loadingClass])
     const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     }
+    if(error){
+        return <div className='text-red-500'>{error}</div>
+      }
 
     return (
         <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
-            <h1 className='font-bold text-2xl text-center text-(--color-text)'>Quản lý học phần</h1>
+            <h1 className='font-bold text-2xl text-center text-(--color-text)'>Quản lý lớp học</h1>
             <div className='w-full flex justify-between items-center relative px-6'>
                 <div className='flex gap-4'>
                     {loadingTerm ? <LoaderSelect /> : terms.length > 0 && <SelectComponent selected={selectedTerm} setSelected={setSelectedTerm} options={terms} defaultOption={terms[0]} width="w-20" />}
@@ -119,11 +104,11 @@ function Class() {
                     terms.length > 0 &&
                     <Link href={`/admin/${selectedTerm.id}/${selectedTerm.label}/create-class`} className='btn-text text-white py-2 px-4 w-44 rounded-md'>
                         <FontAwesomeIcon icon={faPlus} className='mr-2' />
-                        Thêm học phần
+                        Thêm lớp học
                     </Link>}
             </div>
             {loadingClass ? <LoaderTable /> :
-                <TableComponent headCells={headCells} dataCells={classes} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} modal={modal} setReload={setLoadingClass} EditComponent={EditClassModal} />}
+                <TableComponent headCells={headCells} dataCells={classes} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} modal={modal} setDatas={setClasses} EditComponent={EditClassModal} />}
         </div>
     );
 }

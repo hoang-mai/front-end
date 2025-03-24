@@ -75,8 +75,8 @@ function CreateClass() {
                 }),
             {
                 pending: "Đang xử lý...",
-                success: "Tạo học phần thành công",
-                error: "Tạo học phần thất bại",
+                success: "Tạo lớp học thành công",
+                error: "Tạo lớp học thất bại",
             }
         ).catch((err) => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
@@ -94,7 +94,7 @@ function CreateClass() {
                     />
                 </Link>
             </div>
-            <h1 className="font-bold text-2xl text-center text-(--color-text)">Tạo học phần mới</h1>
+            <h1 className="font-bold text-2xl text-center text-(--color-text)">Tạo lớp học mới</h1>
             <div className="w-full flex justify-center ">
                 <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8" >
                     <div className="flex flex-row my-4">
@@ -102,9 +102,9 @@ function CreateClass() {
                         <p> {params.label}</p>
                     </div>
                     <div className="flex flex-col relative mb-4">
-                        <label htmlFor="name" className="">Tên học phần</label>
+                        <label htmlFor="name" className="">Tên lớp học</label>
                         <input
-                            placeholder='Tên học phần'
+                            placeholder='Tên lớp học'
                             value={subjectName}
                             onChange={handelOnChangeNameClass}
                             type="text"
@@ -145,7 +145,7 @@ function CreateClass() {
                             disabled={!subjectName || !enrollLimit || !midtermWeight || !!errorMidtermWeight || !!errorEnrollLimit}
                             type="submit"
                             className="btn-text bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Tạo học phần
+                            Tạo lớp học
                         </button>
                     </div>
                 </form>

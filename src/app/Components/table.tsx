@@ -23,10 +23,11 @@ interface HeadCell<T> {
     label: string;
 }
 interface EditComponentProps {
+    midTermWeight?: string;
     data: any;
     showEdit: boolean;
     setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
-    setReload: React.Dispatch<React.SetStateAction<boolean>>;
+    setDatas: React.Dispatch<React.SetStateAction<any[]>>;
 }
 interface TableComponentProps<T> {
     headCells: HeadCell<T>[]
@@ -35,7 +36,9 @@ interface TableComponentProps<T> {
     search?: string
     modal: ModalProps;
     EditComponent: React.FC<EditComponentProps>;
-    setReload: React.Dispatch<React.SetStateAction<boolean>>;
+    setDatas: React.Dispatch<React.SetStateAction<T[]>>;
+    deleteCell?: boolean;
+    midTermWeight?: string;
 }
 interface ModalProps {
     headTitle: string;
@@ -82,7 +85,7 @@ const renderCellValue = <T extends Record<string, unknown>>(row: T, id: keyof T)
     const value = row[id];
 
     if (value instanceof Date) return value.toLocaleDateString("vi-VN");
-    if (value === null || value === undefined) return "-";
+    if (value === null || value === undefined || value === '') return "-";
 
     const stringValue = String(value);
     return stringValue.length > 20 ? stringValue.slice(0, 17) + "..." : stringValue;
@@ -95,10 +98,12 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
     search,
     modal,
     EditComponent,
-    setReload,
+    setDatas,
+    deleteCell = true,
+    midTermWeight,
 }: TableComponentProps<T>) => {
 
-
+    console.log(midTermWeight);
     const [order, setOrder] = useState<Order | null>(null);
     const [orderBy, setOrderBy] = useState<keyof T | null>(null);
     const [page, setPage] = useState(0);
@@ -213,22 +218,22 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                         <div className='flex gap-2'>
                                             <button className=' flex-1 rounded-lg'
                                                 onClick={(e) => {
-                                                    
+
                                                     setEdit(true);
                                                     setEditId(dataCell.id);
                                                 }}
                                             >
                                                 <FontAwesomeIcon icon={faPencil} />
                                             </button>
-                                            <button className=' flex-1 rounded-lg'
+                                            {deleteCell && <button className=' flex-1 rounded-lg'
                                                 onClick={(e) => {
-                                                    
+
                                                     setConfirmDelete(true);
                                                     setConfirmDeleteId(dataCell.id);
                                                 }}
                                             >
                                                 <FontAwesomeIcon icon={faTrash} />
-                                            </button>
+                                            </button>}
                                         </div>
                                     </TableCell>
                                 </StyledTableRow>
@@ -256,7 +261,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     labelRowsPerPage='Số dòng trên trang:'
                 />
-                <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)}
+                {deleteCell && <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)}
                     className='flex items-center justify-center'
                 >
                     <Box className="p-8 bg-white rounded-md shadow-md">
@@ -273,7 +278,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                         }
                                     ).then(() => {
                                         setConfirmDelete(false);
-                                        setReload(true);
+                                        setDatas((prev) => prev.filter((dataCell) => dataCell.id !== confirmDeleteId));
                                     }).catch((err) => {
                                         const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
                                         toast.error(firstValue);
@@ -291,14 +296,15 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                             </button>
                         </div>
                     </Box>
-                </Modal>
+                </Modal>}
                 {edit &&
-                <EditComponent
-                    data={dataCells.find((dataCell) => dataCell.id === editId)}
-                    showEdit={edit}
-                    setShowEdit={setEdit}
-                    setReload={setReload}
-                />}
+                    <EditComponent
+                        data={dataCells.find((dataCell) => dataCell.id === editId)}
+                        showEdit={edit}
+                        setShowEdit={setEdit}
+                        setDatas={setDatas}
+                        midTermWeight={midTermWeight}
+                    />}
 
             </Paper>
         </Box>

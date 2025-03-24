@@ -14,46 +14,37 @@ import { faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
 import EditTermModal from './editTermModal';
 import TableComponent from '@/app/Components/table';
 import EditClassModal from '../class/[id]/editClassModal';
-interface Courses extends Record<string, unknown> {
-    id: number;
-    subjectName: string;
-    code: string;
-    enrollLimit: number;
-    midtermWeight: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-}
-interface Term {
-    id: number;
-    nameTerm: string;
-    startDate: Date;
-    endDate: Date;
-    rosterDeadline: Date;
-    gradeEntryDate: Date;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-    courses: Courses[];
-}
+import { set } from 'date-fns';
+
 interface HeadCell {
-    id: keyof Courses;
+    id: keyof Course;
     label: string;
 }
+const termDefault: Term = {
+    id: 0,
+    nameTerm: '',
+    startDate: new Date(),
+    endDate: new Date(),
+    rosterDeadline: new Date(),
+    gradeEntryDate: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: new Date(),
+}
 const headCells: HeadCell[] = [
-    { id: 'code', label: 'Mã học phần', },
-    { id: 'subjectName', label: 'Tên học phần', },
+    { id: 'code', label: 'Mã lớp học', },
+    { id: 'subjectName', label: 'Tên lớp học', },
     { id: 'enrollLimit', label: 'Số lượng đăng ký tối đa', },
     { id: 'midtermWeight', label: 'Trọng số giữa kỳ', },
     { id: 'createdAt', label: 'Ngày tạo', },
 ];
 const modal = {
-    headTitle: 'Bạn có chắc chắn muốn xóa học phần này không?',
-    successMessage: 'Xóa học phần thành công',
-    errorMessage: 'Xóa học phần thất bại',
+    headTitle: 'Bạn có chắc chắn muốn xóa lớp học này không?',
+    successMessage: 'Xóa lớp học thành công',
+    errorMessage: 'Xóa lớp học thất bại',
     url: course,
 }
-function convertDataToClass(data: any): Courses {
+function convertDataToCourse(data: any): Course {
     return {
         id: data.id,
         code: data.code,
@@ -76,7 +67,6 @@ function convertDataToTerm(data: any): Term {
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
         deletedAt: new Date(data.deleted_at),
-        courses: data.courses.map((course: any) => convertDataToClass(course))
     }
 }
 function formatDate(date: Date): string {
@@ -88,31 +78,28 @@ function formatDate(date: Date): string {
 export default function TermDetail() {
     const router = useRouter();
     const params = useParams<{ id: string }>()
-    const [termData, setTermData] = useState<Term>();
+    const [termData, setTermData] = useState<Term>(termDefault);
+    const [courses, setCourses] = useState<Course[]>([])
     const [error, setError] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(true);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [showEdit, setShowEdit] = useState<boolean>(false);
-    const [reload, setReload] = useState<boolean>(true);
-    const [courses, setCourses] = useState<Courses[]>([])
     const [search, setSearch] = useState<string>('');
     useEffect(() => {
         if (!/^\d+$/.test(params.id)) {
             router.push('/404');
             return;
         }
-        if (reload) {
-            get(term + '/' + params.id, {}).then((res) => {
-                const term = convertDataToTerm(res.data.data);
-                setTermData(term);
-                setCourses(term.courses);
-            }).catch((err) => {
-                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-                setError(firstValue);
-            }).finally(() => {
-                setReload(false)
-            })
-        }
-    }, [params.id, reload]);
+
+        get(term + '/' + params.id, {}).then((res) => {
+            setTermData(convertDataToTerm(res.data.data));
+            setCourses(res.data.data.courses.map((course: any) => convertDataToCourse(course)));
+        }).catch((err) => {
+            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+            setError(firstValue);
+        }).finally(() => setLoading(false));
+
+    }, [params.id]);
     const handleOnConfirmDeleteTerm = () => {
         toast.promise(del(term + '/' + params.id, {}), {
             pending: "Đang xử lý...",
@@ -135,7 +122,7 @@ export default function TermDetail() {
     }
     return (
         <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
-            {!termData || reload ? (
+            {loading  ? (
                 <>
                     <div className='w-full flex justify-center items-center mb-10'>
                         <LoaderLine height='h-7' width='w-50' />
@@ -183,7 +170,7 @@ export default function TermDetail() {
                             </button>
                         </div>
                     </div>
-                    <TableComponent dataCells={courses} headCells={headCells} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} setReload={setReload} EditComponent={EditClassModal} modal={modal} />
+                    <TableComponent dataCells={courses} headCells={headCells} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} setDatas={setCourses} EditComponent={EditClassModal} modal={modal} />
                     <Modal open={showModal} onClose={() => setShowModal(false)}
                         className='flex items-center justify-center'
                     >
@@ -209,7 +196,7 @@ export default function TermDetail() {
                     {showEdit &&
                         <EditTermModal
                             data={termData}
-                            setReload={setReload}
+                            setData={setTermData}
                             showEdit={showEdit}
                             setShowEdit={setShowEdit}
 

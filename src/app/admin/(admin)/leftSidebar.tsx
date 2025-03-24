@@ -1,13 +1,13 @@
 'use client';
 import Image from 'next/image';
-import { faHome, faSignOut, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faSignOut, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
 import { toast } from 'react-toastify';
-import { post,get } from '@/app/Services/callApi';
+import { post, get } from '@/app/Services/callApi';
 import { authTest, logout } from '@/app/Services/api';
 
 const LeftSidebar = () => {
@@ -37,11 +37,11 @@ const LeftSidebar = () => {
                 }
             }
             )
-            .catch((err) => {
-                toast.error("Phiên đăng nhập hết hạn");
-                localStorage.removeItem("token");
-                router.push("/admin/login");
-            });
+                .catch((err) => {
+                    toast.error("Phiên đăng nhập hết hạn");
+                    localStorage.removeItem("token");
+                    router.push("/admin/login");
+                });
         }
     }, [])
     return (
@@ -59,7 +59,7 @@ const LeftSidebar = () => {
 
                         >
                             <FontAwesomeIcon icon={faHome} className='mr-2' />
-                            Trang chủ
+                            Quản lý học kỳ
                         </Link>
 
                         {pathname !== '/admin' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
@@ -74,10 +74,25 @@ const LeftSidebar = () => {
 
                         >
                             <Image src="/class.svg" alt="class" width={22} height={20} className="mr-2 inline " />
-                            Quản lý học phần
+                            Quản lý lớp học
                         </Link>
 
                         {pathname !== "/admin/class" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/admin-manager"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/admin/admin-manager"
+                            className={`p-2 w-full h-full block ${pathname !== "/admin/admin-manager" ? "relative z-10" : ""}`}
+
+                        >
+                            <FontAwesomeIcon icon={faUserTie} className='mr-2' />
+                            Quản lý quản lý học viên
+                        </Link>
+
+                        {pathname !== "/admin/admin-manager" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/register"
                         ? "group relative"

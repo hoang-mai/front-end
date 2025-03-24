@@ -7,35 +7,23 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import { put } from '@/app/Services/callApi';
 import { course } from '@/app/Services/api';
-interface Class {
-    id: number;
-    code: string;
-    subjectName: string;
-    termId: number;
-    enrollLimit: string;
-    midtermWeight: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
-    term: {
-        id: number;
-        name: string;
-    }
-}
+
 interface EditClassModalProps {
-    readonly data: Class;
+    readonly data: Course;
     readonly showEdit: boolean;
-    readonly setReload: Dispatch<SetStateAction<boolean>>;
+    readonly setDatas?: Dispatch<SetStateAction<Course[]>>;
+    readonly setData?: Dispatch<SetStateAction<Course>>;
     readonly setShowEdit: (show: boolean) => void;
 }
 function EditClassModal({
     data,
-    setReload,
+    setDatas,
+    setData,
     showEdit,
     setShowEdit,
 }: EditClassModalProps) {
     const [subjectName, setSubjectName] = useState<string>(data.subjectName);
-    const [enrollLimit, setEnrollLimit] = useState<string>(data.enrollLimit);
+    const [enrollLimit, setEnrollLimit] = useState<string>(String(data.enrollLimit));
     const [midtermWeight, setMidtermWeight] = useState<string>(data.midtermWeight);
     const [errorEnrollLimit, setErrorEnrollLimit] = useState<string>('');
     const [errorMidtermWeight, setErrorMidtermWeight] = useState<string>('');
@@ -87,11 +75,27 @@ function EditClassModal({
             }),
             {
                 pending: "Đang xử lý...",
-                success: "Chỉnh sửa học phần thành công",
-                error: "Chỉnh sửa học phần thất bại",
+                success: "Chỉnh sửa lớp học thành công",
+                error: "Chỉnh sửa lớp học thất bại",
             }
         ).then(() => {
-            setReload(true);
+            setDatas?.((prev) => prev.map((course) =>
+                    course.id === data.id
+                        ? {
+                              ...course,
+                              subjectName,
+                              enrollLimit: Number(enrollLimit),
+                              midtermWeight,
+                          }
+                        : course
+                )
+            );
+            setData?.({
+                ...data,
+                subjectName,
+                enrollLimit: Number(enrollLimit),
+                midtermWeight,
+            });
             setShowEdit(false);
         }).catch((err) => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
@@ -106,7 +110,7 @@ function EditClassModal({
         >
             <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%] xl:h-[60%] h-[70%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
                 <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa học phần</h2>
+                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa lớp học</h2>
                     <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
                         onClick={() => {
                             setShowEdit(false);
@@ -117,10 +121,10 @@ function EditClassModal({
                 </div>
                 <form action="" className="space-y-4">
                     <div className="flex flex-row items-center mb-7">
-                        <label htmlFor="name" className="w-1/3 text-left pr-4 relative bottom-2">Tên học phần</label>
+                        <label htmlFor="name" className="w-1/3 text-left pr-4 relative bottom-2">Tên lớp học</label>
                         <div className="flex flex-col w-2/3">
                             <input
-                                placeholder="Tên học phần"
+                                placeholder="Tên lớp học"
                                 value={subjectName}
                                 onChange={handleOnChangeSubjectName}
                                 type="text"
