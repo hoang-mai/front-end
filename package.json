@@ -19,6 +19,7 @@
     "@mui/x-date-pickers": "^7.25.0",
     "axios": "^1.8.2",
     "date-fns": "^4.1.0",
+    "firebase": "^11.5.0",
     "front-end": "file:",
     "next": "15.2.0",
     "react": "^19.0.0",

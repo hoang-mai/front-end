@@ -21,7 +21,7 @@ function CreateTerm() {
     const [errorRosterDeadline, setErrorRosterDeadline] = useState<string>('');
     const [errorGradeEntryDate, setErrorGradeEntryDate] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const handelOnChangeNameTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const handelOnChangeNameTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
         const regex = /20\d{2}[A-Z]/;
         setNameTerm(e.target.value);
         if (!regex.exec(e.target.value)) {
@@ -148,18 +148,16 @@ function CreateTerm() {
             }
         ).then((res) => {
             setNameTerm('');
-
+            setStartDate(null);
+            setEndDate(null);
+            setRosterDeadline(null);
+            setGradeEntryDate(null);
+            setError('');
         })
             .catch((err) => {
                 const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
                 setError(firstValue);
 
-            }).finally(() => {
-                setStartDate(null);
-                setEndDate(null);
-                setRosterDeadline(null);
-                setGradeEntryDate(null);
-                setError('');
             })
     }
     return (
@@ -214,7 +212,7 @@ function CreateTerm() {
                             : <p className='text-gray-500 text-sm'>Lưu ý *: Sau thời gian này, giảng viên mới có thể nhập điểm.</p>
                         }
                     </div>
-                    <p className='h-5 text-red-500 text-sm my-2 h-fit'>{error}</p>
+                    <p className='h-5 text-red-500 text-sm my-2 '>{error}</p>
                     <div className='flex items-center justify-center'>
                         <button
                             onClick={handleOnSubmit}

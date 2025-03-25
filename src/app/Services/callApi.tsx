@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
 const axiosInstance = axios.create({
-    baseURL:process.env.NEXT_PUBLIC_BE_HOST,
-    
+    baseURL: process.env.NEXT_PUBLIC_BE_HOST,
+
     headers: {
         'Content-Type': 'application/json',
         'Accept-Language': 'vi',
-      },
-}) 
+    },
+})
 
 axiosInstance.interceptors.request.use(
     (config) => {
@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
-        
+
         return Promise.reject(error.response.data);
     }
 );
@@ -39,7 +39,7 @@ export const get = (path: string, params?: Record<string, any>): Promise<AxiosRe
 };
 
 export const post = (path: string, body: object, params?: Record<string, any>): Promise<AxiosResponse<any, any>> => {
-    return axiosInstance.post(path, body, { params }); 
+    return axiosInstance.post(path, body, { params });
 };
 export const put = (path: string, body: object, params?: Record<string, any>): Promise<AxiosResponse<any, any>> => {
     return axiosInstance.put(path, body, { params });

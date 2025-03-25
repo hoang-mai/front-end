@@ -29,17 +29,7 @@ interface EditComponentProps {
     setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
     setDatas: React.Dispatch<React.SetStateAction<any[]>>;
 }
-interface TableComponentProps<T> {
-    headCells: HeadCell<T>[]
-    dataCells: T[];
-    onRowClick: (id: number) => void;
-    search?: string
-    modal: ModalProps;
-    EditComponent: React.FC<EditComponentProps>;
-    setDatas: React.Dispatch<React.SetStateAction<T[]>>;
-    deleteCell?: boolean;
-    midTermWeight?: string;
-}
+
 interface ModalProps {
     headTitle: string;
     successMessage: string;
@@ -90,8 +80,21 @@ const renderCellValue = <T extends Record<string, unknown>>(row: T, id: keyof T)
     const stringValue = String(value);
     return stringValue.length > 20 ? stringValue.slice(0, 17) + "..." : stringValue;
 };
-
+interface TableComponentProps<T> {
+    index?: boolean;
+    headCells: HeadCell<T>[]
+    dataCells: T[];
+    onRowClick: (id: number) => void;
+    search?: string
+    modal?: ModalProps;
+    EditComponent?: React.FC<EditComponentProps>;
+    setDatas?: React.Dispatch<React.SetStateAction<T[]>>;
+    deleteCell?: boolean;
+    actionCell?: boolean;
+    midTermWeight?: string;
+}
 const TableComponent = <T extends { id: number } & Record<string, unknown>>({
+    index,
     headCells,
     dataCells,
     onRowClick,
@@ -99,6 +102,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
     modal,
     EditComponent,
     setDatas,
+    actionCell = true,
     deleteCell = true,
     midTermWeight,
 }: TableComponentProps<T>) => {
@@ -160,6 +164,16 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                     <Table aria-labelledby="tableTitle" size='medium'>
                         <TableHead>
                             <TableRow className='bg-green-100'>
+                                {index && <TableCell align='center' padding='normal' sx={{
+                                    paddingX: {
+                                        lg: '16px',
+                                        md: '4px',
+                                        sm: '0px',
+                                    }
+                                }}>
+                                    STT
+                                </TableCell>
+                                }
                                 {headCells.map((headCell) => (
                                     <TableCell
                                         key={headCell.id}
@@ -190,7 +204,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                         </TableSortLabel>
                                     </TableCell>
                                 ))}
-                                <TableCell align='center' padding='normal' sx={{
+                                {actionCell && <TableCell align='center' padding='normal' sx={{
                                     paddingX: {
                                         lg: '16px',
                                         md: '4px',
@@ -198,7 +212,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                     }
                                 }}>
                                     Hành động
-                                </TableCell>
+                                </TableCell>}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -209,12 +223,15 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                     sx={{ cursor: 'pointer' }}
                                     onClick={() => onRowClick(dataCell.id)}
                                 >
+                                    {index && <TableCell align='center'>
+                                        {dataCells.indexOf(dataCell) + 1}
+                                    </TableCell>}
                                     {headCells.map((headCell) => (
                                         <TableCell key={headCell.id} align="center">
                                             {renderCellValue(dataCell, headCell.id)}
                                         </TableCell>
                                     ))}
-                                    <TableCell onClick={(e) => e.stopPropagation()} align='center'>
+                                    {actionCell && <TableCell onClick={(e) => e.stopPropagation()} align='center'>
                                         <div className='flex gap-2'>
                                             <button className=' flex-1 rounded-lg'
                                                 onClick={(e) => {
@@ -235,7 +252,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                                 <FontAwesomeIcon icon={faTrash} />
                                             </button>}
                                         </div>
-                                    </TableCell>
+                                    </TableCell>}
                                 </StyledTableRow>
                             ))}
                             {emptyRows > 0 && (
@@ -265,20 +282,20 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                     className='flex items-center justify-center'
                 >
                     <Box className="p-8 bg-white rounded-md shadow-md">
-                        <h1 className="text-lg font-bold mb-4">{modal.headTitle}</h1>
+                        <h1 className="text-lg font-bold mb-4">{modal?.headTitle}</h1>
                         <div className="flex justify-center gap-10">
                             <button
                                 className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
                                 onClick={() => {
-                                    toast.promise(del(modal.url + '/' + confirmDeleteId),
+                                    toast.promise(del(modal?.url + '/' + confirmDeleteId),
                                         {
                                             pending: "Đang xử lý...",
-                                            success: modal.successMessage,
-                                            error: modal.errorMessage,
+                                            success: modal?.successMessage,
+                                            error: modal?.errorMessage,
                                         }
                                     ).then(() => {
                                         setConfirmDelete(false);
-                                        setDatas((prev) => prev.filter((dataCell) => dataCell.id !== confirmDeleteId));
+                                        setDatas?.((prev) => prev.filter((dataCell) => dataCell.id !== confirmDeleteId));
                                     }).catch((err) => {
                                         const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
                                         toast.error(firstValue);
@@ -297,7 +314,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                         </div>
                     </Box>
                 </Modal>}
-                {edit &&
+                {edit && EditComponent && setDatas &&
                     <EditComponent
                         data={dataCells.find((dataCell) => dataCell.id === editId)}
                         showEdit={edit}
