@@ -81,6 +81,10 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
     const handleOnSubmit = async () => {
         let urlImage: string= "";
         if (!isUrlImage && file) {
+            if(file.size > 10 * 1024 * 1024){
+                toast.error('Kích thước ảnh không được vượt quá 10MB');
+                return;
+            }
             try{
             urlImage= await uploadImage(file, 'managers', manager.id.toString(), 'avatar')
             }catch(e){
@@ -213,21 +217,25 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                         />
 
 
-                        <label
-                            htmlFor="file"
-                            className="btn-text text-white py-2 px-4 rounded cursor-pointer"
-                        >
-                            Chọn ảnh
-                        </label>
+                        <div className="flex flex-col gap-2 relative top-1/2 transform -translate-y-1/2">
+                            <div className="flex gap-2">
+                                <label
+                                    htmlFor="file"
+                                    className="btn-text text-white py-2 px-4 rounded cursor-pointer"
+                                >
+                                    Chọn ảnh
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={handleRemoveFile}
+                                    className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                >
+                                    Xóa ảnh
+                                </button>
+                            </div>
+                            <p className='text-gray-500 text-sm'>Lưu ý *: Ảnh phải có kích thước dưới 10MB.</p>
 
-
-                        <button
-                            type="button"
-                            onClick={handleRemoveFile}
-                            className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        >
-                            Xóa ảnh
-                        </button>
+                        </div>
                     </div>
                     <div className='flex flex-col md:flex-row gap-2 mr-2'>
                         <label htmlFor="fullName" className="text-lg md:w-1/3">Họ và tên:</label>

@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import EditManagerModal from "./[id]/editManagerModal";
 import { useRouter } from "next/navigation";
 
 interface Manager extends Record<string, unknown> {

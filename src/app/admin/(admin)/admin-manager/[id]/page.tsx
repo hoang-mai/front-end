@@ -139,7 +139,7 @@ function ManagerDetail() {
                                 alt="Ảnh đại diện"
                                 width={100}
                                 height={100}
-                                className="rounded-full border-2 border-gray-300 shadow-md mx-auto md:mx-0"
+                                className="w-32 h-32 object-cover rounded-full border border-gray-300"
                             />
                             <div className="text-center md:text-left">
                                 <h2 className="text-2xl font-bold text-gray-800 flex items-center justify-center ">
