@@ -102,13 +102,13 @@ const RegisterPage: React.FC = () => {
 
     return (
         <div className='lg:w-150 w-120 bg-white rounded-lg shadow-md p-4 px-16'>
-            <h2 className="text-2xl font-bold mb-6 text-center text-(--color-text)">Đăng ký</h2>
+            <h2 className="text-2xl font-bold mb-6 text-center text-(--color-text)">Tạo tài khoản mới</h2>
             <form className="mb-4">
                 <div className="relative mb-4">
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="name">
-                        Họ và tên
+                        Họ và tên (<span className='text-red-500'>*</span>)
                     </label>
-                    {name === '' && <FontAwesomeIcon icon={faUser} className='absolute opacity-50 bottom-3.5 left-1' />}
+                    {name === '' && <FontAwesomeIcon icon={faUser} className='absolute opacity-50 bottom-3.5 left-2' />}
                     <input
                         className="shadow appearance-none border rounded-lg w-full py-2 px-6 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
                         id="name"
@@ -121,9 +121,9 @@ const RegisterPage: React.FC = () => {
                 </div>
                 <div className="relative">
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="email">
-                        Email
+                        Email (<span className='text-red-500'>*</span>)
                     </label>
-                    {email === '' && <FontAwesomeIcon icon={faEnvelope} className='absolute opacity-50 bottom-10.5 left-1' />}
+                    {email === '' && <FontAwesomeIcon icon={faEnvelope} className='absolute opacity-50 bottom-10.5 left-2' />}
                     <input
                         className="shadow appearance-none border rounded-lg w-full py-2 px-6 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
                         id="email"
@@ -138,9 +138,9 @@ const RegisterPage: React.FC = () => {
 
                 <div className=" relative">
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="password">
-                        Mật khẩu
+                        Mật khẩu (<span className='text-red-500'>*</span>)
                     </label>
-                    {password === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-1' />}
+                    {password === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />}
                     <input
                         className="shadow appearance-none border rounded-lg w-full py-2 px-6 text-gray-700  focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
                         id="password"
@@ -155,9 +155,9 @@ const RegisterPage: React.FC = () => {
                 </div>
                 <div className="relative">
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="confirmPassword">
-                        Nhập lại mật khẩu
+                        Nhập lại mật khẩu (<span className='text-red-500'>*</span>)
                     </label>
-                    {confirmPassword === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-1' />}
+                    {confirmPassword === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />}
                     <input
                         className="shadow appearance-none border rounded-lg w-full py-2 px-6 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
                         id="confirmPassword"
@@ -172,7 +172,7 @@ const RegisterPage: React.FC = () => {
                 </div>
                 <div >
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="role">
-                        Vai trò
+                        Vai trò (<span className='text-red-500'>*</span>)
                     </label>
                     <SelectComponent selected={role} setSelected={setRole} defaultOption={{id:'1', label:'Học viên'} as Option} options={options} />
                 </div>

@@ -135,7 +135,7 @@ function AddClass({
                             <p> {label}</p>
                         </div>
                         <div className="flex flex-col relative mb-4">
-                            <label htmlFor="name" className="">Tên lớp học</label>
+                            <label htmlFor="name" className="">Tên lớp học (<span className='text-red-500'>*</span>)</label>
                             <input
                                 placeholder='Tên lớp học'
                                 value={subjectName}
@@ -147,7 +147,7 @@ function AddClass({
 
                         </div>
                         <div className="flex flex-col relative">
-                            <label htmlFor="enrollLimit" className="">Số lượng đăng ký tối đa</label>
+                            <label htmlFor="enrollLimit" className="">Số lượng đăng ký tối đa (<span className='text-red-500'>*</span>)</label>
                             <input
                                 placeholder='Số lượng đăng ký tối đa'
                                 value={enrollLimit}
@@ -159,7 +159,7 @@ function AddClass({
                             <p className='h-5 text-red-500 text-sm'>{errorEnrollLimit}</p>
                         </div>
                         <div className="flex flex-col relative ">
-                            <label htmlFor="midtermWeight" className="">Trọng số giữa kỳ</label>
+                            <label htmlFor="midtermWeight" className="">Trọng số giữa kỳ (<span className='text-red-500'>*</span>)</label>
                             <input
                                 placeholder='Trọng số giữa kỳ'
                                 value={midtermWeight}

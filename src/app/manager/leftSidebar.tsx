@@ -3,9 +3,9 @@ import Image from 'next/image';
 import { faHome, faSignOut, faExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
-import { usePathname,useRouter } from 'next/navigation';
-import React,{useEffect} from 'react';
-import { post,get } from '@/app/Services/callApi';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { post, get } from '@/app/Services/callApi';
 import { authTest, logout } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 
@@ -22,25 +22,29 @@ const LeftSidebar = () => {
             }
         ).then((res) => {
             localStorage.removeItem("token");
-            router.push("/manager/login");
+            router.push("/login");
         })
     }
     useEffect(() => {
         if (!localStorage.getItem("token")) {
-            router.push("/manager/login");
+            router.push("/login");
         } else {
             get(authTest).then((res) => {
-                if (res.data.user.role !== 'manager') {
-                    toast.error('Quyền truy cập không hợp lệ')
-                    router.push("/manager/login");
+                switch (res.data.user.role) {
+                    case 'manager':
+                        break;
+                    case 'admin':
+                        router.push("/admin");
+                        break;
+                    default:
+                        router.push("/");
+                        break;
                 }
-            }
-            )
-            .catch((err) => {
-                toast.error("Phiên đăng nhập hết hạn");
-                localStorage.removeItem("token");
-                router.push("/manager/login");
-            });
+            }).catch((err) => {
+                    toast.error("Phiên đăng nhập hết hạn");
+                    localStorage.removeItem("token");
+                    router.push("/login");
+                });
         }
     }, [])
     return (
@@ -63,9 +67,9 @@ const LeftSidebar = () => {
 
                         {pathname !== '/manager' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
-                    
-                    
-                    
+
+
+
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/manager/violation"
                         ? "group relative"
                         : "bg-gradient-to-r from-green-300 to-gray-300"

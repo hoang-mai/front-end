@@ -205,7 +205,7 @@ const EditTermModal = ({
 
                 <form action="" >
                     <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="name" className="w-1/3 text-left relative bottom-4 pr-4">Tên học kỳ</label>
+                        <label htmlFor="name" className="w-1/3 text-left relative bottom-4 pr-4">Tên học kỳ (<span className='text-red-500'>*</span>)</label>
                         <div className='flex flex-col w-2/3'>
                             <input
                                 placeholder={`${new Date().getFullYear()}A`}
@@ -219,21 +219,21 @@ const EditTermModal = ({
                         </div>
                     </div>
                     <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="start" className="w-1/3 text-left relative bottom-4 pr-4">Ngày bắt đầu</label>
+                        <label htmlFor="start" className="w-1/3 text-left relative bottom-4 pr-4">Ngày bắt đầu (<span className='text-red-500'>*</span>)</label>
                         <div className='flex flex-col w-2/3'>
                             <DatePickerComponent value={startDate} onChange={handleOnChangeStartDate} />
                             <p className='h-5 text-red-500 text-sm'>{errorStartDate}</p>
                         </div>
                     </div>
                     <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Ngày kết thúc</label>
+                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Ngày kết thúc (<span className='text-red-500'>*</span>)</label>
                         <div className='flex flex-col w-2/3'>
                             <DatePickerComponent value={endDate} onChange={handleOnChangeEndDate} />
                             <p className='h-5 text-red-500 text-sm'>{errorEndDate}</p>
                         </div>
                     </div>
                     <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Hạn đăng ký lớp</label>
+                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Hạn đăng ký lớp (<span className='text-red-500'>*</span>)</label>
                         <div className='flex flex-col w-2/3'>
                             <DatePickerComponent value={rosterDeadline} onChange={handleOnChangeRosterDeadline} />
                             {errorRosterDeadline
@@ -243,7 +243,7 @@ const EditTermModal = ({
                         </div>
                     </div>
                     <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Ngày bắt đầu nhập điểm</label>
+                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Ngày bắt đầu nhập điểm (<span className='text-red-500'>*</span>)</label>
                         <div className='flex flex-col w-2/3'>
                             <DatePickerComponent value={gradeEntryDate} onChange={handleOnChangeGradeEntryDate} />
                             {errorGradeEntryDate

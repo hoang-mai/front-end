@@ -107,7 +107,6 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
     midTermWeight,
 }: TableComponentProps<T>) => {
 
-    console.log(midTermWeight);
     const [order, setOrder] = useState<Order | null>(null);
     const [orderBy, setOrderBy] = useState<keyof T | null>(null);
     const [page, setPage] = useState(0);
@@ -240,7 +239,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                                     setEditId(dataCell.id);
                                                 }}
                                             >
-                                                <FontAwesomeIcon icon={faPencil} />
+                                                <FontAwesomeIcon icon={faPencil} className='text-green-600'/>
                                             </button>
                                             {deleteCell && <button className=' flex-1 rounded-lg'
                                                 onClick={(e) => {
@@ -249,7 +248,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                                     setConfirmDeleteId(dataCell.id);
                                                 }}
                                             >
-                                                <FontAwesomeIcon icon={faTrash} />
+                                                <FontAwesomeIcon icon={faTrash} className='text-red-600'/>
                                             </button>}
                                         </div>
                                     </TableCell>}

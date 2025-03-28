@@ -23,25 +23,29 @@ const LeftSidebar = () => {
             }
         ).then((res) => {
             localStorage.removeItem("token");
-            router.push("/admin/login");
+            router.push("/login");
         })
     }
     useEffect(() => {
         if (!localStorage.getItem("token")) {
-            router.push("/admin/login");
+            router.push("/login");
         } else {
             get(authTest).then((res) => {
-                if (res.data.user.role !== 'admin') {
-                    toast.error('Quyền truy cập không hợp lệ')
-                    router.push("/admin/login");
+                switch (res.data.user.role) {
+                    case 'admin':
+                        break;
+                    case 'manager':
+                        router.push("/manager");
+                        break;
+                    default:
+                        router.push("/");
+                        break;
                 }
-            }
-            )
-                .catch((err) => {
-                    toast.error("Phiên đăng nhập hết hạn");
-                    localStorage.removeItem("token");
-                    router.push("/admin/login");
-                });
+            }).catch((err) => {
+                toast.error("Phiên đăng nhập hết hạn");
+                localStorage.removeItem("token");
+                router.push("/login");
+            });
         }
     }, [])
     return (
@@ -118,7 +122,7 @@ const LeftSidebar = () => {
                             className={`p-2 w-full h-full block ${pathname !== "/admin/register" ? "relative z-10" : ""}`}
 
                         ><FontAwesomeIcon icon={faUserPlus} className='mr-2' />
-                            Đăng ký tài khoản
+                            Tạo tài khoản mới
                         </Link>
 
                         {pathname !== '/admin/register' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}

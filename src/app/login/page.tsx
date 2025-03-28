@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEye, faEyeSlash, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { post,get } from '@/app/Services/callApi';
+import { post, get } from '@/app/Services/callApi';
 import { authTest, login } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 
@@ -34,27 +34,42 @@ const LoginPage: React.FC = () => {
         e.preventDefault();
         toast.promise(
             post(login, { email, password }).then((res) => {
-                if(res.data.data.user.role !== 'manager'){
-                    return Promise.reject(new Error('Quyền truy cập không hợp lệ'))
-                }
                 localStorage.setItem("token", res.data.data.token);
-                router.push("/manager");
-                }),
+                switch (res.data.data.user.role) {
+                    case 'admin':
+                        router.push("/admin");
+                        break;
+                    case 'manager':
+                        router.push("/manager");
+                        break;
+                    default:
+                        router.push("/");
+                        break;
+                }
+            }),
             {
                 pending: "Đang xử lý...",
-                success:  "Đăng nhập thành công",
+                success: "Đăng nhập thành công",
                 error: "Đăng nhập thất bại",
             }
         )
-        .catch((err) => {
-            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+            .catch((err) => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
                 setError(firstValue);
-        });
+            });
     }
     useEffect(() => {
         get(authTest, {}).then((res) => {
-            if(res.data.user.role === 'manager'){
-                router.push("/manager");
+            switch (res.data.user.role) {
+                case 'admin':
+                    router.push("/admin");
+                    break;
+                case 'manager':
+                    router.push("/manager");
+                    break;
+                default:
+                    router.push("/");
+                    break;
             }
         });
     }, [])
@@ -65,9 +80,9 @@ const LoginPage: React.FC = () => {
                 <form onSubmit={handleOnSubmit}>
                     <div className="relative">
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Email
+                            Email (<span className='text-red-500'>*</span>)
                         </label>
-                        {email === '' && <FontAwesomeIcon icon={faEnvelope} className='absolute opacity-50 bottom-10.5 left-1' />}
+                        {email === '' && <FontAwesomeIcon icon={faEnvelope} className='absolute opacity-50 bottom-10.5 left-2' />}
                         <input
                             autoComplete='off'
                             type="text"
@@ -84,9 +99,9 @@ const LoginPage: React.FC = () => {
                     </div>
                     <div className="relative">
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                            Mật khẩu
+                            Mật khẩu (<span className='text-red-500'>*</span>)
                         </label>
-                        {password === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-1' />}
+                        {password === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />}
                         <input
                             autoComplete='off'
                             type={showPassword ? 'text' : 'password'}

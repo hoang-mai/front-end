@@ -121,7 +121,7 @@ function EditClassModal({
                 </div>
                 <form action="" className="space-y-4">
                     <div className="flex flex-row items-center mb-7">
-                        <label htmlFor="name" className="w-1/3 text-left pr-4 relative bottom-2">Tên lớp học</label>
+                        <label htmlFor="name" className="w-1/3 text-left pr-4 relative bottom-2">Tên lớp học (<span className='text-red-500'>*</span>)</label>
                         <div className="flex flex-col w-2/3">
                             <input
                                 placeholder="Tên lớp học"
@@ -134,7 +134,7 @@ function EditClassModal({
                         </div>
                     </div>
                     <div className="flex flex-row items-center">
-                        <label htmlFor="enrollLimit" className="w-1/3 text-left pr-4 relative bottom-4">Số lượng đăng ký tối đa</label>
+                        <label htmlFor="enrollLimit" className="w-1/3 text-left pr-4 relative bottom-4">Số lượng đăng ký tối đa (<span className='text-red-500'>*</span>)</label>
                         <div className="flex flex-col w-2/3">
                             <input
                                 placeholder="Số lượng đăng ký tối đa"
@@ -148,7 +148,7 @@ function EditClassModal({
                         </div>
                     </div>
                     <div className="flex flex-row items-center">
-                        <label htmlFor="midtermWeight" className="w-1/3 text-left pr-4 relative bottom-4">Trọng số giữa kỳ</label>
+                        <label htmlFor="midtermWeight" className="w-1/3 text-left pr-4 relative bottom-4">Trọng số giữa kỳ (<span className='text-red-500'>*</span>)</label>
                         <div className="flex flex-col w-2/3">
                             <input
                                 placeholder="Trọng số giữa kỳ"

@@ -206,7 +206,7 @@ function CreateTerm({
             <div className="w-full flex justify-center">
                 <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8" >
                     <div className="flex flex-col relative">
-                        <label htmlFor="name" className="">Tên học kỳ</label>
+                        <label htmlFor="name" className="">Tên học kỳ (<span className='text-red-500'>*</span>)</label>
                         <input
                             placeholder={`${new Date().getFullYear()}A`}
                             value={nameTerm}
@@ -218,17 +218,17 @@ function CreateTerm({
                         <p className='h-5 text-red-500 text-sm'>{errorNameTerm}</p>
                     </div>
                     <div className=" flex flex-col">
-                        <label htmlFor="start" className="">Ngày bắt đầu</label>
+                        <label htmlFor="start" className="">Ngày bắt đầu (<span className='text-red-500'>*</span>)</label>
                         <DatePickerComponent value={startDate} onChange={handleOnChangeStartDate} />
                         <p className='h-5 text-red-500 text-sm'>{errorStartDate}</p>
                     </div>
                     <div className=" flex flex-col">
-                        <label htmlFor="end" className="">Ngày kết thúc</label>
+                        <label htmlFor="end" className="">Ngày kết thúc (<span className='text-red-500'>*</span>)</label>
                         <DatePickerComponent value={endDate} onChange={handleOnChangeEndDate} />
                         <p className='h-5 text-red-500 text-sm'>{errorEndDate}</p>
                     </div>
                     <div className=" flex flex-col">
-                        <label htmlFor="end" className="">Hạn đăng ký lớp</label>
+                        <label htmlFor="end" className="">Hạn đăng ký lớp (<span className='text-red-500'>*</span>)</label>
                         <DatePickerComponent value={rosterDeadline} onChange={handleOnChangeRosterDeadline} />
                         {errorRosterDeadline
                             ? <p className='h-5 text-red-500 text-sm'>{errorRosterDeadline}</p>
@@ -236,7 +236,7 @@ function CreateTerm({
                         }
                     </div>
                     <div className=" flex flex-col">
-                        <label htmlFor="end" className="">Ngày bắt đầu nhập điểm</label>
+                        <label htmlFor="end" className="">Ngày bắt đầu nhập điểm (<span className='text-red-500'>*</span>)</label>
                         <DatePickerComponent value={gradeEntryDate} onChange={handleOnChangeGradeEntryDate} />
                         {errorGradeEntryDate
                             ? <p className='h-5 text-red-500 text-sm'>{errorGradeEntryDate}</p>

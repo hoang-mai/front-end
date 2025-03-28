@@ -6,16 +6,31 @@ import { useEffect, useRef, useState } from 'react';
 import LoaderSpinner from '@/app/Components/Loader/loaderSpinner';
 import useDebounce from '@/app/hooks/useDebounce';
 import { toast } from 'react-toastify';
-import { put } from '@/app/Services/callApi';
+import { post } from '@/app/Services/callApi';
 import { adminClasses } from '@/app/Services/api';
-
+interface AddClassManagerProps {
+    readonly showModal: boolean;
+    readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    readonly setDatas: any;
+}
 interface Manager {
     readonly id: number;
     readonly name: string;
     readonly email: string;
 }
-
-const dataFetch: Manager[] = [
+function convertDataToClassManager(data: any,manager:Manager | null) {
+    return {
+        id: data.id,
+        name: data.name,
+        managerId: manager?.id,
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at),
+        studentCount: 0,
+        managerName: manager?.name,
+        managerEmail: manager?.email,
+    }
+}
+const data: Manager[] = [
     {
         id: 1,
         name: 'Nguyễn Văn A',
@@ -46,110 +61,69 @@ const dataFetch: Manager[] = [
         name: 'Nguyễn Văn F',
         email: ''
     },
-]
-interface ClassManager extends Record<string, unknown> {
-    id: number;
-    name: string;
-    managerId: number | null;
-    createdAt: Date;
-    updatedAt: Date;
-    studentCount: number;
-    managerName: string | null;
-    managerEmail: string | null;
-
-}
-interface EditClassManagerModalProps {
-    readonly data: ClassManager;
-    readonly showEdit: boolean;
-    readonly setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
-    readonly setDatas?: React.Dispatch<React.SetStateAction<ClassManager[]>>;
-    readonly setData?: React.Dispatch<React.SetStateAction<ClassManager>>;
-}
-function EditClassManagerModal({
-    data,
-    showEdit,
-    setShowEdit,
+]   
+function AddClassManager({
+    showModal,
+    setShowModal,
     setDatas,
-    setData,
-}: EditClassManagerModalProps
+}: AddClassManagerProps
 ) {
-    console.log(data);
+
     const searchRef = useRef<HTMLDivElement>(null);
-    const [search, setSearch] = useState(data.managerName ?? '');
+    const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [managers, setManagers] = useState<Manager[]>();
-    const [selectedManager, setSelectedManager] = useState<Manager | null>(data.managerId && data.managerName && data.managerEmail ? { id: data.managerId, name: data.managerName, email: data.managerEmail } : null);
+    const [selectedManager, setSelectedManager] = useState<Manager | null>(null);
     const debouncedQuery = useDebounce(search, 500, setLoading);
     const [error, setError] = useState<string>('');
-    const [classManagerName, setClassManagerName] = useState<string>(data.name);
+    const [classManagerName, setClassManagerName] = useState<string>('');
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
-            put(adminClasses + '/' + data.id, {
-                name: classManagerName,
-                manager_id: selectedManager?.id
+            post(adminClasses,{
+                name:classManagerName,
+                manager_id:selectedManager?.id
             }),
             {
-                pending: 'Đang cập nhật lớp quản lý',
-                success: 'Cập nhật lớp quản lý thành công',
-                error: 'Cập nhật lớp quản lý thất bại',
+                pending:'Đang tạo lớp quản lý',
+                success: 'Tạo lớp quản lý thành công',
+                error: 'Tạo lớp quản lý thất bại',
             }
         ).then((res) => {
-            setDatas?.((prev) => prev.map((classManager) =>
-                classManager.id === data.id
-                    ? {
-                        ...classManager,
-                        name: classManagerName,
-                        managerId: selectedManager?.id ?? null,
-                        managerName: selectedManager?.name ?? null,
-                        managerEmail: selectedManager?.email ?? null,
-                    }
-                    : classManager
-
-            )
-
-            );
-            setData?.((prev) => {
-                return {
-                    ...prev,
-                    name: classManagerName,
-                    managerId: selectedManager?.id ?? null,
-                    managerName: selectedManager?.name ?? null,
-                    managerEmail: selectedManager?.email ?? null,
-                }
+            setDatas((prev: any) => {
+                return [convertDataToClassManager(res.data.data,selectedManager), ...prev];
             });
-            setShowEdit(false);
+            setShowModal(false);
         }
         ).catch((err) => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
             setError(firstValue);
         })
     }
-    console.log(selectedManager);
     const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
         setSelectedManager(null);
-        if (e.target.value === '') {
+        if(e.target.value === ''){
             setManagers(undefined);
         }
     }
     useEffect(() => {
-        if (selectedManager) {
+        if(selectedManager){
             setLoading(false);
             return;
         }
         if (debouncedQuery && loading) {
-            setManagers(dataFetch.filter(manager => manager.name.toLowerCase().includes(debouncedQuery.toLowerCase())));
-            setLoading(false);
+            setManagers(data.filter(manager => manager.name.toLowerCase().includes(debouncedQuery.toLowerCase())));
+            setLoading(false);  
         }
-    }, [debouncedQuery, selectedManager])
+    }, [debouncedQuery,selectedManager])
     useEffect(() => {
         const handleOnClickOutside = (e: MouseEvent) => {
             if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
 
                 setLoading(false);
                 setManagers(undefined);
-                if (!selectedManager) {
+                if(!selectedManager){
                     setSearch('');
                 }
             }
@@ -161,16 +135,16 @@ function EditClassManagerModal({
     }, [searchRef, selectedManager])
     return (
         <Modal
-            open={showEdit}
-            onClose={() => setShowEdit(false)}
+            open={showModal}
+            onClose={() => setShowModal(false)}
             className="flex items-center justify-center "
         >
             <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] h-[60%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg '>
                 <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa lớp quản lý</h2>
+                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Thêm lớp quản lý</h2>
                     <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
                         onClick={() => {
-                            setShowEdit(false);
+                            setShowModal(false);
                         }}>
                         <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
                     </button>
@@ -179,15 +153,15 @@ function EditClassManagerModal({
                 <div className="w-full flex justify-center flex-1">
                     <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8 flex flex-col flex-1" >
                         <div className="flex flex-col relative mb-4">
-                            <label htmlFor="name" className="mr-2">Tên lớp quản lý:</label>
-                            <input
+                            <label htmlFor="name" className="mr-2">Tên lớp quản lý (<span className='text-red-500'>*</span>)</label>
+                            <input 
                                 placeholder='Tên lớp quản lý'
                                 value={classManagerName}
                                 onChange={(e) => setClassManagerName(e.target.value)}
-                                type="text" id="name" className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)" />
+                            type="text" id="name" className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)" />
                         </div>
                         <div className='flex-1'>
-                            <label htmlFor="manager" className="mr-2">Quản lý:</label>
+                            <label htmlFor="manager" className="mr-2">Quản lý</label>
                             <div className='relative w-full h-10 max-h-10 '>
                                 <div className={`absolute w-full z-10001 flex flex-col rounded-lg h-fit  ${(loading || managers) && 'bg-white shadow-md '}`}
                                     ref={searchRef}
@@ -236,9 +210,14 @@ function EditClassManagerModal({
                             </div>
                         </div>
                         <p className='h-5 text-red-500 text-sm my-2 '>{error}</p>
-                        <div className='flex justify-center gap-4 w-full mt-4'>
-                            <button disabled={!classManagerName} className='btn-text text-white w-20 h-10 rounded-lg' onClick={handleOnSubmit}>Lưu</button>
-                            <button className='bg-red-700 text-white w-20 h-10 rounded-lg hover:bg-red-800 active:bg-red-900' onClick={() => setShowEdit(false)}>Hủy</button>
+                        <div className='flex items-center justify-center'>
+                            <button
+                                onClick={handleOnSubmit}
+                                disabled={!classManagerName}
+                                type="submit"
+                                className="btn-text bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                Tạo lớp quản lý
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -247,6 +226,6 @@ function EditClassManagerModal({
     );
 }
 
-export default EditClassManagerModal;
+export default AddClassManager;
 
 
