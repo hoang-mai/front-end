@@ -73,7 +73,7 @@ const LeftSidebar = () => {
                             className={`p-2 w-full h-full block ${pathname !== "/admin/class" ? "relative z-10" : ""}`}
 
                         >
-                            <Image src="/class.svg" alt="class" width={22} height={20} className="mr-2 inline " />
+                            <Image src="/class.svg" alt="class" width={22} height={20} className="mr-1 inline " />
                             Quản lý lớp học
                         </Link>
 
@@ -93,6 +93,21 @@ const LeftSidebar = () => {
                         </Link>
 
                         {pathname !== "/admin/admin-manager" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/class-manager"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/admin/class-manager"
+                            className={`p-2 w-full h-full block ${pathname !== "/admin/class-manager" ? "relative z-10" : ""}`}
+
+                        >
+                            <Image src="/class-manager.svg" alt="classManager" width={20} height={20} className="mr-1 inline " />
+                            Quản lý lớp quản lý
+                        </Link>
+
+                        {pathname !== "/admin/class-manager" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/register"
                         ? "group relative"

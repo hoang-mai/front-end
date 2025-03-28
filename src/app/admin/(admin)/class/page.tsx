@@ -13,7 +13,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import EditClassModal from "./[id]/editClassModal";
 import { toast } from "react-toastify";
-import { set } from "date-fns";
+import AddClass from "./addClass";
+
 
 
 interface HeadCell {
@@ -63,24 +64,29 @@ function Class() {
     const [loadingTerm, setLoadingTerm] = useState<boolean>(true);
     const [loadingClass, setLoadingClass] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
+    const [showAddClass, setShowAddClass] = useState<boolean>(false);
     useEffect(() => {
         get(term, {}).then((res) => {
             const fetchedTerms = res.data.data.map((term: any) => convertDataToTerm(term));
             setTerms(fetchedTerms);
             if (fetchedTerms.length > 0) {
                 setSelectedTerm(fetchedTerms[0]);
-                get(courseByTerm, { termId: fetchedTerms[0].id }).then((res) => {
-                    setClasses(res.data.data.map((term: any) => convertDataToClass(term)));
-                }).catch((res) => {
-                    toast.error(res.data.message);
-                    setError(res.data.message);
-                }).finally(() => setLoadingClass(false));
             }
         }).catch((res) => {
             toast.error(res.data.message);
             setError(res.data.message);
         }).finally(() => setLoadingTerm(false));
     }, [])
+    useEffect(() => {
+        if (selectedTerm.id !== '') {
+            get(courseByTerm, { termId: selectedTerm.id }).then((res) => {
+                setClasses(res.data.data.map((term: any) => convertDataToClass(term)));
+            }).catch((res) => {
+                toast.error(res.data.message);
+                setError(res.data.message);
+            }).finally(() => setLoadingClass(false));
+        }
+    }, [selectedTerm])
     const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     }
@@ -102,13 +108,16 @@ function Class() {
                 </div>
                 {loadingTerm ? <LoaderLine width="w-30" height="h-10" /> :
                     terms.length > 0 &&
-                    <Link href={`/admin/${selectedTerm.id}/${selectedTerm.label}/create-class`} className='btn-text text-white py-2 px-4 w-44 rounded-md'>
+                    <button className='btn-text text-white py-2 px-4 w-44 rounded-md'
+                        onClick={() => setShowAddClass(true)}
+                    >
                         <FontAwesomeIcon icon={faPlus} className='mr-2' />
                         Thêm lớp học
-                    </Link>}
+                    </button>}
             </div>
             {loadingClass ? <LoaderTable /> :
                 <TableComponent headCells={headCells} dataCells={classes} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} modal={modal} setDatas={setClasses} EditComponent={EditClassModal} />}
+            {showAddClass && <AddClass id={selectedTerm.id} label={selectedTerm.label} setShowModal={setShowAddClass}  showModal={showAddClass} setDatas={setClasses}/>}
         </div>
     );
 }

@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import TableComponent from '@/app/Components/table';
 import EditTermModal from './[id]/editTermModal';
 import { toast } from 'react-toastify';
+import CreateTerm from './addTerm';
 
 function convertDataToTerm(data: any): Term {
   return {
@@ -50,6 +51,7 @@ export default function HomePage() {
   const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+  const [showModal, setShowModal] = useState<boolean>(false);
   useEffect(() => {
 
     get(term, {}).then((res) => {
@@ -73,14 +75,17 @@ export default function HomePage() {
         <div className='relative'>
           <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
           <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' /></div>
-        <Link href={'/admin/create-term'} className='btn-text text-white py-2 px-4 w-40 rounded-md'>
+        <button className='btn-text text-white py-2 px-4 w-40 rounded-md'
+        
+          onClick={() => setShowModal(true)}>
           <FontAwesomeIcon icon={faPlus} className='mr-2' />
           Thêm học kỳ
-        </Link>
+        </button>
       </div>
       {loading ? <LoaderTable />
         : <TableComponent dataCells={terms} headCells={headCells} search={search} onRowClick={(id) => { router.push(`admin/${id}`) }} modal={modal} EditComponent={EditTermModal} setDatas={setTerms} />
       }
+      {showModal && <CreateTerm setShowModal={setShowModal} showModal={showModal} setDatas={setTerms} />}
     </div>
   );
 }

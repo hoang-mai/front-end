@@ -41,7 +41,7 @@ function AddStudent({
 }: AddStudentProps) {
     const [search, setSearch] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-    const debouncedQuery = useDebounce<string>(search, 1000, setLoading);
+    const debouncedQuery = useDebounce<string>(search, 500, setLoading);
     const [students, setStudents] = useState<Student[] | undefined>();
     const [addStudents, setAddStudents] = useState<Student[]>([]);
     const [error, setError] = useState<string>('');

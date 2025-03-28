@@ -1,15 +1,38 @@
 'use client';
 import React, { useState } from 'react';
 import DatePickerComponent from "@/app/Components/datePicker";
-import { faReply } from "@fortawesome/free-solid-svg-icons";
+import { faReply, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { toast } from 'react-toastify';
 import { post } from '@/app/Services/callApi';
 import { term } from '@/app/Services/api';
-
-
-function CreateTerm() {
+import Modal from '@mui/material/Modal'
+import Box from '@mui/material/Box'
+interface CreateTermProps {
+    readonly showModal: boolean;
+    readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    readonly setDatas: any;
+}
+function convertDataToTerm(data: any): Term {
+    return {
+        id: data.id,
+        nameTerm: data.name,
+        startDate: new Date(data.start_date),
+        endDate: new Date(data.end_date),
+        rosterDeadline: new Date(data.roster_deadline),
+        gradeEntryDate: new Date(data.grade_entry_date),
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at),
+        deletedAt: new Date(data.deleted_at),
+    }
+}
+function CreateTerm({
+    showModal,
+    setShowModal,
+    setDatas,
+}: CreateTermProps
+) {
     const [nameTerm, setNameTerm] = useState<string>('');
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
@@ -153,6 +176,8 @@ function CreateTerm() {
             setRosterDeadline(null);
             setGradeEntryDate(null);
             setError('');
+            setDatas((prev: any) => [...prev, convertDataToTerm(res.data.data)]);
+            setShowModal(false);
         })
             .catch((err) => {
                 const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
@@ -161,16 +186,22 @@ function CreateTerm() {
             })
     }
     return (
-        <div className=" xl:w-[60%] md:w-full h-full flex flex-col items-center bg-white rounded-lg shadow-md lg:p-6 md:p-4">
-            <div className="self-start">
-                <Link href="/admin">
-                    <FontAwesomeIcon
-                        icon={faReply}
-                        className='text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
-                    />
-                </Link>
-            </div>
-            <h1 className="font-bold text-2xl text-center text-(--color-text)">Tạo học kỳ mới</h1>
+        <Modal
+            open={showModal}
+            onClose={() => setShowModal(false)}
+            className="flex items-center justify-center "
+        >
+            <Box className='xl:w-[50%] lg:w-[70%] md:w-[90%] h-fit w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
+                <div className='relative w-full'>
+                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Thêm học kỳ</h2>
+                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
+                        onClick={() => {
+                            setShowModal(false);
+                        }}>
+                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+                    </button>
+                    <hr className='my-2' />
+                </div>
 
             <div className="w-full flex justify-center">
                 <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8" >
@@ -224,7 +255,8 @@ function CreateTerm() {
                     </div>
                 </form>
             </div>
-        </div>
+        </Box>
+        </Modal>
     );
 }
 

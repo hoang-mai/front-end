@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { faHome, faSignOut, faVest, faHandHoldingDollar, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faSignOut, faExclamation } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname,useRouter } from 'next/navigation';
@@ -63,61 +63,21 @@ const LeftSidebar = () => {
 
                         {pathname !== '/manager' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95 ${pathname !== "/manager/class"
+                    
+                    
+                    
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/manager/violation"
                         ? "group relative"
                         : "bg-gradient-to-r from-green-300 to-gray-300"
                         }`}>
                         <Link
-                            href="/manager/class"
-                            className={`p-2 w-full h-full block ${pathname !== "/manager/class" ? "relative z-10" : ""}`}
+                            href="/manager/violation"
+                            className={`p-2 w-full h-full block ${pathname !== "/manager/violation" ? "relative z-10" : ""}`}
 
-                        >
-                            <Image className='inline mr-1' src='/class.svg' alt='class icon' width={24} height={24} />
-                            Quản lý lớp học
+                        ><FontAwesomeIcon icon={faExclamation} className='mr-2' />
+                            Quản lý vi phạm
                         </Link>
-
-                        {pathname !== '/manager/class' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
-                    </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/manager/student"
-                        ? "group relative"
-                        : "bg-gradient-to-r from-green-300 to-gray-300"
-                        }`}>
-                        <Link
-                            href="/manager/student"
-                            className={`p-2 w-full h-full block ${pathname !== "/manager/student" ? "relative z-10" : ""}`}
-
-                        ><FontAwesomeIcon icon={faUsers} className='mr-2' />
-                            Quản lý sinh viên
-                        </Link>
-
-                        {pathname !== "/manager/student" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
-                    </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/manager/military-equipment"
-                        ? "group relative"
-                        : "bg-gradient-to-r from-green-300 to-gray-300"
-                        }`}>
-                        <Link
-                            href="/manager/military-equipment"
-                            className={`p-2 w-full h-full block ${pathname !== "/manager/military-equipment" ? "relative z-10" : ""}`}
-
-                        ><FontAwesomeIcon icon={faVest} className='mr-2' />
-                            Quân tư trang
-                        </Link>
-
-                        {pathname !== '/manager/military-equipment' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
-                    </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/manager/allowance"
-                        ? "group relative"
-                        : "bg-gradient-to-r from-green-300 to-gray-300"
-                        }`}>
-                        <Link
-                            href="/manager/allowance"
-                            className={`p-2 w-full h-full block ${pathname !== "/manager/allowance" ? "relative z-10" : ""}`}
-
-                        ><FontAwesomeIcon icon={faHandHoldingDollar} className='mr-2' />
-                            Phụ cấp
-                        </Link>
-                        {pathname !== '/manager/allowance' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                        {pathname !== '/manager/violation"' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                 </ul>
             </div>

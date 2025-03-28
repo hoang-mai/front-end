@@ -11,4 +11,5 @@ export const course='/api/courses'
 export const courseByTerm='/api/courses/getAllByTerm'
 export const searchStudent='/api/search/student'
 export const adminAdminManager='/api/admin/managers'
+export const adminClasses='/api/admin/classes'
 //manager
