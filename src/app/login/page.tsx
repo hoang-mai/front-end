@@ -2,12 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEye, faEyeSlash, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { post, get } from '@/app/Services/callApi';
-import { authTest, login } from '@/app/Services/api';
+import {  post } from '@/app/Services/callApi';
+import {  login } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 
 import { useRouter } from 'next/navigation'
+
 const LoginPage: React.FC = () => {
+
+
+
     const router = useRouter()
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -54,25 +58,11 @@ const LoginPage: React.FC = () => {
             }
         )
             .catch((err) => {
+                
                 const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
                 setError(firstValue);
             });
     }
-    useEffect(() => {
-        get(authTest, {}).then((res) => {
-            switch (res.data.user.role) {
-                case 'admin':
-                    router.push("/admin");
-                    break;
-                case 'manager':
-                    router.push("/manager");
-                    break;
-                default:
-                    router.push("/");
-                    break;
-            }
-        });
-    }, [])
     return (
         <div className="flex items-center justify-center min-h-screen bg-radial to-green-300 from-gray-300 from-30% " >
             <div className="w-full max-w-md p-8 space-y-6 border-gray-400 bg-gray-250 backdrop-blur-sm rounded-lg shadow-md border ">

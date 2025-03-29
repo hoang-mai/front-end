@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { useSessionExpired } from '@/app/hooks/useSessionExpired';
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BE_HOST,
 
@@ -29,6 +30,9 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
+        if (error.response.status === 401 && error.response.data.message === 'Token đã hết hạn') {
+            useSessionExpired.getState().showSessionExpiredModal();
+        }
         return Promise.reject(error.response.data);
     }
 );

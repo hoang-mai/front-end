@@ -4,9 +4,9 @@ import { faHome, faSignOut, faExclamation } from '@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
-import { post, get } from '@/app/Services/callApi';
-import { authTest, logout } from '@/app/Services/api';
+import React from 'react';
+import { post } from '@/app/Services/callApi';
+import { logout } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 
 const LeftSidebar = () => {
@@ -25,28 +25,7 @@ const LeftSidebar = () => {
             router.push("/login");
         })
     }
-    useEffect(() => {
-        if (!localStorage.getItem("token")) {
-            router.push("/login");
-        } else {
-            get(authTest).then((res) => {
-                switch (res.data.user.role) {
-                    case 'manager':
-                        break;
-                    case 'admin':
-                        router.push("/admin");
-                        break;
-                    default:
-                        router.push("/");
-                        break;
-                }
-            }).catch((err) => {
-                    toast.error("Phiên đăng nhập hết hạn");
-                    localStorage.removeItem("token");
-                    router.push("/login");
-                });
-        }
-    }, [])
+    
     return (
         <aside className={` lg:w-64 md:w-48 bg-gray-100 flex flex-col justify-between border-r border-(--border-color) shadow-2xl`}>
             <div>

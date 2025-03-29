@@ -6,6 +6,8 @@ import '@/app/globals.css';
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import { ToastContainer, Bounce } from "react-toastify";
+import SessionExpiredModal from "./sessionExpiredModal";
+import CheckRole from "./checkRole";
 config.autoAddCss = false
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -33,6 +35,8 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-100`}
             >
                 {children}
+                <CheckRole />
+                <SessionExpiredModal />
                 <ToastContainer
                     position="top-right"
                     autoClose={4000}
