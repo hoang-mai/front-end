@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -154,7 +154,27 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
             .sort(getComparator(order, orderBy))
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
     }, [order, orderBy, page, rowsPerPage, dataCells, search]);
-
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+          if (e.key === 'ArrowRight') {
+            // Chuyển tới trang tiếp theo nếu chưa tới trang cuối
+            if (page < Math.ceil(dataCells.length / rowsPerPage) - 1) {
+              handleChangePage(null, page + 1);
+            }
+          } else if (e.key === 'ArrowLeft') {
+            // Quay lại trang trước nếu không phải trang đầu
+            if (page > 0) {
+              handleChangePage(null, page - 1);
+            }
+          }
+        };
+      
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+      }, [page, rowsPerPage, dataCells.length]);
+      
     return (
 
         <Box sx={{ width: '100%' }}>

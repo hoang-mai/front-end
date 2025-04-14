@@ -2,11 +2,12 @@
 import LoaderLine from "@/app/Components/Loader/loaderLine";
 import { adminClasses } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
-import { faReply } from "@fortawesome/free-solid-svg-icons";
+import {  faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams, useRouter } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Box, Modal } from "@mui/material";
 interface StudentDetail extends Record<string, unknown> {
     id: number;
     userId: number;
@@ -79,9 +80,18 @@ function convertStatusToString(status: string): string {
             return 'Hoạt động';
     }
 }
-function StudentDetail() {
-    const router = useRouter();
-    const { id, studentId } = useParams<{ id: string, studentId: string }>();
+interface StudentDetailProps {
+    readonly id: string;
+    readonly studentId: string;
+    readonly showStudentDetail: boolean;
+    readonly setShowStudentDetail: (show: boolean) => void;
+}
+function StudentDetail({
+    id,
+    studentId,
+    showStudentDetail,
+    setShowStudentDetail
+}: StudentDetailProps) {
     const [studentDetail, setStudentDetail] = useState<StudentDetail>(studentDetailDefault);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
@@ -99,7 +109,22 @@ function StudentDetail() {
     }
 
     return ( 
-        <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
+        <Modal
+        open={showStudentDetail}
+        onClose={() => setShowStudentDetail(false)}
+        className="flex items-center justify-center "
+    >
+        <Box className='xl:w-[65%] lg:w-[75%] md:w-[90%]  h-[50%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
+            <div className='relative w-full'>
+                <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Thông tin học viên</h2>
+                <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
+                    onClick={() => {
+                        setShowStudentDetail(false);
+                    }}>
+                    <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+                </button>
+                <hr className='my-2' />
+            </div>
             {loading  ?
                 <>
                     <div className='w-full flex justify-center items-center mb-10'>
@@ -116,18 +141,10 @@ function StudentDetail() {
                 </>
                 :
                 <>
-                    <div className="self-start">
-                        <button onClick={() => router.back()}>
-                            <FontAwesomeIcon
-                                icon={faReply}
-                                className='text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
-                            />
-                        </button>
-                    </div>
                     <div className='w-full flex justify-center items-center'>
                         <h1 className='text-2xl font-bold mb-6 text-center text-(--color-text)'>Tên: {studentDetail.student.name}</h1>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 xl:gap-x-90 lg:gap-x-50">
+                    <div className="ml-20 grid grid-cols-2 gap-4 lg:gap-x-20">
                         <p>Email: {studentDetail.student.email}</p>
                         
                         <p>Trạng thái: {convertStatusToString(studentDetail.status)}</p>
@@ -139,7 +156,8 @@ function StudentDetail() {
                     </div>
                     </>
             }
-        </div>
+        </Box>
+    </Modal>
 
 
      );

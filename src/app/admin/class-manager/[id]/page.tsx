@@ -13,6 +13,8 @@ import EditClassManagerModal from "./editClassManagerModal";
 import LoaderTable from "@/app/Components/Loader/loaderTable";
 import TableComponent from "@/app/Components/table";
 import EditStudentModal from "./editStudentModal";
+import AddStudent from "./addStudent";
+import StudentDetail from "./studentDetail";
 interface ClassManager extends Record<string, unknown> {
     id: number;
     name: string;
@@ -112,6 +114,8 @@ function ClassManagerDetail() {
     const [classManager, setClassManager] = useState<ClassManager>(classManagerDefault);
     const [students, setStudents] = useState<Student[]>([]);
     const [showAddStudent, setShowAddStudent] = useState<boolean>(false);
+    const [showStudentDetail, setShowStudentDetail] = useState<boolean>(false);
+    const [studentDetail, setStudentDetail] = useState<number>(0);
     const [showEdit, setShowEdit] = useState<boolean>(false);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
@@ -239,6 +243,10 @@ function ClassManagerDetail() {
                             </div>
                         </Box>
                     </Modal>
+                    {
+                        showAddStudent &&
+                        <AddStudent classId={classManager.id} showAddStudent={showAddStudent} setShowAddStudent={setShowAddStudent} setStudentToClass={setStudents} />
+                    }
                     {showEdit &&
                         <EditClassManagerModal
                             data={classManager}
@@ -247,7 +255,10 @@ function ClassManagerDetail() {
                             setData={setClassManager}
                         />
                     }
-                    <TableComponent headCells={headCells} dataCells={students} search={search} onRowClick={(studentId) => {router.push(`/admin/class-manager/${id}/${studentId}`) }} modal={modal} EditComponent={EditStudentModal} setDatas={setStudents}/>
+                    {showStudentDetail &&
+                        <StudentDetail studentId={studentDetail.toString()} id={id} showStudentDetail={showStudentDetail} setShowStudentDetail={setShowStudentDetail} />
+                    }
+                    <TableComponent headCells={headCells} dataCells={students} search={search} onRowClick={(studentId) => {setShowStudentDetail(true); setStudentDetail(studentId); }} modal={modal} EditComponent={EditStudentModal} setDatas={setStudents}/>
                 </>
             }
         </div>

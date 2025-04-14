@@ -1,11 +1,13 @@
 'use client'
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { get } from "./Services/callApi";
 import { authTest } from "./Services/api";
 
 function CheckRole() {
     const router = useRouter();
+    const pathname = usePathname();
+    const path = pathname.split("/")[1];
     useEffect(() => {
         if (!localStorage.getItem("token")) {
             router.push("/login");
@@ -13,14 +15,24 @@ function CheckRole() {
             get(authTest).then((res) => {
                 switch (res.data.user.role) {
                     case 'manager':
-                        break;
+                        if(path !== "manager") {
+                            router.push("/manager");
+                        }
+                        
+                        return;
                     case 'admin':
-                        router.push("/admin");
-                        break;
+                        if(path !== "admin") {
+                            router.push("/admin");
+                        }
+                        return;
                     default:
-                        router.push("/");
-                        break;
+                        if(path === "admin" || path === "manager") {
+                            router.push("/");
+                        }
+                        return;
                 }
+            }).catch((err) => {
+                console.error("Error fetching user role:", err);
             });
         }
     }, [])

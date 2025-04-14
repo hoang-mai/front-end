@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { faHome, faSignOut, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
+import { faHandHoldingDollar, faHome, faSignOut, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -91,6 +91,20 @@ const LeftSidebar = () => {
                         </Link>
 
                         {pathname !== "/admin/class-manager" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/allowance"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/admin/allowance"
+                            className={`p-2 w-full h-full block ${pathname !== "/admin/allowance" ? "relative z-10" : ""}`}
+
+                        ><FontAwesomeIcon icon={faHandHoldingDollar} className='mr-2' />
+                            Quản lý trợ cấp
+                        </Link>
+
+                        {pathname !== '/admin/allowance' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/register"
                         ? "group relative"

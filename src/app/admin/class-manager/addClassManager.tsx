@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import LoaderSpinner from '@/app/Components/Loader/loaderSpinner';
 import useDebounce from '@/app/hooks/useDebounce';
 import { toast } from 'react-toastify';
-import { post } from '@/app/Services/callApi';
-import { adminClasses } from '@/app/Services/api';
+import { get, post } from '@/app/Services/callApi';
+import { adminAdminManager, adminClasses } from '@/app/Services/api';
 interface AddClassManagerProps {
     readonly showModal: boolean;
     readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,38 +30,7 @@ function convertDataToClassManager(data: any,manager:Manager | null) {
         managerEmail: manager?.email,
     }
 }
-const data: Manager[] = [
-    {
-        id: 1,
-        name: 'Nguyễn Văn A',
-        email: ''
-    },
-    {
-        id: 2,
-        name: 'Nguyễn Văn B',
-        email: ''
-    },
-    {
-        id: 3,
-        name: 'Nguyễn Văn C',
-        email: ''
-    },
-    {
-        id: 4,
-        name: 'Nguyễn Văn D',
-        email: ''
-    },
-    {
-        id: 5,
-        name: 'Nguyễn Văn E',
-        email: ''
-    },
-    {
-        id: 6,
-        name: 'Nguyễn Văn F',
-        email: ''
-    },
-]   
+
 function AddClassManager({
     showModal,
     setShowModal,
@@ -72,9 +41,10 @@ function AddClassManager({
     const searchRef = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
+    const [data, setData] = useState<Manager[]>([]);
     const [managers, setManagers] = useState<Manager[]>();
     const [selectedManager, setSelectedManager] = useState<Manager | null>(null);
-    const debouncedQuery = useDebounce(search, 500, setLoading);
+    const debouncedQuery = useDebounce(search, 100, setLoading);
     const [error, setError] = useState<string>('');
     const [classManagerName, setClassManagerName] = useState<string>('');
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -133,6 +103,16 @@ function AddClassManager({
             document.removeEventListener('mousedown', handleOnClickOutside);
         }
     }, [searchRef, selectedManager])
+    useEffect(() => {
+        get(adminAdminManager)
+                .then((res) => {
+                    setData(res.data.data);
+                })
+                .catch((res)=>{
+                    toast.error(res.data.message);
+                    setError(res.data.message);
+                })
+    },[])
     return (
         <Modal
             open={showModal}

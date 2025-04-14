@@ -6,8 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import LoaderSpinner from '@/app/Components/Loader/loaderSpinner';
 import useDebounce from '@/app/hooks/useDebounce';
 import { toast } from 'react-toastify';
-import { put } from '@/app/Services/callApi';
-import { adminClasses } from '@/app/Services/api';
+import { get, put } from '@/app/Services/callApi';
+import { adminAdminManager, adminClasses } from '@/app/Services/api';
 
 interface Manager {
     readonly id: number;
@@ -15,38 +15,7 @@ interface Manager {
     readonly email: string;
 }
 
-const dataFetch: Manager[] = [
-    {
-        id: 1,
-        name: 'Nguyễn Văn A',
-        email: ''
-    },
-    {
-        id: 2,
-        name: 'Nguyễn Văn B',
-        email: ''
-    },
-    {
-        id: 3,
-        name: 'Nguyễn Văn C',
-        email: ''
-    },
-    {
-        id: 4,
-        name: 'Nguyễn Văn D',
-        email: ''
-    },
-    {
-        id: 5,
-        name: 'Nguyễn Văn E',
-        email: ''
-    },
-    {
-        id: 6,
-        name: 'Nguyễn Văn F',
-        email: ''
-    },
-]
+
 interface ClassManager extends Record<string, unknown> {
     id: number;
     name: string;
@@ -76,18 +45,20 @@ function EditClassManagerModal({
     console.log(data);
     const searchRef = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState(data.managerName ?? '');
+    const [dataFetch, setDataFetch] = useState<Manager[]>([]);
     const [loading, setLoading] = useState(false);
     const [managers, setManagers] = useState<Manager[]>();
     const [selectedManager, setSelectedManager] = useState<Manager | null>(data.managerId && data.managerName && data.managerEmail ? { id: data.managerId, name: data.managerName, email: data.managerEmail } : null);
     const debouncedQuery = useDebounce(search, 500, setLoading);
     const [error, setError] = useState<string>('');
     const [classManagerName, setClassManagerName] = useState<string>(data.name);
+    console.log(selectedManager?.id)
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
             put(adminClasses + '/' + data.id, {
                 name: classManagerName,
-                manager_id: selectedManager?.id
+                manager_id: selectedManager?.id ?? null,
             }),
             {
                 pending: 'Đang cập nhật lớp quản lý',
@@ -125,7 +96,6 @@ function EditClassManagerModal({
             setError(firstValue);
         })
     }
-    console.log(selectedManager);
     const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
         setSelectedManager(null);
@@ -159,6 +129,16 @@ function EditClassManagerModal({
             document.removeEventListener('mousedown', handleOnClickOutside);
         }
     }, [searchRef, selectedManager])
+    useEffect(() => {
+            get(adminAdminManager)
+                    .then((res) => {
+                        setDataFetch(res.data.data);
+                    })
+                    .catch((res)=>{
+                        toast.error(res.data.message);
+                        setError(res.data.message);
+                    })
+        },[])
     return (
         <Modal
             open={showEdit}
