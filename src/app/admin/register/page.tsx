@@ -108,9 +108,9 @@ const RegisterPage: React.FC = () => {
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="name">
                         Họ và tên (<span className='text-red-500'>*</span>)
                     </label>
-                    {name === '' && <FontAwesomeIcon icon={faUser} className='absolute opacity-50 bottom-3.5 left-2' />}
+                    <FontAwesomeIcon icon={faUser} className='absolute opacity-50 bottom-3.5 left-2' />
                     <input
-                        className="shadow appearance-none border rounded-lg w-full py-2 px-6 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
+                        className="shadow appearance-none border rounded-lg w-full py-2 px-8 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
                         id="name"
                         type="text"
                         placeholder="Họ và tên"
@@ -123,9 +123,9 @@ const RegisterPage: React.FC = () => {
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="email">
                         Email (<span className='text-red-500'>*</span>)
                     </label>
-                    {email === '' && <FontAwesomeIcon icon={faEnvelope} className='absolute opacity-50 bottom-10.5 left-2' />}
+                    <FontAwesomeIcon icon={faEnvelope} className='absolute opacity-50 bottom-10.5 left-2' />
                     <input
-                        className="shadow appearance-none border rounded-lg w-full py-2 px-6 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
+                        className="shadow appearance-none border rounded-lg w-full py-2 px-8 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
                         id="email"
                         type="text"
                         placeholder="Email"
@@ -140,9 +140,9 @@ const RegisterPage: React.FC = () => {
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="password">
                         Mật khẩu (<span className='text-red-500'>*</span>)
                     </label>
-                    {password === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />}
+                    <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />
                     <input
-                        className="shadow appearance-none border rounded-lg w-full py-2 px-6 text-gray-700  focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
+                        className="shadow appearance-none border rounded-lg w-full py-2 px-8 text-gray-700  focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
                         id="password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder='Mật khẩu'
@@ -157,9 +157,9 @@ const RegisterPage: React.FC = () => {
                     <label className="block text-gray-700 text-sm font-medium mb-1" htmlFor="confirmPassword">
                         Nhập lại mật khẩu (<span className='text-red-500'>*</span>)
                     </label>
-                    {confirmPassword === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />}
+                    <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />
                     <input
-                        className="shadow appearance-none border rounded-lg w-full py-2 px-6 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
+                        className="shadow appearance-none border rounded-lg w-full py-2 px-8 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover) "
                         id="confirmPassword"
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="Nhập lại mật khẩu"

@@ -69,19 +69,19 @@ function AddStudent({
                 error: 'Thêm học viên thất bại'
             }
         ).then((res) => {
-            
+
             setAddStudentsToCourse((prev: AddStudentToCourse[]) => {
                 const updatedStudents = res.data.data.success.map((studentId: number) => {
                     const student = addStudents.find(s => s.id === studentId);
                     return student
                         && {
-                              ...student,
-                              midtermGrade: '',
-                              finalGrade: '',
-                              totalGrade: '',
-                              status: 'Đã đăng ký',
-                              notes: ''
-                          };
+                        ...student,
+                        midtermGrade: '',
+                        finalGrade: '',
+                        totalGrade: '',
+                        status: 'Đã đăng ký',
+                        notes: ''
+                    };
                 });
 
                 return [...prev, ...updatedStudents];
@@ -186,25 +186,35 @@ function AddStudent({
                 </div>
                 <div className="flex flex-col mt-4 flex-1 overflow-y-auto">
                     <h1 className='text-lg font-semibold text-(--color-text) '>Danh sách học viên đã chọn</h1>
-                    <ul className={`${addStudents.length > 0 && 'rounded-lg p-2 bg-white'}`}>
-                        {addStudents.map(student => (
-                            <li key={student.id} className='w-full'>
-                                <div className="flex items-center justify-between p-2 cursor-pointer">
-                                    <div className="text-left">
-                                        <h3>{student.name}</h3>
-                                        <p className="text-gray-500 text-sm">{student.email}</p>
+                    {addStudents.length > 0 ? (
+                        <ul className='rounded-lg p-2 bg-white'>
+                            {addStudents.map(student => (
+                                <li key={student.id} className='w-full'>
+                                    <div className="flex items-center justify-between p-2 cursor-pointer">
+                                        <div className="text-left">
+                                            <h3>{student.name}</h3>
+                                            <p className="text-gray-500 text-sm">{student.email}</p>
+                                        </div>
+                                        <button className="p-2"
+                                            onClick={() => {
+                                                setAddStudents(addStudents.filter(s => s.id !== student.id));
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={faXmark} className="text-gray-500 " />
+                                        </button>
                                     </div>
-                                    <button className="p-2"
-                                        onClick={() => {
-                                            setAddStudents(addStudents.filter(s => s.id !== student.id));
-                                        }}
-                                    >
-                                        <FontAwesomeIcon icon={faXmark} className="text-gray-500 " />
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center bg-white rounded-lg p-8 mt-2 text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <p>Chưa có học viên nào được chọn</p>
+                            <p className="text-sm mt-1">Tìm kiếm và chọn học viên để thêm vào lớp</p>
+                        </div>
+                    )}
                 </div>
                 <p className='h-5 text-red-500 text-sm mt-2'>{error}</p>
                 <div className='flex justify-center gap-4 w-full mt-4'>

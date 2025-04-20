@@ -78,8 +78,11 @@ function Class() {
         }).finally(() => setLoadingTerm(false));
     }, [])
     useEffect(() => {
+        console.log('selectedTerm', selectedTerm.id);
         if (selectedTerm.id !== '') {
-            get(courseByTerm, { termId: selectedTerm.id }).then((res) => {
+            console.log('selectedTerm', selectedTerm);
+            get(courseByTerm + '/' + selectedTerm.id).then((res) => {
+                
                 setClasses(res.data.data.map((term: any) => convertDataToClass(term)));
             }).catch((res) => {
                 toast.error(res.data.message);

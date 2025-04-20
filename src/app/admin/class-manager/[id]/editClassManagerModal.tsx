@@ -1,7 +1,7 @@
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faUsers, faUserTie, faSearch, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
 import LoaderSpinner from '@/app/Components/Loader/loaderSpinner';
 import useDebounce from '@/app/hooks/useDebounce';
@@ -42,7 +42,6 @@ function EditClassManagerModal({
     setData,
 }: EditClassManagerModalProps
 ) {
-    console.log(data);
     const searchRef = useRef<HTMLDivElement>(null);
     const [search, setSearch] = useState(data.managerName ?? '');
     const [dataFetch, setDataFetch] = useState<Manager[]>([]);
@@ -52,7 +51,7 @@ function EditClassManagerModal({
     const debouncedQuery = useDebounce(search, 500, setLoading);
     const [error, setError] = useState<string>('');
     const [classManagerName, setClassManagerName] = useState<string>(data.name);
-    console.log(selectedManager?.id)
+    
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
@@ -143,69 +142,96 @@ function EditClassManagerModal({
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center "
+            className="flex items-center justify-center"
         >
-            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] h-[60%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg '>
-                <div className='relative w-full'>
+            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] h-[70%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg border border-(--border-color)'>
+                <div className='relative w-full flex items-center justify-center mb-2'>
+                    <FontAwesomeIcon icon={faUsers} className="text-(--color-text) mr-2 text-xl" />
                     <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa lớp quản lý</h2>
-                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
+                    <button className='absolute right-0 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center text-lg active:scale-90 transition-transform duration-200 text-(--color-text) hover:text-(--color-text-hover) hover:bg-gray-200'
                         onClick={() => {
                             setShowEdit(false);
                         }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+                        <FontAwesomeIcon icon={faXmark} />
                     </button>
-                    <hr className='my-2' />
                 </div>
+                <hr className='my-3 border-(--border-color)' />
+
                 <div className="w-full flex justify-center flex-1">
-                    <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8 flex flex-col flex-1" >
-                        <div className="flex flex-col relative mb-4">
-                            <label htmlFor="name" className="mr-2">Tên lớp quản lý (<span className='text-red-500'>*</span>)</label>
-                            <input
-                                placeholder='Tên lớp quản lý'
-                                value={classManagerName}
-                                onChange={(e) => setClassManagerName(e.target.value)}
-                                type="text" id="name" className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)" />
+                    <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8 flex flex-col flex-1">
+                        <div className="flex flex-col relative mb-5">
+                            <div className="flex items-center mb-1">
+                                <FontAwesomeIcon icon={faInfoCircle} className="text-(--color-text) mr-2" />
+                                <label htmlFor="name" className="text-(--color-text) font-medium">Tên lớp quản lý (<span className='text-red-500'>*</span>)</label>
+                            </div>
+                            <div className="relative">
+                                <input
+                                    placeholder='Tên lớp quản lý'
+                                    value={classManagerName}
+                                    onChange={(e) => setClassManagerName(e.target.value)}
+                                    type="text"
+                                    id="name"
+                                    className="shadow appearance-none border rounded-lg w-full py-2.5 pl-10 pr-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-(--border-color-focus) border-(--border-color) hover:border-(--border-color-hover)"
+                                />
+                                <FontAwesomeIcon
+                                    icon={faUsers}
+                                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                                />
+                            </div>
                         </div>
-                        <div className='flex-1'>
-                            <label htmlFor="manager" className="mr-2">Quản lý</label>
-                            <div className='relative w-full h-10 max-h-10 '>
-                                <div className={`absolute w-full z-10001 flex flex-col rounded-lg h-fit  ${(loading || managers) && 'bg-white shadow-md '}`}
+
+                        <div className='flex-1 mb-6'>
+                            <div className="flex items-center mb-1">
+                                <FontAwesomeIcon icon={faUserTie} className="text-(--color-text) mr-2" />
+                                <label htmlFor="manager" className="text-(--color-text) font-medium">Quản lý</label>
+                            </div>
+                            <div className='relative w-full'>
+                                <div className={`w-full flex flex-col rounded-lg h-fit`}
                                     ref={searchRef}
                                 >
-                                    <input
-                                        placeholder="Quản lý"
-                                        type="text"
-                                        className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                                        value={search}
-                                        onChange={handleOnChangeSearch}
-                                    />
+                                    <div className="relative">
+                                        <input
+                                            placeholder="Tìm kiếm quản lý"
+                                            type="text"
+                                            className="appearance-none border rounded-lg w-full py-2.5 pl-10 pr-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-(--border-color-focus) border-(--border-color) hover:border-(--border-color-hover)"
+                                            value={search}
+                                            onChange={handleOnChangeSearch}
+                                        />
+                                        <FontAwesomeIcon
+                                            icon={faSearch}
+                                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                                        />
+                                    </div>
                                     {(() => {
                                         let content;
                                         if (loading) {
-                                            content = <LoaderSpinner />;
+                                            content = <div className="py-4 flex justify-center"><LoaderSpinner /></div>;
                                         } else if (managers) {
                                             content = managers.length > 0 ? (
-                                                <ul className='max-h-40 overflow-y-auto'>
+                                                <ul className='w-full absolute top-12 max-h-40 overflow-y-auto custom-scrollbar mt-1 border border-(--border-color) bg-white rounded-lg shadow-md'>
                                                     {
                                                         managers.map(manager => (
                                                             <li key={manager.id} className='w-full'>
-                                                                <button className="w-full flex items-center justify-between bg-white p-2 rounded-lg hover:bg-gray-100 "
+                                                                <button className="w-full flex items-center justify-between p-2.5 hover:bg-gray-100 border-b border-(--border-color) last:border-b-0"
                                                                     onClick={() => {
                                                                         setSelectedManager(manager);
                                                                         setSearch(manager.name);
                                                                         setManagers(undefined);
                                                                     }}
                                                                 >
-                                                                    <div className="text-left">
-                                                                        <h3>{manager.name}</h3>
-                                                                        <p className="text-gray-500 text-sm">{manager.email}</p>
+                                                                    <div className="text-left flex items-center">
+                                                                        <FontAwesomeIcon icon={faUserTie} className="text-(--color-text) mr-3" />
+                                                                        <div>
+                                                                            <h3 className="text-(--color-text) font-medium">{manager.name}</h3>
+                                                                            <p className="text-gray-500 text-sm">{manager.email}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </button>
                                                             </li>
                                                         ))}
                                                 </ul>
                                             ) : (
-                                                <p className="text-center my-2">Không tìm thấy quản lý</p>
+                                                <p className="text-center my-3 text-(--color-text) bg-white p-3 border border-(--border-color) rounded-lg mt-1">Không tìm thấy quản lý</p>
                                             );
                                         } else {
                                             content = null;
@@ -214,11 +240,38 @@ function EditClassManagerModal({
                                     })()}
                                 </div>
                             </div>
+                            {selectedManager && (
+                                <div className="mt-2 p-2 bg-gray-50 rounded-lg border border-(--border-color) flex items-center">
+                                    <FontAwesomeIcon icon={faUserTie} className="text-(--color-text) mr-3" />
+                                    <div>
+                                        <p className="font-medium text-(--color-text)">{selectedManager.name}</p>
+                                        <p className="text-sm text-gray-500">{selectedManager.email}</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <p className='h-5 text-red-500 text-sm my-2 '>{error}</p>
-                        <div className='flex justify-center gap-4 w-full mt-4'>
-                            <button disabled={!classManagerName} className='btn-text text-white w-20 h-10 rounded-lg' onClick={handleOnSubmit}>Lưu</button>
-                            <button className='bg-red-700 text-white w-20 h-10 rounded-lg hover:bg-red-800 active:bg-red-900' onClick={() => setShowEdit(false)}>Hủy</button>
+
+                        {error && (
+                            <p className='text-red-500 text-sm mb-4 flex items-center'>
+                                <FontAwesomeIcon icon={faInfoCircle} className="mr-2" />
+                                {error}
+                            </p>
+                        )}
+
+                        <div className='flex items-center justify-center gap-4 mt-auto'>
+                            <button
+                                onClick={handleOnSubmit}
+                                disabled={!classManagerName}
+                                className="btn-text text-white py-2.5 px-8 rounded-lg focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
+                                <FontAwesomeIcon icon={faInfoCircle} className="mr-2" />
+                                Cập nhật
+                            </button>
+                            <button 
+                                onClick={() => setShowEdit(false)}
+                                className="bg-red-700 text-white py-2.5 px-8 rounded-lg hover:bg-red-800 active:bg-red-900 focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
+                                <FontAwesomeIcon icon={faXmark} className="mr-2" />
+                                Hủy
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -2,11 +2,15 @@
 import { SetStateAction, Dispatch, useState } from 'react'
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import { put } from '@/app/Services/callApi';
 import { course } from '@/app/Services/api';
+import CloseIcon from '@mui/icons-material/Close';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import SchoolIcon from '@mui/icons-material/School';
+import GroupIcon from '@mui/icons-material/Group';
+import BalanceIcon from '@mui/icons-material/Balance';
 
 interface EditClassModalProps {
     readonly data: Course;
@@ -106,67 +110,102 @@ function EditClassModal({
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center "
+            className="flex items-center justify-center"
         >
-            <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%] xl:h-[60%] h-[70%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
-                <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa lớp học</h2>
-                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
-                        onClick={() => {
-                            setShowEdit(false);
-                        }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+            <Box className='xl:w-[50%] lg:w-[70%] md:w-[90%] w-[95%] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden'>
+                <div className='bg-[var(--color-text)] text-white p-5 relative'>
+                    <h2 className='text-2xl font-semibold text-center'>Chỉnh sửa lớp học</h2>
+                    <button 
+                        className='absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:bg-[var(--color-text-hover)] p-1 rounded-full transition-all duration-200'
+                        onClick={() => setShowEdit(false)}
+                    >
+                        <CloseIcon />
                     </button>
-                    <hr className='my-2' />
                 </div>
-                <form action="" className="space-y-4">
-                    <div className="flex flex-row items-center mb-7">
-                        <label htmlFor="name" className="w-1/3 text-left pr-4 relative bottom-2">Tên lớp học (<span className='text-red-500'>*</span>)</label>
-                        <div className="flex flex-col w-2/3">
-                            <input
-                                placeholder="Tên lớp học"
-                                value={subjectName}
-                                onChange={handleOnChangeSubjectName}
-                                type="text"
-                                id="name"
-                                className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center">
-                        <label htmlFor="enrollLimit" className="w-1/3 text-left pr-4 relative bottom-4">Số lượng đăng ký tối đa (<span className='text-red-500'>*</span>)</label>
-                        <div className="flex flex-col w-2/3">
-                            <input
-                                placeholder="Số lượng đăng ký tối đa"
-                                value={enrollLimit}
-                                onChange={handelOnChangeEnrollLimit}
-                                type="text"
-                                id="enrollLimit"
-                                className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                            <p className="h-5 text-red-500 text-sm">{errorEnrollLimit}</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center">
-                        <label htmlFor="midtermWeight" className="w-1/3 text-left pr-4 relative bottom-4">Trọng số giữa kỳ (<span className='text-red-500'>*</span>)</label>
-                        <div className="flex flex-col w-2/3">
-                            <input
-                                placeholder="Trọng số giữa kỳ"
-                                value={midtermWeight}
-                                onChange={handelOnChangeMidtermWeight}
-                                type="text"
-                                id="midtermWeight"
-                                className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                            <p className="h-5 text-red-500 text-sm">{errorMidtermWeight}</p>
-                        </div>
-                    </div>
-                    <p className="h-5 text-red-500 text-sm my-2">{error}</p>
-                </form>
 
-                <div className='flex justify-center gap-4 w-full mt-4'>
-                    <button disabled={!subjectName || !enrollLimit || !midtermWeight} className='btn-text text-white w-20 h-10 rounded-lg' onClick={handleOnSubmit}>Lưu</button>
-                    <button className='bg-red-700 text-white w-20 h-10 rounded-lg hover:bg-red-800 active:bg-red-900' onClick={() => setShowEdit(false)}>Hủy</button>
+                <div className='p-6 custom-scrollbar overflow-y-auto max-h-[calc(90vh-130px)]'>
+                    <form action="" className="space-y-5">
+                        <div className="flex flex-col md:flex-row md:items-center gap-2 mb-4">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <SchoolIcon />
+                                <label htmlFor="name" className="font-medium">Tên lớp học <span className='text-red-500'>*</span></label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <input
+                                    placeholder="Tên lớp học"
+                                    value={subjectName}
+                                    onChange={handleOnChangeSubjectName}
+                                    type="text"
+                                    id="name"
+                                    className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <GroupIcon />
+                                <label htmlFor="enrollLimit" className="font-medium">Số lượng đăng ký tối đa <span className='text-red-500'>*</span></label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <input
+                                    placeholder="Số lượng đăng ký tối đa"
+                                    value={enrollLimit}
+                                    onChange={handelOnChangeEnrollLimit}
+                                    type="text"
+                                    id="enrollLimit"
+                                    className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
+                                />
+                                {errorEnrollLimit && (
+                                    <p className="mt-1 text-red-500 text-sm">{errorEnrollLimit}</p>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <BalanceIcon />
+                                <label htmlFor="midtermWeight" className="font-medium">Trọng số giữa kỳ <span className='text-red-500'>*</span></label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <input
+                                    placeholder="Trọng số giữa kỳ"
+                                    value={midtermWeight}
+                                    onChange={handelOnChangeMidtermWeight}
+                                    type="text"
+                                    id="midtermWeight"
+                                    className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
+                                />
+                                {errorMidtermWeight && (
+                                    <p className="mt-1 text-red-500 text-sm">{errorMidtermWeight}</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                                {error}
+                            </div>
+                        )}
+                    </form>
+                </div>
+
+                <div className='bg-gray-50 p-5 flex justify-center gap-4 border-t'>
+                    <button 
+                        disabled={!subjectName || !enrollLimit || !midtermWeight} 
+                        className='btn-text text-white py-2 px-6 rounded-lg flex items-center gap-2 disabled:opacity-60'
+                        onClick={handleOnSubmit}
+                    >
+                        <SaveIcon fontSize="small" />
+                        <span>Lưu</span>
+                    </button>
+                    <button 
+                        className='bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 active:bg-red-800 flex items-center gap-2 transition-colors duration-200' 
+                        onClick={() => setShowEdit(false)}
+                    >
+                        <CancelIcon fontSize="small" />
+                        <span>Hủy</span>
+                    </button>
                 </div>
             </Box>
         </Modal>

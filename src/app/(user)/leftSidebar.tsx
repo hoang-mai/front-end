@@ -1,15 +1,32 @@
 'use client';
 import Image from 'next/image';
-import { faHandFist, faHome, faSignOut, faExclamation, faVest, faHandHoldingDollar } from '@fortawesome/free-solid-svg-icons';
+import { faHandHoldingDollar, faHome, faSignOut, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 
+import { toast } from 'react-toastify';
+import {  post} from '@/app/Services/callApi';
+import {  logout } from '@/app/Services/api';
 
 const LeftSidebar = () => {
-    
+    const router = useRouter();
     const pathname = usePathname();
+    const handleLogout = () => {
+        toast.promise(
+            post(logout, {}),
+            {
+                pending: "Đang xử lý...",
+                success: "Đăng xuất thành công",
+                error: "Đăng xuất thất bại",
+            }
+        ).then((res) => {
+            localStorage.removeItem("token");
+            router.push("/login");
+        })
+    }
+
     return (
         <aside className={` lg:w-64 md:w-48 bg-gray-100 flex flex-col justify-between border-r border-(--border-color) shadow-2xl`}>
             <div>
@@ -21,57 +38,26 @@ const LeftSidebar = () => {
                         <Link
                             href="/"
                             className={`p-2 w-full h-full block ${pathname !== "/" ? "relative z-10" : ""}`}
-                            
-                        
                         >
                             <FontAwesomeIcon icon={faHome} className='mr-2' />
-                            Trang chủ
+                            Quản lý học kỳ
                         </Link>
 
                         {pathname !== '/' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95 ${pathname !== "/practice"
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/class-manager"
                         ? "group relative"
                         : "bg-gradient-to-r from-green-300 to-gray-300"
                         }`}>
                         <Link
-                            href="/practice"
-                            className={`p-2 w-full h-full block ${pathname !== "/practice" ? "relative z-10" : ""}`}
-                            
-                        >
-                            <FontAwesomeIcon icon={faHandFist} className='mr-2' />
-                            Rèn luyện
+                            href="/class-manager"
+                            className={`p-2 w-full h-full block ${pathname !== "/class-manager" ? "relative z-10" : ""}`}
+
+                        ><Image src="/class-manager.svg" alt="classManager" width={20} height={20} className="mr-1 inline " />
+                            Lớp quản lý
                         </Link>
 
-                        {pathname !== '/practice' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
-                    </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/violation"
-                        ? "group relative"
-                        : "bg-gradient-to-r from-green-300 to-gray-300"
-                        }`}>
-                        <Link
-                            href="/violation"
-                            className={`p-2 w-full h-full block ${pathname !== "/violation" ? "relative z-10" : ""}`}
-                            
-                        ><FontAwesomeIcon icon={faExclamation} className='mr-2' />
-                            Lỗi vi phạm
-                        </Link>
-
-                        {pathname !== "/violation" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
-                    </li>
-                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/military-equipment"
-                        ? "group relative"
-                        : "bg-gradient-to-r from-green-300 to-gray-300"
-                        }`}>
-                        <Link
-                            href="/military-equipment"
-                            className={`p-2 w-full h-full block ${pathname !== "/military-equipment" ? "relative z-10" : ""}`}
-                            
-                        ><FontAwesomeIcon icon={faVest} className='mr-2' />
-                            Quân tư trang
-                        </Link>
-
-                        {pathname !== '/military-equipment' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                        {pathname !== '/class-manager' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/allowance"
                         ? "group relative"
@@ -80,24 +66,27 @@ const LeftSidebar = () => {
                         <Link
                             href="/allowance"
                             className={`p-2 w-full h-full block ${pathname !== "/allowance" ? "relative z-10" : ""}`}
-                            
+
                         ><FontAwesomeIcon icon={faHandHoldingDollar} className='mr-2' />
-                            Phụ cấp
+                            Trợ cấp
                         </Link>
+
                         {pathname !== '/allowance' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                 </ul>
             </div>
             <div >
-                <Link href="/login">
-                    <div className="m-2 p-2 cursor-pointer flex items-center transition-all duration-300 active:scale-95">
-                        <FontAwesomeIcon icon={faSignOut} />
-                        <span className="ml-2">Đăng xuất</span>
-                    </div>
-                </Link>
+
+                <button className="m-2 p-2 cursor-pointer flex items-center transition-all duration-300 active:scale-95"
+                    onClick={handleLogout}
+                >
+                    <FontAwesomeIcon icon={faSignOut} />
+                    <span className="ml-2">Đăng xuất</span>
+                </button>
+
                 <hr className="mx-4 border border-gray-400" />
-                <Link href="/profile" >
-                    <div className={`m-2 p-2 cursor-pointer flex items-center ${pathname === '/profile' ? "shadow rounded-lg shadow-gray-300" : ""} transition-all duration-300 active:scale-95` }>
+                <Link href="/admin/profile" >
+                    <div className={`m-2 p-2 cursor-pointer flex items-center ${pathname === '/admin/profile' ? "shadow rounded-lg shadow-gray-300" : ""} transition-all duration-300 active:scale-95`}>
                         <div className='relative flex items-center justify-center w-8 h-8'>
                             <Image fill src="/avatarDefault.svg" alt="profile" className="rounded-full border border-(--border-color)" />
                         </div>

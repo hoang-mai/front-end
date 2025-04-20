@@ -1,14 +1,20 @@
 'use client';
 import React, { useState } from 'react';
 import DatePickerComponent from "@/app/Components/datePicker";
-import { faReply, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
+import CloseIcon from '@mui/icons-material/Close';
 import { toast } from 'react-toastify';
 import { post } from '@/app/Services/callApi';
 import { term } from '@/app/Services/api';
-import Modal from '@mui/material/Modal'
-import Box from '@mui/material/Box'
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import { format } from 'date-fns/format';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EventIcon from '@mui/icons-material/Event';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import GradeIcon from '@mui/icons-material/Grade';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 interface CreateTermProps {
     readonly showModal: boolean;
     readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -44,7 +50,8 @@ function CreateTerm({
     const [errorRosterDeadline, setErrorRosterDeadline] = useState<string>('');
     const [errorGradeEntryDate, setErrorGradeEntryDate] = useState<string>('');
     const [error, setError] = useState<string>('');
-        const handelOnChangeNameTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const handelOnChangeNameTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
         const regex = /20\d{2}[A-Z]/;
         setNameTerm(e.target.value);
         if (!regex.exec(e.target.value)) {
@@ -56,7 +63,6 @@ function CreateTerm({
     }
 
     const handleOnChangeStartDate = (date: Date) => {
-
         if (endDate && date.getTime() > endDate.getTime() - 14 * 24 * 60 * 60 * 1000) {
             setErrorStartDate('Ngày bắt đầu phải cách ngày kết thúc ít nhất 2 tuần');
             setStartDate(null);
@@ -75,6 +81,7 @@ function CreateTerm({
         setStartDate(date);
         setErrorStartDate('');
     }
+
     const handleOnChangeEndDate = (date: Date) => {
         if (!startDate) {
             setErrorEndDate('Vui lòng chọn ngày bắt đầu trước');
@@ -130,6 +137,7 @@ function CreateTerm({
         setRosterDeadline(date);
         setErrorRosterDeadline('');
     }
+
     const handleOnChangeGradeEntryDate = (date: Date) => {
         if (!startDate) {
             setErrorGradeEntryDate('Vui lòng chọn ngày bắt đầu trước');
@@ -160,10 +168,11 @@ function CreateTerm({
         setGradeEntryDate(date);
         setErrorGradeEntryDate('');
     }
+
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
-            post(term, { name: nameTerm, start_date: startDate, end_date: endDate, roster_deadline: rosterDeadline, grade_entry_date: gradeEntryDate }),
+            post(term, { name: nameTerm, start_date: startDate ? format(startDate, 'yyyy-MM-dd') : null, end_date: endDate ? format(endDate, 'yyyy-MM-dd') : null, roster_deadline: rosterDeadline ? format(rosterDeadline, 'yyyy-MM-dd') : null, grade_entry_date: gradeEntryDate ? format(gradeEntryDate, 'yyyy-MM-dd') : null }),
             {
                 pending: "Đang xử lý...",
                 success: "Tạo học kỳ thành công",
@@ -176,86 +185,138 @@ function CreateTerm({
             setRosterDeadline(null);
             setGradeEntryDate(null);
             setError('');
-            setDatas((prev: any) => [...prev, convertDataToTerm(res.data.data)]);
+            setDatas((prev: any) => [convertDataToTerm(res.data.data), ...prev]);
             setShowModal(false);
         })
             .catch((err) => {
                 const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
                 setError(firstValue);
-
             })
     }
+
     return (
         <Modal
             open={showModal}
             onClose={() => setShowModal(false)}
-            className="flex items-center justify-center "
+            className="flex items-center justify-center"
         >
-            <Box className='xl:w-[50%] lg:w-[70%] md:w-[90%] h-fit w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
-                <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Thêm học kỳ</h2>
-                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
-                        onClick={() => {
-                            setShowModal(false);
-                        }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+            <Box className='xl:w-[50%] lg:w-[70%] md:w-[90%] w-[95%] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden'>
+                <div className='bg-[var(--color-text)] text-white p-5 relative'>
+                    <h2 className='text-2xl font-semibold text-center'>Thêm học kỳ</h2>
+                    <button
+                        className='absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:bg-[var(--color-text-hover)] p-1 rounded-full transition-all duration-200'
+                        onClick={() => setShowModal(false)}
+                    >
+                        <CloseIcon />
                     </button>
-                    <hr className='my-2' />
                 </div>
 
-            <div className="w-full flex justify-center">
-                <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8" >
-                    <div className="flex flex-col relative">
-                        <label htmlFor="name" className="">Tên học kỳ (<span className='text-red-500'>*</span>)</label>
-                        <input
-                            placeholder={`${new Date().getFullYear()}A`}
-                            value={nameTerm}
-                            onChange={handelOnChangeNameTerm}
-                            type="text"
-                            id="name"
-                            className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)"
-                        />
-                        <p className='h-5 text-red-500 text-sm'>{errorNameTerm}</p>
-                    </div>
-                    <div className=" flex flex-col">
-                        <label htmlFor="start" className="">Ngày bắt đầu (<span className='text-red-500'>*</span>)</label>
-                        <DatePickerComponent value={startDate} onChange={handleOnChangeStartDate} />
-                        <p className='h-5 text-red-500 text-sm'>{errorStartDate}</p>
-                    </div>
-                    <div className=" flex flex-col">
-                        <label htmlFor="end" className="">Ngày kết thúc (<span className='text-red-500'>*</span>)</label>
-                        <DatePickerComponent value={endDate} onChange={handleOnChangeEndDate} />
-                        <p className='h-5 text-red-500 text-sm'>{errorEndDate}</p>
-                    </div>
-                    <div className=" flex flex-col">
-                        <label htmlFor="end" className="">Hạn đăng ký lớp (<span className='text-red-500'>*</span>)</label>
-                        <DatePickerComponent value={rosterDeadline} onChange={handleOnChangeRosterDeadline} />
-                        {errorRosterDeadline
-                            ? <p className='h-5 text-red-500 text-sm'>{errorRosterDeadline}</p>
-                            : <p className='text-gray-500 text-sm'>Lưu ý *: Sau thời gian này, hệ thống sẽ đóng đăng ký lớp.</p>
-                        }
-                    </div>
-                    <div className=" flex flex-col">
-                        <label htmlFor="end" className="">Ngày bắt đầu nhập điểm (<span className='text-red-500'>*</span>)</label>
-                        <DatePickerComponent value={gradeEntryDate} onChange={handleOnChangeGradeEntryDate} />
-                        {errorGradeEntryDate
-                            ? <p className='h-5 text-red-500 text-sm'>{errorGradeEntryDate}</p>
-                            : <p className='text-gray-500 text-sm'>Lưu ý *: Sau thời gian này, giảng viên mới có thể nhập điểm.</p>
-                        }
-                    </div>
-                    <p className='h-5 text-red-500 text-sm my-2 '>{error}</p>
-                    <div className='flex items-center justify-center'>
-                        <button
-                            onClick={handleOnSubmit}
-                            disabled={!nameTerm || !!errorNameTerm || !startDate || !endDate || !rosterDeadline || !gradeEntryDate}
-                            type="submit"
-                            className="btn-text bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Tạo học kỳ
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </Box>
+                <div className='p-6 custom-scrollbar overflow-y-auto max-h-[calc(90vh-130px)]'>
+                    <form action="" className="space-y-5">
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <CalendarMonthIcon />
+                                <label htmlFor="name" className="font-medium">
+                                    Tên học kỳ <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <input
+                                    placeholder={`${new Date().getFullYear()}A`}
+                                    value={nameTerm}
+                                    onChange={handelOnChangeNameTerm}
+                                    type="text"
+                                    id="name"
+                                    className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
+                                />
+                                <p className='h-5 mt-1 text-red-500 text-sm'>{errorNameTerm}</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <EventIcon />
+                                <label htmlFor="start" className="font-medium">
+                                    Ngày bắt đầu <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3 flex flex-col">
+                                <DatePickerComponent value={startDate} onChange={handleOnChangeStartDate} />
+                                <p className='h-5 mt-1 text-red-500 text-sm'>{errorStartDate}</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <EventIcon />
+                                <label htmlFor="end" className="font-medium">
+                                    Ngày kết thúc <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3 flex flex-col">
+                                <DatePickerComponent value={endDate} onChange={handleOnChangeEndDate} />
+                                <p className='h-5 mt-1 text-red-500 text-sm'>{errorEndDate}</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <AssignmentIcon />
+                                <label htmlFor="roster" className="font-medium">
+                                    Hạn đăng ký lớp <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3 flex flex-col">
+                                <DatePickerComponent value={rosterDeadline} onChange={handleOnChangeRosterDeadline} />
+                                {errorRosterDeadline
+                                    ? <p className='h-5 mt-1 text-red-500 text-sm'>{errorRosterDeadline}</p>
+                                    : <p className='text-gray-500 text-sm mt-1'>Lưu ý *: Sau thời gian này, hệ thống sẽ đóng đăng ký lớp.</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <GradeIcon />
+                                <label htmlFor="grade" className="font-medium">
+                                    Ngày bắt đầu nhập điểm <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3 flex flex-col">
+                                <DatePickerComponent value={gradeEntryDate} onChange={handleOnChangeGradeEntryDate} />
+                                {errorGradeEntryDate
+                                    ? <p className='h-5 mt-1 text-red-500 text-sm'>{errorGradeEntryDate}</p>
+                                    : <p className='text-gray-500 text-sm mt-1'>Lưu ý *: Sau thời gian này, giảng viên mới có thể nhập điểm.</p>
+                                }
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                                {error}
+                            </div>
+                        )}
+                    </form>
+                </div>
+
+                <div className='bg-gray-50 p-5 flex justify-center gap-4 border-t'>
+                    <button
+                        onClick={handleOnSubmit}
+                        disabled={!nameTerm || !!errorNameTerm || !startDate || !endDate || !rosterDeadline || !gradeEntryDate}
+                        className='btn-text text-white py-2 px-6 rounded-lg flex items-center gap-2 disabled:opacity-60'
+                    >
+                        <SaveIcon fontSize="small" />
+                        <span>Tạo học kỳ</span>
+                    </button>
+                    <button
+                        className='bg-red-700 text-white py-2 px-6 rounded-lg hover:bg-red-800 active:bg-red-900 flex items-center gap-2 transition-colors duration-200'
+                        onClick={() => setShowModal(false)}
+                    >
+                        <CancelIcon fontSize="small" />
+                        <span>Hủy</span>
+                    </button>
+                </div>
+            </Box>
         </Modal>
     );
 }

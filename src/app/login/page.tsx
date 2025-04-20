@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEye, faEyeSlash, faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import {  post } from '@/app/Services/callApi';
-import {  login } from '@/app/Services/api';
+import { post } from '@/app/Services/callApi';
+import { login } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 
 import { useRouter } from 'next/navigation'
@@ -58,7 +58,7 @@ const LoginPage: React.FC = () => {
             }
         )
             .catch((err) => {
-                
+
                 const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
                 setError(firstValue);
             });
@@ -72,7 +72,7 @@ const LoginPage: React.FC = () => {
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                             Email (<span className='text-red-500'>*</span>)
                         </label>
-                        {email === '' && <FontAwesomeIcon icon={faEnvelope} className='absolute opacity-50 bottom-10.5 left-2' />}
+                         <FontAwesomeIcon icon={faEnvelope} className='absolute opacity-50 bottom-10.5 left-2' />
                         <input
                             autoComplete='off'
                             type="text"
@@ -83,7 +83,7 @@ const LoginPage: React.FC = () => {
                                 setEmail(e.target.value)
                                 setError('')
                             }}
-                            className="w-full px-6 py-2 mt-1  rounded-lg shadow-sm focus:outline-none border border-(--border-color) hover:border-(--border-color-hover) "
+                            className="w-full px-8 py-2 mt-1  rounded-lg shadow-sm focus:outline-none border border-(--border-color) hover:border-(--border-color-hover) "
                         />
                         <p className='h-5 text-red-500 text-sm mt-2'>{errorEmail}</p>
                     </div>
@@ -91,7 +91,7 @@ const LoginPage: React.FC = () => {
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                             Mật khẩu (<span className='text-red-500'>*</span>)
                         </label>
-                        {password === '' && <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />}
+                         <FontAwesomeIcon icon={faLock} className='absolute opacity-50 bottom-10.5 left-2' />
                         <input
                             autoComplete='off'
                             type={showPassword ? 'text' : 'password'}
@@ -103,7 +103,7 @@ const LoginPage: React.FC = () => {
                                 setError('')
                             }
                             }
-                            className="w-full px-6 py-2 mt-1 rounded-lg shadow-sm focus:outline-none border border-(--border-color) hover:border-(--border-color-hover)  "
+                            className="w-full px-8 py-2 mt-1 rounded-lg shadow-sm focus:outline-none border border-(--border-color) hover:border-(--border-color-hover)  "
 
                         />
                         <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} className='absolute opacity-50 bottom-10.5 right-1 cursor-pointer' onClick={() => setShowPassword(!showPassword)} />

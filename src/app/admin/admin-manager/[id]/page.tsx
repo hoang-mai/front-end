@@ -8,9 +8,26 @@ import Image from "next/image";
 
 import LoaderAvatar from "@/app/Components/Loader/loaderAvatar";
 import LoaderLine from "@/app/Components/Loader/loaderLine";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faReply } from "@fortawesome/free-solid-svg-icons";
 import EditManagerModal from "./editManagerModal";
+
+// Material UI Icons
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PersonIcon from '@mui/icons-material/Person';
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+import CakeIcon from '@mui/icons-material/Cake';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import BusinessIcon from '@mui/icons-material/Business';
+import FlagIcon from '@mui/icons-material/Flag';
+import HomeIcon from '@mui/icons-material/Home';
+import BadgeIcon from '@mui/icons-material/Badge';
+import EditIcon from '@mui/icons-material/Edit';
+import PeopleIcon from '@mui/icons-material/People';
+import MaleIcon from '@mui/icons-material/Male';
+import FemaleIcon from '@mui/icons-material/Female';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretSquareDown, faReply } from "@fortawesome/free-solid-svg-icons";
+
 interface Manager {
     id: number;
     name: string;
@@ -96,6 +113,7 @@ function ManagerDetail() {
     const [loading, setLoading] = useState<boolean>(true);
     const [manager, setManager] = useState<Manager>(managerDefault);
     const [error, setError] = useState<string>('');
+
     useEffect(() => {
         get(adminAdminManager + '/' + params.id)
             .then((res) => {
@@ -110,149 +128,280 @@ function ManagerDetail() {
     }, []);
 
     if (error) {
-        return <div className="text-red-500">{error}</div>
+        return (
+            <div className="w-full px-6 py-8 flex justify-center">
+                <div className="bg-red-50 p-6 rounded-lg border border-red-200 text-red-600 max-w-md">
+                    <p className="font-semibold text-lg mb-2">Đã xảy ra lỗi</p>
+                    <p>{error}</p>
+                </div>
+            </div>
+        );
     }
+
     return (
-        <div className="xl:w-[90%] md:w-full mx-auto flex flex-col gap-8">
-            <div className="flex lg:flex-row lg:gap-4 flex-col gap-8 ">
-                <div className="flex flex-col items-center gap-6 pb-4 bg-gray-50 rounded-lg p-4 shadow-sm hover:shadow-md transition duration-300">
-                    {loading ?
-                        <>
+        <div className="xl:w-[90%] md:w-full mx-auto flex flex-col gap-6">
+            {/* Top navigation bar */}
+
+
+
+
+            {/* Profile content */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Profile sidebar */}
+                <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="relative bg-gradient-to-r from-green-50 to-green-100 p-6 flex flex-col items-center border-b border-(--border-color)">
+                        <button
+                            onClick={() => router.push('/admin/admin-manager')}
+                            className="absolute top-2 left-2 flex items-center gap-2 text-(--color-text) hover:text-(--color-text-hover) transition-colors py-2 px-3 rounded-md hover:bg-green-50"
+                        >
+                            <FontAwesomeIcon icon={faReply} />
+                        </button>
+                        {loading ? (
                             <LoaderAvatar />
-                            <div className="text-center md:text-left gap-2 flex flex-col">
-                                <LoaderLine width="w-50" height="h-6" />
-                                <LoaderLine width="w-50" height="h-6" />
-                            </div>
-                        </>
-                        :
-                        <>
-                            <div className="self-start">
-                                <button onClick={() => router.push('/admin/admin-manager')}>
-                                    <FontAwesomeIcon
-                                        icon={faReply}
-                                        className='text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
+                        ) : (
+                            <div className="relative mb-4">
+                                <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto">
+                                    <Image
+                                        src={manager.detail.photoUrl || "/avatarDefault.svg"}
+                                        alt="Ảnh đại diện"
+                                        width={112}
+                                        height={112}
+                                        className="object-cover w-full h-full"
                                     />
-                                </button>
+                                </div>
                             </div>
-                            <Image
-                                src={manager.detail.photoUrl || "/avatarDefault.svg"}
-                                alt="Ảnh đại diện"
-                                width={100}
-                                height={100}
-                                className="w-32 h-32 object-cover rounded-full border border-gray-300"
-                            />
-                            <div className="text-center md:text-left">
-                                <h2 className="text-2xl font-bold text-gray-800 flex items-center justify-center ">
+                        )}
+
+                        {loading ? (
+                            <div className="text-center w-full gap-2 flex flex-col items-center">
+                                <LoaderLine width="w-3/4" height="h-6" />
+                                <LoaderLine width="w-1/2" height="h-4" />
+                            </div>
+                        ) : (
+                            <div className="text-center">
+                                <h2 className="text-xl font-bold text-(--color-text) mb-1">
                                     {manager.name || "Chưa cập nhật"}
                                 </h2>
-                                <p className="text-gray-500 flex items-center justify-center ">
+                                <p className="text-gray-600 mb-2">
                                     {manager.email || "Không có email"}
                                 </p>
+                                <div className="font-bold inline-flex items-center px-3 py-1 bg-green-100 rounded-full text-md text-(--color-text)">
+                                    <MilitaryTechIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                                    
+                                    {manager.detail.rank || "Chưa cập nhật cấp bậc"}
+                                </div>
                             </div>
-                            <div className="flex-1 flex lg:justify-end justify-center">
-                                <button className="btn-text text-white h-10 w-30 rounded-lg"
-                                    onClick={() => setShowEditModal(true)}
-                                >Chỉnh sửa</button>
+                        )}
+                    </div>
+
+                    {!loading && (
+                        <div className="p-4">
+                            <div className="mb-5">
+                                <h3 className="text-sm uppercase text-gray-500 font-semibold mb-3 border-b pb-1">Thông tin liên hệ</h3>
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 text-gray-700">
+                                        <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text)">
+                                            <PhoneIcon sx={{ fontSize: 18 }} />
+                                        </div>
+                                        <span>{manager.detail.phoneNumber || "Chưa cập nhật"}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-gray-700">
+                                        <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text)">
+                                            <BusinessIcon sx={{ fontSize: 18 }} />
+                                        </div>
+                                        <span>{manager.detail.managementUnit || "Chưa cập nhật"}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-gray-700">
+                                        <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text)">
+                                            <HomeIcon sx={{ fontSize: 18 }} />
+                                        </div>
+                                        <span>{manager.detail.permanentAddress || "Chưa cập nhật"}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </>}
-                </div>
-                <div className="flex-1 bg-gray-50 rounded-lg p-4 shadow-sm hover:shadow-md transition duration-300">
-                    <h2 className='text-lg font-semibold text-(--color-text) mb-8' >Thông tin cá nhân</h2>
-                    <div className="flex lg:flex-row flex-col gap-4  xl:gap-30">
-                        <div className="flex flex-col gap-8">
-                            {loading ?
-                                <>
-                                    <div className="flex flex-row"><strong className="mr-1">Họ và tên:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                    <div className="flex flex-row"><strong className="mr-1">Cấp bậc:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                    <div className="flex flex-row"><strong className="mr-1">Năm sinh:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                    <div className="flex flex-row"><strong className="mr-1">Số điện thoại:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                </>
-                                : <>
-                                    <p><strong className="mr-1">Họ và tên:</strong> {manager.detail.fullName || "Chưa cập nhật"}</p>
-                                    <p><strong className="mr-1">Cấp bậc:</strong> {manager.detail.rank || "Chưa cập nhật"}</p>
-                                    <p ><strong className="mr-1">Năm sinh:</strong> {manager.detail.birthYear ?? "Chưa cập nhật"}</p>
-                                    <p><strong className="mr-1">Số điện thoại:</strong>{manager.detail.phoneNumber || "Chưa cập nhật"}</p>
-                                </>}
+
+                            <div>
+                                <h3 className="text-sm uppercase text-gray-500 font-semibold mb-3 border-b pb-1">Thông tin khác</h3>
+                                <div className="flex items-center gap-3 text-gray-700">
+                                    <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text)">
+                                        <FlagIcon sx={{ fontSize: 18 }} />
+                                    </div>
+                                    <span>Đảng viên: {manager.detail.isPartyMember ? "Có" : "Không"}</span>
+                                </div>
+                                <div className="flex items-center justify-center mt-4">
+                                    <button
+                                        className="btn-text text-white py-2 px-4 rounded-md flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                                        onClick={() => setShowEditModal(true)}
+                                    >
+                                        <EditIcon sx={{ fontSize: 20 }} />
+                                        <span>Chỉnh sửa hồ sơ</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex flex-col gap-8">
-                            {loading ?
-                                <>
-                                    <div className="flex flex-row"><strong className="mr-1">Quê quán:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                    <div className="flex flex-row"><strong className="mr-1">Đơn vị quản lý:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                    <div className="flex flex-row"><strong className="mr-1">Đảng viên:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                    <div className="flex flex-row"><strong className="mr-1">Địa chỉ thường trú:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                </>
-                                : <>
-                                    <p ><strong className="mr-1">Quê quán:</strong> {manager.detail.hometown || "Chưa cập nhật"}</p>
-                                    <p><strong className="mr-1">Đơn vị quản lý:</strong> {manager.detail?.managementUnit || "Không có thông tin"}</p>
-                                    <p><strong className="mr-1">Đảng viên:</strong> {manager.detail?.isPartyMember ? "Có" : "Không"}</p>
-                                    <p><strong className="mr-1">Địa chỉ thường trú:</strong> {manager.detail?.permanentAddress || "Không có thông tin"}</p>
-                                </>
-                            }
+                    )}
+                </div>
+
+                {/* Main content area */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Personal Information Card */}
+                    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div className="p-4 bg-gray-200 bg-opacity-10 flex items-center border-b border-(--border-color)">
+                            <BadgeIcon sx={{ color: 'var(--color-text)', mr: 1 }} />
+                            <h2 className="text-lg font-semibold text-(--color-text)">Thông tin cá nhân</h2>
+                        </div>
+
+                        <div className="p-5">
+                            {loading ? (
+                                <div className="space-y-4">
+                                    <div className="flex items-center">
+                                        <div className="w-8 h-8 rounded-full bg-gray-100 mr-3 flex-shrink-0"></div>
+                                        <LoaderLine width="w-full" height="h-6" />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div className="w-8 h-8 rounded-full bg-gray-100 mr-3 flex-shrink-0"></div>
+                                        <LoaderLine width="w-full" height="h-6" />
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div className="w-8 h-8 rounded-full bg-gray-100 mr-3 flex-shrink-0"></div>
+                                        <LoaderLine width="w-full" height="h-6" />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="grid md:grid-cols-2 gap-5">
+                                    <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                            <PersonIcon />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Họ và tên</p>
+                                            <p className="font-medium">{manager.detail.fullName || "Chưa cập nhật"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                            <CakeIcon />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Năm sinh</p>
+                                            <p className="font-medium">{manager.detail.birthYear || "Chưa cập nhật"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                            <LocationOnIcon />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Quê quán</p>
+                                            <p className="font-medium">{manager.detail.hometown || "Chưa cập nhật"}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Family Information Card */}
+                    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div className="p-4 bg-gray-200 bg-opacity-10 flex items-center border-b border-(--border-color)">
+                            <PeopleIcon sx={{ color: 'var(--color-text)', mr: 1 }} />
+                            <h2 className="text-lg font-semibold text-(--color-text)">Thông tin gia đình</h2>
+                        </div>
+
+                        <div className="p-5">
+                            {loading ? (
+                                <div className="space-y-4">
+                                    <LoaderLine width="w-full" height="h-6" />
+                                    <LoaderLine width="w-full" height="h-6" />
+                                    <LoaderLine width="w-full" height="h-6" />
+                                </div>
+                            ) : (
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    {/* Father information */}
+                                    <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-(--border-color)">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            
+                                            <h3 className="text-md font-semibold text-(--color-text)">Thông tin bố</h3>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                                    <PersonIcon fontSize="small" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Họ và tên</p>
+                                                    <p className="font-medium">{manager.detail.fatherName || "Chưa cập nhật"}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                                    <CakeIcon fontSize="small" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Năm sinh</p>
+                                                    <p className="font-medium">{manager.detail.fatherBirthYear || "Chưa cập nhật"}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                                    <LocationOnIcon fontSize="small" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Quê quán</p>
+                                                    <p className="font-medium">{manager.detail.fatherHometown || "Chưa cập nhật"}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Mother information */}
+                                    <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-(--border-color)">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <h3 className="text-md font-semibold text-(--color-text)">Thông tin mẹ</h3>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                                    <PersonIcon fontSize="small" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Họ và tên</p>
+                                                    <p className="font-medium">{manager.detail.motherName || "Chưa cập nhật"}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                                    <CakeIcon fontSize="small" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Năm sinh</p>
+                                                    <p className="font-medium">{manager.detail.motherBirthYear || "Chưa cập nhật"}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                                    <LocationOnIcon fontSize="small" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Quê quán</p>
+                                                    <p className="font-medium">{manager.detail.motherHometown || "Chưa cập nhật"}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
 
-
-            <div className="bg-gray-50 rounded-lg p-4 shadow-sm hover:shadow-md transition duration-300">
-                <p className="text-lg font-semibold text-(--color-text) mb-3">Thông tin gia đình</p>
-                <div className="flex flex-col lg:flex-row gap-4 xl:gap-84 lg:gap-30">
-                    <div className="flex flex-col gap-4">
-                        {loading ?
-
-                            <>
-                                <div className="flex flex-row"><strong className="mr-1">Cha:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                <div className="flex flex-row"><strong className="mr-1">Quê quán bố:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                <div className="flex flex-row"><strong className="mr-1">Năm sinh bố:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                            </>
-                            :
-                            <>
-
-                                <p><strong className="mr-1">Cha:</strong> {manager.detail.fatherName || "Chưa cập nhật"}</p>
-                                <p><strong className="mr-1">Quê quán bố:</strong> {manager.detail.fatherHometown || "Chưa cập nhật"}</p>
-                                <p><strong className="mr-1">Năm sinh bố:</strong> {manager.detail.fatherBirthYear ?? "Chưa cập nhật"}</p>
-                            </>
-                        }
-                    </div>
-                    <div className="flex flex-col gap-4">
-                        {loading ?
-                            <>
-
-                                <div className="flex flex-row"><strong className="mr-1">Mẹ:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                <div className="flex flex-row"><strong className="mr-1">Quê quán mẹ:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                                <div className="flex flex-row"><strong className="mr-1">Năm sinh mẹ:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                            </>
-                            :
-                            <>
-                                <p><strong className="mr-1">Mẹ:</strong> {manager.detail.motherName || "Chưa cập nhật"}</p>
-                                <p><strong className="mr-1">Quê quán mẹ:</strong> {manager.detail.motherHometown || "Chưa cập nhật"}</p>
-                                <p><strong className="mr-1">Năm sinh mẹ:</strong> {manager.detail.motherBirthYear ?? "Chưa cập nhật"}</p>
-                            </>
-                        }
-                    </div>
-                </div>
-            </div>
-
-            
-            {/* <div className="bg-gray-50 rounded-lg p-4 shadow-sm flex flex-col gap-2 hover:shadow-md transition duration-300">
-                <p className="text-lg font-semibold text-(--color-text) mb-3">Lịch sử cập nhật</p>
-                {loading ?
-
-                    <>
-                        <div className="flex flex-row"><strong className="mr-1">Ngày tạo:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                        <div className="flex flex-row"><strong className="mr-1">Cập nhật lần cuối:</strong><LoaderLine width="w-50" height="h-6" /></div>
-                    </>
-                    :
-                    <>
-                        <p><strong className="mr-1">Ngày tạo:</strong>{manager.detail.createdAt ? manager.detail.createdAt.toLocaleDateString("vi-VN") : "Không có dữ liệu"}</p>
-                        <p><strong className="mr-1">Cập nhật lần cuối:</strong>{manager.detail.updatedAt ? manager.detail.updatedAt.toLocaleDateString("vi-VN") : "Không có dữ liệu"}</p>
-                    </>
-                }
-            </div> */}
-            {showEditModal && <EditManagerModal setShowEdit={setShowEditModal} showEdit={showEditModal} manager={manager} setManager={setManager}/>}
+            {showEditModal && <EditManagerModal setShowEdit={setShowEditModal} showEdit={showEditModal} manager={manager} setManager={setManager} />}
         </div>
-
     );
 }
 

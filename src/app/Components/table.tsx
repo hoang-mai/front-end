@@ -298,13 +298,28 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                     labelRowsPerPage='Số dòng trên trang:'
                 />
                 {deleteCell && <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)}
-                    className='flex items-center justify-center'
+                    className="flex items-center justify-center"
                 >
-                    <Box className="p-8 bg-white rounded-md shadow-md">
-                        <h1 className="text-lg font-bold mb-4">{modal?.headTitle}</h1>
-                        <div className="flex justify-center gap-10">
+                    <Box className="p-8 bg-white rounded-xl shadow-lg transform transition-all max-w-md w-full mx-4 animate-[fadeIn_0.3s_ease-in-out]">
+                        <div className="flex flex-col items-center text-center mb-6">
+                            <div className="bg-red-100 p-3 rounded-full mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-xl font-bold text-gray-800 mb-2">{modal?.headTitle}</h2>
+                            <p className="text-gray-600">Hành động này không thể hoàn tác.</p>
+                        </div>
+
+                        <div className="flex justify-center gap-4 mt-6">
                             <button
-                                className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
+                                className="bg-white border border-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                                onClick={() => setConfirmDelete(false)}
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-600 active:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
                                 onClick={() => {
                                     toast.promise(del(modal?.url + '/' + confirmDeleteId),
                                         {
@@ -319,16 +334,9 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                         const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
                                         toast.error(firstValue);
                                     })
-                                }
-                                }
+                                }}
                             >
-                                Đồng ý
-                            </button>
-                            <button
-                                className=' bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 active:bg-gray-500 transition-colors'
-                                onClick={() => setConfirmDelete(false)}
-                            >
-                                Không
+                                Xác nhận xóa
                             </button>
                         </div>
                     </Box>

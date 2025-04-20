@@ -7,6 +7,12 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import SchoolIcon from '@mui/icons-material/School';
+import GroupIcon from '@mui/icons-material/Group';
+import BalanceIcon from '@mui/icons-material/Balance';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 interface AddClassProps {
     readonly id: number | string;
@@ -96,8 +102,7 @@ function AddClass({
                     setSubjectName('');
                     setEnrollLimit('60');
                     setMidtermWeight('0.5');
-                    console.log(res.data.data);
-                    setDatas((prev: any) => [...prev, convertDataToClass(res.data.data)]);
+                    setDatas((prev: any) => [convertDataToClass(res.data.data), ...prev]);
                     setShowModal(false);
                 }),
             {
@@ -115,73 +120,119 @@ function AddClass({
         <Modal
             open={showModal}
             onClose={() => setShowModal(false)}
-            className="flex items-center justify-center "
+            className="flex items-center justify-center"
         >
-            <Box className='xl:w-[50%] lg:w-[70%] md:w-[90%] h-[70%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
-                <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Thêm lớp học</h2>
-                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
-                        onClick={() => {
-                            setShowModal(false);
-                        }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+            <Box className='xl:w-[50%] lg:w-[70%] md:w-[90%] w-[95%] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden'>
+                <div className='bg-[var(--color-text)] text-white p-5 relative'>
+                    <h2 className='text-2xl font-semibold text-center'>Thêm lớp học</h2>
+                    <button 
+                        className='absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:bg-[var(--color-text-hover)] p-1 rounded-full transition-all duration-200'
+                        onClick={() => setShowModal(false)}
+                    >
+                        <FontAwesomeIcon icon={faXmark} />
                     </button>
-                    <hr className='my-2' />
                 </div>
-                <div className="w-full flex justify-center ">
-                    <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8" >
-                        <div className="flex flex-row my-4">
-                            <label htmlFor="name" className="mr-2">Tên học kỳ:</label>
-                            <p> {label}</p>
-                        </div>
-                        <div className="flex flex-col relative mb-4">
-                            <label htmlFor="name" className="">Tên lớp học (<span className='text-red-500'>*</span>)</label>
-                            <input
-                                placeholder='Tên lớp học'
-                                value={subjectName}
-                                onChange={handelOnChangeNameClass}
-                                type="text"
-                                id="name"
-                                className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)"
-                            />
 
+                <div className='p-6 custom-scrollbar overflow-y-auto max-h-[calc(90vh-130px)]'>
+                    <form action="" className="space-y-5">
+                        <div className="flex flex-col md:flex-row md:items-center gap-2 mb-4">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <CalendarMonthIcon />
+                                <label htmlFor="termName" className="font-medium">Tên học kỳ</label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <p id="termName" className="py-2">{label}</p>
+                            </div>
                         </div>
-                        <div className="flex flex-col relative">
-                            <label htmlFor="enrollLimit" className="">Số lượng đăng ký tối đa (<span className='text-red-500'>*</span>)</label>
-                            <input
-                                placeholder='Số lượng đăng ký tối đa'
-                                value={enrollLimit}
-                                onChange={handelOnChangeEnrollLimit}
-                                type="text"
-                                id="enrollLimit"
-                                className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                            <p className='h-5 text-red-500 text-sm'>{errorEnrollLimit}</p>
+                        
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <SchoolIcon />
+                                <label htmlFor="name" className="font-medium">
+                                    Tên lớp học <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <input
+                                    placeholder='Tên lớp học'
+                                    value={subjectName}
+                                    onChange={handelOnChangeNameClass}
+                                    type="text"
+                                    id="name"
+                                    className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
+                                />
+                            </div>
                         </div>
-                        <div className="flex flex-col relative ">
-                            <label htmlFor="midtermWeight" className="">Trọng số giữa kỳ (<span className='text-red-500'>*</span>)</label>
-                            <input
-                                placeholder='Trọng số giữa kỳ'
-                                value={midtermWeight}
-                                onChange={handelOnChangeMidtermWeight}
-                                type="text"
-                                id="midtermWeight"
-                                className="shadow appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none  border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                            <p className='h-5 text-red-500 text-sm'>{errorMidtermWeight}</p>
+                        
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <GroupIcon />
+                                <label htmlFor="enrollLimit" className="font-medium">
+                                    Số lượng đăng ký tối đa <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <input
+                                    placeholder='Số lượng đăng ký tối đa'
+                                    value={enrollLimit}
+                                    onChange={handelOnChangeEnrollLimit}
+                                    type="text"
+                                    id="enrollLimit"
+                                    className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
+                                />
+                                
+                                    <p className="h-5 mt-1 text-red-500 text-sm">{errorEnrollLimit}</p>
+                                
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <BalanceIcon />
+                                <label htmlFor="midtermWeight" className="font-medium">
+                                    Trọng số giữa kỳ <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <input
+                                    placeholder='Trọng số giữa kỳ'
+                                    value={midtermWeight}
+                                    onChange={handelOnChangeMidtermWeight}
+                                    type="text"
+                                    id="midtermWeight"
+                                    className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
+                                />
+                                
+                                    <p className="h-5 mt-1 text-red-500 text-sm">{errorMidtermWeight}</p>
+                                
+                            </div>
                         </div>
 
-                        <p className='h-5 text-red-500 text-sm my-2 h-fit'>{error}</p>
-                        <div className='flex items-center justify-center'>
-                            <button
-                                onClick={handleOnSubmit}
-                                disabled={!subjectName || !enrollLimit || !midtermWeight || !!errorMidtermWeight || !!errorEnrollLimit}
-                                type="submit"
-                                className="btn-text bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                                Tạo lớp học
-                            </button>
-                        </div>
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                                {error}
+                            </div>
+                        )}
                     </form>
+                </div>
+
+                <div className='bg-gray-50 p-5 flex justify-center gap-4 border-t'>
+                    <button
+                        onClick={handleOnSubmit}
+                        disabled={!subjectName || !enrollLimit || !midtermWeight || !!errorMidtermWeight || !!errorEnrollLimit}
+                        type="submit"
+                        className='btn-text text-white py-2 px-6 rounded-lg flex items-center gap-2 disabled:opacity-60'
+                    >
+                        <SaveIcon fontSize="small" />
+                        <span>Tạo lớp học</span>
+                    </button>
+                    <button 
+                        className='bg-[var(--color-danger)] text-white py-2 px-6 rounded-lg hover:bg-[var(--color-danger-hover)] active:bg-[var(--color-danger-active)] flex items-center gap-2 transition-colors duration-200' 
+                        onClick={() => setShowModal(false)}
+                    >
+                        <CancelIcon fontSize="small" />
+                        <span>Hủy</span>
+                    </button>
                 </div>
             </Box>
         </Modal>

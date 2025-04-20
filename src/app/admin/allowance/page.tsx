@@ -5,9 +5,11 @@ import { adminAllowances } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AddAllowance from "./addAllowance";
+import AllowanceDetail from "./allowanceDetail";
+import EditAllowanceModal from "./editAllowanceModal";
 
 interface AllowanceStudent extends Record<string, unknown> {
     id: number;
@@ -28,25 +30,25 @@ interface AllowanceStudent extends Record<string, unknown> {
     studentUpdatedAt: Date | null;
     studentRole: 'student';
 
-  }
-  function convertReceivedToString(received: boolean): string {
+}
+function convertReceivedToString(received: boolean): string {
     return received ? 'Đã nhận' : 'Chưa nhận'
-  }
-  function convertAmountToString(amountStr: string): string {
+}
+function convertAmountToString(amountStr: string): string {
     const amount = parseFloat(amountStr);
     const [intPart, decimalPart = ''] = amount.toFixed(2).split('.');
-  
+
     const formattedInt = Number(intPart).toLocaleString('vi-VN');
-  
+
     if (decimalPart === '00') {
-      return `${formattedInt}`;
+        return `${formattedInt}`;
     } else {
-      return `${formattedInt},${decimalPart}`; 
+        return `${formattedInt},${decimalPart}`;
     }
-  }
-  
-  
-  function convertDataToAllowanceStudent(data: any): AllowanceStudent {
+}
+
+
+function convertDataToAllowanceStudent(data: any): AllowanceStudent {
     return {
         id: data.id,
         userId: data.user_id,
@@ -66,8 +68,8 @@ interface AllowanceStudent extends Record<string, unknown> {
         studentUpdatedAt: new Date(data.student.updated_at),
         studentRole: data.student.role === 'student' ? 'Học viên' : data.student.role
     }
-  }
-  interface HeadCell {
+}
+interface HeadCell {
     id: keyof AllowanceStudent;
     label: string;
 }
@@ -79,14 +81,13 @@ const headCells: HeadCell[] = [
     { id: 'receivedAt', label: 'Ngày nhận', },
     { id: 'notes', label: 'Ghi chú', },
     { id: 'month', label: 'Tháng', },
-    { id: 'studentRole', label: 'Vai trò', },
 ];
-  const modal = {
-      headTitle: 'Bạn có chắc chắn muốn xóa lớp quản lý này không?',
-      successMessage: 'Xóa lớp quản lý thành công',
-      errorMessage: 'Xóa lớp quản lý thất bại',
-      url: adminAllowances,
-  }
+const modal = {
+    headTitle: 'Bạn có chắc chắn muốn xóa trợ cấp này không?',
+    successMessage: 'Xóa trợ cấp thành công',
+    errorMessage: 'Xóa trợ cấp thất bại',
+    url: adminAllowances,
+}
 
 function Allowance() {
     const [allowanceStudents, setAllowanceStudents] = useState<AllowanceStudent[]>([]);
@@ -94,22 +95,24 @@ function Allowance() {
     const [search, setSearch] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [showAllowanceDetail, setShowAllowanceDetail] = useState<boolean>(false);
+    const [allowanceDetail, setAllowanceDetail] = useState<AllowanceStudent >();
 
     const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     };
 
     useEffect(() => {
-         get(adminAllowances)
-                    .then((res) => {
-                        setAllowanceStudents(res.data.data.map((student: any) => convertDataToAllowanceStudent(student)));
-                    })
-                    .catch((res) => {
-                        toast.error(res.data.message);
-                        setError(res.data.message);
-                    }).finally(() => {
-                        setLoading(false);
-                    })
+        get(adminAllowances)
+            .then((res) => {
+                setAllowanceStudents(res.data.data.map((student: any) => convertDataToAllowanceStudent(student)));
+            })
+            .catch((res) => {
+                toast.error(res.data.message);
+                setError(res.data.message);
+            }).finally(() => {
+                setLoading(false);
+            })
     }, []);
 
     if (error) {
@@ -130,9 +133,15 @@ function Allowance() {
                 </button>
             </div>
             {loading ? <LoaderTable />
-                : <TableComponent dataCells={allowanceStudents} headCells={headCells} search={search} onRowClick={(id) => { }} modal={modal} actionCell={false} setDatas={setAllowanceStudents} />
+                : <TableComponent dataCells={allowanceStudents} headCells={headCells} search={search} onRowClick={(id) => {
+                    setShowAllowanceDetail(true);
+                    setAllowanceDetail(allowanceStudents.find((student) => student.id === id));
+                }} modal={modal}
+                EditComponent={EditAllowanceModal}
+                setDatas={setAllowanceStudents} />
             }
-            {showModal && <AddAllowance  setShowModal={setShowModal} showModal={showModal} setDatas={setAllowanceStudents} />}
+            {showModal && <AddAllowance setShowModal={setShowModal} showModal={showModal} setDatas={setAllowanceStudents} />}
+            {showAllowanceDetail && <AllowanceDetail allowanceStudent={allowanceDetail} showModal={showAllowanceDetail} setShowModal={setShowAllowanceDetail} />}
         </div>
     );
 }

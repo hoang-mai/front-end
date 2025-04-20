@@ -193,15 +193,27 @@ function ClassDetail() {
                     </div>
 
 
-                    <div className='flex justify-between gap-5 lg:gap-3 xl:gap-5 lg:flex-row flex-col'>
-                        <div className='flex gap-5 lg:gap-3 xl:gap-5 '>
-                            <button className='btn-text text-white h-10 w-36 rounded-lg' onClick={() => setShowAddStudent(true)}>
-                                <FontAwesomeIcon icon={faPlus} className='mr-2' />
-                                Thêm học viên
+                    <div className="flex flex-col lg:flex-row justify-between gap-5 mt-4 mb-2">
+                    <div className="flex flex-wrap gap-3">
+                    <button
+                                className="btn-text text-white h-10 px-4 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                                onClick={() => setShowAddStudent(true)}
+                            >
+                                <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                                <span>Thêm học viên</span>
                             </button>
-                            <div className='relative'>
-                                <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
-                                <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='xl:w-auto lg:w-30 shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
+                            <div className="relative flex-grow max-w-md">
+                                <FontAwesomeIcon
+                                    icon={faSearch}
+                                    className="absolute opacity-50 top-1/2 transform -translate-y-1/2 left-3"
+                                />
+                                <input
+                                    value={search}
+                                    onChange={handleOnChangeSearch}
+                                    type="text"
+                                    placeholder="Tìm kiếm học viên..."
+                                    className="w-full shadow appearance-none border rounded-lg py-2 pl-10 pr-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-(--background-button) focus:border-transparent border-(--border-color) hover:border-(--border-color-hover)"
+                                />
                             </div>
                             <button className="btn-text text-white h-10 w-36 rounded-lg"
                                 onClick={() => setShowEnterGrade(true)}
@@ -209,35 +221,56 @@ function ClassDetail() {
                                 Nhập điểm
                             </button>
                         </div>
-                        <div className='flex gap-5 lg:gap-3 xl:gap-5'>
-                            <button className='btn-text text-white h-10 w-30 rounded-lg' onClick={() => setShowEdit(true)}>Chỉnh sửa</button>
+                        <div className="flex gap-3 shrink-0">
                             <button
-                                className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
+                                className="btn-text text-white h-10 px-5 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                                onClick={() => setShowEdit(true)}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Chỉnh sửa
+                            </button>
+                            <button
+                                className="bg-red-500 text-white h-10 px-5 rounded-lg flex items-center justify-center shadow-sm hover:bg-red-600 hover:shadow active:bg-red-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
                                 onClick={() => setShowModal(true)}
                             >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
                                 Xóa lớp học
                             </button>
                         </div>
                     </div>
 
-                    <Modal open={showModal} onClose={() => setShowModal(false)}
-                        className='flex items-center justify-center'
+                    <Modal
+                        open={showModal}
+                        onClose={() => setShowModal(false)}
+                        className="flex items-center justify-center"
                     >
-                        <Box className="p-8 bg-white rounded-md shadow-md">
-                            <h1 className="text-lg font-bold mb-4">Bạn có chắc chắn muốn xóa lớp học này ?</h1>
-                            <div className="flex justify-center gap-10">
-                                <button
-                                    className='bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 active:bg-red-700 transition-colors'
-                                    onClick={handleOnConfirmDeleteClass}
-                                >
-                                    Đồng ý
-                                </button>
-                                <button
+                        <Box className="p-8 bg-white rounded-xl shadow-lg transform transition-all max-w-md w-full mx-4 animate-[fadeIn_0.3s_ease-in-out]">
+                            <div className="flex flex-col items-center text-center mb-6">
+                                <div className="bg-red-100 p-3 rounded-full mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-xl font-bold text-gray-800 mb-2">Xác nhận xóa lớp</h2>
+                                <p className="text-gray-600">Bạn có chắc chắn muốn xóa lớp quản lý <span className="font-semibold">{classDetail.subjectName}</span>? Hành động này không thể hoàn tác.</p>
+                            </div>
 
-                                    className=' bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 active:bg-gray-500 transition-colors'
+                            <div className="flex justify-center gap-4 mt-6">
+                                <button
+                                    className="bg-white border border-gray-300 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
                                     onClick={() => setShowModal(false)}
                                 >
-                                    Không
+                                    Hủy
+                                </button>
+                                <button
+                                    className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-600 active:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-300"
+                                    onClick={handleOnConfirmDeleteClass}
+                                >
+                                    Xác nhận xóa
                                 </button>
                             </div>
                         </Box>

@@ -45,7 +45,7 @@ const SelectComponent: FC<SelectProps> = ({ selected, setSelected, options, defa
             </button>
             {showSelect &&
                 <div className="absolute w-full bg-green-100 border border-(--border-color) rounded-lg z-10">
-                    <ul>
+                    <ul className="max-h-50 overflow-y-auto custom-scrollbar">
                         {options.map((option) =>
                             <li key={option.id}>
                                 <button className=" hover:bg-green-300 rounded-lg p-2 w-full text-left" onClick={() => { setSelected(option); setShowSelect(false) }}>{option.label}</button>

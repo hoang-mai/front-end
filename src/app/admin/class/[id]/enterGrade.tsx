@@ -182,8 +182,8 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                 status: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))) >= 4 ? 'Hoàn thành' : 'Trượt',
             })));
         }).catch((err) => {
-            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-            setError(firstValue);
+            
+            setError(err.message);
             });
     };
             
@@ -193,7 +193,7 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
             onClose={() => setShowModal(false)}
             className="flex items-center justify-center"
         >
-            <Box className=' lg:w-[70%] md:w-[90%]  h-[85%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
+            <Box className=' lg:w-[70%] md:w-[90%]  h-[85%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto custom-scrollbar'>
                 <div className='relative w-full'>
                     <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Nhập điểm học viên</h2>
                     <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'

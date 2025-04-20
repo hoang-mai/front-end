@@ -1,16 +1,18 @@
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { term } from '@/app/Services/api'
-
-
 import { SetStateAction, Dispatch, useState } from 'react'
 import { put } from '@/app/Services/callApi';
 import { toast } from 'react-toastify';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import CloseIcon from '@mui/icons-material/Close';
 import DatePickerComponent from '@/app/Components/datePicker';
-
+import { format } from 'date-fns';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EventIcon from '@mui/icons-material/Event';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import GradeIcon from '@mui/icons-material/Grade';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 interface EditTermModalProps {
     data: Term;
@@ -37,6 +39,7 @@ const EditTermModal = ({
     const [errorRosterDeadline, setErrorRosterDeadline] = useState<string>('');
     const [errorGradeEntryDate, setErrorGradeEntryDate] = useState<string>('');
     const [error, setError] = useState<string>('');
+
     const handelOnChangeNameTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
         const regex = /20\d{2}[A-Z]/;
         setNameTerm(e.target.value);
@@ -155,19 +158,23 @@ const EditTermModal = ({
     }
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
+        console.log('startDate', startDate);
+        console.log('endDate', endDate);
+        console.log('rosterDeadline', rosterDeadline);
+        console.log('gradeEntryDate', gradeEntryDate);
         toast.promise(
-            put(term + '/' + data.id, {}, { name: nameTerm, start_date: startDate, end_date: endDate, roster_deadline: rosterDeadline, grade_entry_date: gradeEntryDate }),
+            put(term + '/' + data.id, {}, { name: nameTerm, start_date: startDate ? format(startDate, 'yyyy-MM-dd') : null, end_date: endDate ? format(endDate, 'yyyy-MM-dd') : null, roster_deadline: rosterDeadline ? format(rosterDeadline, 'yyyy-MM-dd') : null, grade_entry_date: gradeEntryDate ? format(gradeEntryDate, 'yyyy-MM-dd') : null }),
             {
                 pending: "Đang xử lý...",
                 success: "Cập nhật học kỳ thành công",
                 error: "Cập nhật học kỳ thất bại",
             }
         ).then((res) => {
-            setDatas?.((prev) =>  prev.map((term) =>
-                    term.id === data.id && startDate && endDate && rosterDeadline && gradeEntryDate
-                        ? { ...term, nameTerm, startDate, endDate, rosterDeadline, gradeEntryDate }
-                        : term
-                
+            setDatas?.((prev) => prev.map((term) =>
+                term.id === data.id && startDate && endDate && rosterDeadline && gradeEntryDate
+                    ? { ...term, nameTerm, startDate, endDate, rosterDeadline, gradeEntryDate }
+                    : term
+
             ));
             setData?.((prev) => ({
                 ...prev,
@@ -189,79 +196,127 @@ const EditTermModal = ({
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center "
+            className="flex items-center justify-center"
         >
-            <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%] h-[82%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
-                <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa học kỳ</h2>
-                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
-                        onClick={() => {
-                            setShowEdit(false);
-                        }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+            <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%] w-[95%] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden'>
+                <div className='bg-[var(--color-text)] text-white p-5 relative'>
+                    <h2 className='text-2xl font-semibold text-center'>Chỉnh sửa học kỳ</h2>
+                    <button
+                        className='absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:bg-[var(--color-text-hover)] p-1 rounded-full transition-all duration-200'
+                        onClick={() => setShowEdit(false)}
+                    >
+                        <CloseIcon />
                     </button>
-                    <hr className='my-2' />
                 </div>
 
-                <form action="" >
-                    <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="name" className="w-1/3 text-left relative bottom-4 pr-4">Tên học kỳ (<span className='text-red-500'>*</span>)</label>
-                        <div className='flex flex-col w-2/3'>
-                            <input
-                                placeholder={`${new Date().getFullYear()}A`}
-                                value={nameTerm}
-                                onChange={handelOnChangeNameTerm}
-                                type="text"
-                                id="name"
-                                className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                            <p className='h-5 text-red-500 text-sm'>{errorNameTerm}</p>
+                <div className='p-6 custom-scrollbar overflow-y-auto max-h-[calc(90vh-130px)]'>
+                    <form action="" className="space-y-5">
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <CalendarMonthIcon />
+                                <label htmlFor="name" className="font-medium">
+                                    Tên học kỳ <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3">
+                                <input
+                                    placeholder={`${new Date().getFullYear()}A`}
+                                    value={nameTerm}
+                                    onChange={handelOnChangeNameTerm}
+                                    type="text"
+                                    id="name"
+                                    className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
+                                />
+                                <p className='h-5 mt-1 text-red-500 text-sm'>{errorNameTerm}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="start" className="w-1/3 text-left relative bottom-4 pr-4">Ngày bắt đầu (<span className='text-red-500'>*</span>)</label>
-                        <div className='flex flex-col w-2/3'>
-                            <DatePickerComponent value={startDate} onChange={handleOnChangeStartDate} />
-                            <p className='h-5 text-red-500 text-sm'>{errorStartDate}</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Ngày kết thúc (<span className='text-red-500'>*</span>)</label>
-                        <div className='flex flex-col w-2/3'>
-                            <DatePickerComponent value={endDate} onChange={handleOnChangeEndDate} />
-                            <p className='h-5 text-red-500 text-sm'>{errorEndDate}</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Hạn đăng ký lớp (<span className='text-red-500'>*</span>)</label>
-                        <div className='flex flex-col w-2/3'>
-                            <DatePickerComponent value={rosterDeadline} onChange={handleOnChangeRosterDeadline} />
-                            {errorRosterDeadline
-                                ? <p className='h-5 text-red-500 text-sm'>{errorRosterDeadline}</p>
-                                : <p className='text-gray-500 text-sm'>Lưu ý *: Sau thời gian này, hệ thống sẽ đóng đăng ký lớp.</p>
-                            }
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center mb-4">
-                        <label htmlFor="end" className="w-1/3 text-left relative bottom-4 pr-4">Ngày bắt đầu nhập điểm (<span className='text-red-500'>*</span>)</label>
-                        <div className='flex flex-col w-2/3'>
-                            <DatePickerComponent value={gradeEntryDate} onChange={handleOnChangeGradeEntryDate} />
-                            {errorGradeEntryDate
-                                ? <p className='h-5 text-red-500 text-sm'>{errorGradeEntryDate}</p>
-                                : <p className='text-gray-500 text-sm'>Lưu ý *: Sau thời gian này, giảng viên mới có thể nhập điểm.</p>
-                            }
-                        </div>
-                    </div>
 
-                    <p className='h-5 text-red-500 text-sm my-2 '>{error}</p>
-                </form>
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <EventIcon />
+                                <label htmlFor="start" className="font-medium">
+                                    Ngày bắt đầu <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3 flex flex-col">
+                                <DatePickerComponent value={startDate} onChange={handleOnChangeStartDate} />
+                                <p className='h-5 mt-1 text-red-500 text-sm'>{errorStartDate}</p>
+                            </div>
+                        </div>
 
-                <div className='flex justify-center gap-4 w-full mt-4'>
-                    <button disabled={!nameTerm || !!errorNameTerm || !startDate || !endDate || !rosterDeadline || !gradeEntryDate} className='btn-text text-white w-20 h-10 rounded-lg' onClick={handleOnSubmit}>Lưu</button>
-                    <button className='bg-red-700 text-white w-20 h-10 rounded-lg hover:bg-red-800 active:bg-red-900' onClick={() => setShowEdit(false)}>Hủy</button>
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <EventIcon />
+                                <label htmlFor="end" className="font-medium">
+                                    Ngày kết thúc <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3 flex flex-col">
+                                <DatePickerComponent value={endDate} onChange={handleOnChangeEndDate} />
+                                <p className='h-5 mt-1 text-red-500 text-sm'>{errorEndDate}</p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <AssignmentIcon />
+                                <label htmlFor="roster" className="font-medium">
+                                    Hạn đăng ký lớp <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3 flex flex-col">
+                                <DatePickerComponent value={rosterDeadline} onChange={handleOnChangeRosterDeadline} />
+                                {errorRosterDeadline
+                                    ? <p className='h-5 mt-1 text-red-500 text-sm'>{errorRosterDeadline}</p>
+                                    : <p className='text-gray-500 text-sm mt-1'>Lưu ý *: Sau thời gian này, hệ thống sẽ đóng đăng ký lớp.</p>
+                                }
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-start gap-2">
+                            <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
+                                <GradeIcon />
+                                <label htmlFor="grade" className="font-medium">
+                                    Ngày bắt đầu nhập điểm <span className='text-red-500'>*</span>
+                                </label>
+                            </div>
+                            <div className="md:w-2/3 flex flex-col">
+                                <DatePickerComponent value={gradeEntryDate} onChange={handleOnChangeGradeEntryDate} />
+                                {errorGradeEntryDate
+                                    ? <p className='h-5 mt-1 text-red-500 text-sm'>{errorGradeEntryDate}</p>
+                                    : <p className='text-gray-500 text-sm mt-1'>Lưu ý *: Sau thời gian này, giảng viên mới có thể nhập điểm.</p>
+                                }
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                                {error}
+                            </div>
+                        )}
+                    </form>
+                </div>
+
+                <div className='bg-gray-50 p-5 flex justify-center gap-4 border-t'>
+                    <button
+                        onClick={handleOnSubmit}
+                        disabled={!nameTerm || !!errorNameTerm || !startDate || !endDate || !rosterDeadline || !gradeEntryDate}
+                        className='btn-text text-white py-2 px-6 rounded-lg flex items-center gap-2 disabled:opacity-60'
+                    >
+                        <SaveIcon fontSize="small" />
+                        <span>Lưu</span>
+                    </button>
+                    <button
+                        className='bg-red-700 text-white py-2 px-6 rounded-lg hover:bg-red-800 active:bg-red-900 flex items-center gap-2 transition-colors duration-200'
+                        onClick={() => setShowEdit(false)}
+                    >
+                        <CancelIcon fontSize="small" />
+                        <span>Hủy</span>
+                    </button>
                 </div>
             </Box>
-        </Modal>);
+        </Modal>
+    );
 }
 
 export default EditTermModal;
