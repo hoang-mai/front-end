@@ -1,17 +1,18 @@
 'use client';
 import Image from 'next/image';
-import { faHandHoldingDollar, faHome, faSignOut, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard, faHandHoldingDollar, faHome, faSignOut, faTools, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
-
+import React, { useEffect, useState } from 'react';
+import PersonIcon from '@mui/icons-material/Person';
 import { toast } from 'react-toastify';
-import {  post} from '@/app/Services/callApi';
-import {  logout } from '@/app/Services/api';
+import { post } from '@/app/Services/callApi';
+import { logout } from '@/app/Services/api';
 
 const LeftSidebar = () => {
     const router = useRouter();
+    const [image, setImage] = useState<string | null>(null);
     const pathname = usePathname();
     const handleLogout = () => {
         toast.promise(
@@ -26,6 +27,12 @@ const LeftSidebar = () => {
             router.push("/login");
         })
     }
+    useEffect(() => {
+        const storedImage = localStorage.getItem("image");
+        if (storedImage && storedImage !== "null") {
+            setImage(storedImage);
+        }
+    }, []);
 
     return (
         <aside className={` lg:w-64 md:w-48 bg-gray-100 flex flex-col justify-between border-r border-(--border-color) shadow-2xl`}>
@@ -106,6 +113,48 @@ const LeftSidebar = () => {
 
                         {pathname !== '/admin/allowance' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/equipment"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/admin/equipment"
+                            className={`p-2 w-full h-full block ${pathname !== "/admin/equipment" ? "relative z-10" : ""}`}
+
+                        ><FontAwesomeIcon icon={faTools} className='mr-2' />
+                            Quản lý quân tư trang
+                        </Link>
+
+                        {pathname !== '/admin/equipment' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/practice"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/admin/practice"
+                            className={`p-2 w-full h-full block ${pathname !== "/admin/practice" ? "relative z-10" : ""}`}
+
+                        ><FontAwesomeIcon icon={faClipboard} className='mr-2' />
+                            Quản lý rèn luyện
+                        </Link>
+
+                        {pathname !== '/admin/practice' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/admin-student"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/admin/admin-student"
+                            className={`p-2 w-full h-full block ${pathname !== "/admin/admin-student" ? "relative z-10" : ""}`}
+                        >
+                            <FontAwesomeIcon icon={faUserTie} className='mr-2' />
+                            Quản lý học viên
+                        </Link>
+
+                        {pathname !== '/admin/admin-student' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/admin/register"
                         ? "group relative"
                         : "bg-gradient-to-r from-green-300 to-gray-300"
@@ -120,6 +169,7 @@ const LeftSidebar = () => {
 
                         {pathname !== '/admin/register' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
+                    
                 </ul>
             </div>
             <div >
@@ -134,8 +184,16 @@ const LeftSidebar = () => {
                 <hr className="mx-4 border border-gray-400" />
                 <Link href="/admin/profile" >
                     <div className={`m-2 p-2 cursor-pointer flex items-center ${pathname === '/admin/profile' ? "shadow rounded-lg shadow-gray-300" : ""} transition-all duration-300 active:scale-95`}>
-                        <div className='relative flex items-center justify-center w-8 h-8'>
-                            <Image fill src="/avatarDefault.svg" alt="profile" className="rounded-full border border-(--border-color)" />
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                            {image ? (
+                                <img
+                                    src={image}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <PersonIcon className="text-gray-500" />
+                            )}
                         </div>
                         <span className="ml-2">Cá nhân</span>
                     </div>

@@ -34,7 +34,7 @@ const optionRole: Option[] = [
 ]
 
 const optionStatus: Option[] = [
-    { id: 'active', label: 'Hoạt động' },
+    { id: 'active', label: 'Đang học' },
     { id: 'suspended', label: 'Đình chỉ' },
 ]
 
@@ -54,12 +54,12 @@ function convertStringToRole(role: string): Option {
 
 function convertStringToStatus(status: string): Option {
     switch (status) {
-        case 'Hoạt động':
-            return { id: 'active', label: 'Hoạt động' };
+        case 'Đang học':
+            return { id: 'active', label: 'Đang học' };
         case 'Đình chỉ':
             return { id: 'suspended', label: 'Đình chỉ' };
         default:
-            return { id: 'active', label: 'Hoạt động' };
+            return { id: 'active', label: 'Đang học' };
     }
 }
 
@@ -205,7 +205,7 @@ function EditStudentModal({
                                             selected={selectedStatus}
                                             setSelected={setSelectedStatus}
                                             options={optionStatus}
-                                            defaultOption={{ id: 'active', label: 'Hoạt động' }}
+                                            defaultOption={{ id: 'active', label: 'Đang học' }}
                                             width="w-full"
                                         />
                                     </div>
@@ -260,14 +260,7 @@ function EditStudentModal({
                         )}
 
                         <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 mt-6 items-center justify-center">
-                            <button
-                                type="button"
-                                onClick={() => setShowEdit(false)}
-                                className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--border-color-focus)] transition-all duration-200 w-full sm:w-auto"
-                            >
-                                <FontAwesomeIcon icon={faTimes} className="mr-2" />
-                                Hủy
-                            </button>
+
                             <button
                                 type="button"
                                 className="btn-text inline-flex justify-center items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white transition-all duration-200 w-full sm:w-auto"
@@ -275,6 +268,12 @@ function EditStudentModal({
                             >
                                 <FontAwesomeIcon icon={faSave} className="mr-2" />
                                 Lưu thay đổi
+                            </button>
+                            <button
+                                onClick={() => setShowEdit(false)}
+                                className="bg-red-700 text-white py-2.5 px-8 rounded-lg hover:bg-red-800 active:bg-red-900 focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
+                                <FontAwesomeIcon icon={faXmark} className="mr-2" />
+                                Hủy
                             </button>
                         </div>
                     </form>

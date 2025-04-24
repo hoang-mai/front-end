@@ -87,11 +87,11 @@ function convertStudent(data: any): Student {
 function convertStatusToText(status: string): string {
     switch (status) {
         case 'active':
-            return 'Hoạt động';
+            return 'Đang học';
         case 'suspended':
             return 'Đình chỉ';
         default:
-            return 'Hoạt động';
+            return 'Đang học';
     }
 }
 const classesDefault: ClassManager = {

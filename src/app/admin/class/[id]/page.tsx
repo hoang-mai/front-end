@@ -2,7 +2,7 @@
 import LoaderLine from "@/app/Components/Loader/loaderLine";
 import { course } from "@/app/Services/api";
 import { del, get } from "@/app/Services/callApi";
-import { faPlus, faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faReply, faSearch, faGraduationCap, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,11 +12,10 @@ import { toast } from "react-toastify";
 import EditClassModal from "./editClassModal";
 import AddStudent from "./addStudent";
 import LoaderTable from "@/app/Components/Loader/loaderTable";
-
 import EnterGradeModal from "./enterGrade";
 import TableComponent from "@/app/Components/table";
 import EditStudentModal from "./editStudentModal";
-
+import StudentDetail from "./studentDetail";
 
 interface HeadCell {
     id: keyof Student;
@@ -32,7 +31,6 @@ const headCells: HeadCell[] = [
     { id: 'notes', label: 'Ghi chú', },
 ];
 
-
 interface Student extends Record<string, unknown> {
     id: number;
     name: string;
@@ -42,6 +40,7 @@ interface Student extends Record<string, unknown> {
     totalGrade: string;
     status: string;
     notes: string;
+    image: string | null;
 }
 function convertDataToStudent(data: any): Student {
     return {
@@ -52,6 +51,7 @@ function convertDataToStudent(data: any): Student {
         finalGrade: data.final_grade,
         totalGrade: data.total_grade,
         status: convertStatus(data.status),
+        image: data.image,
         notes: data.notes
     }
 }
@@ -105,6 +105,8 @@ function ClassDetail() {
     const [error, setError] = useState<string>('');
     const [search, setSearch] = useState<string>('');
     const [showAddStudent, setShowAddStudent] = useState<boolean>(false);
+    const [showStudentDetail, setShowStudentDetail] = useState<boolean>(false);
+    const [selectedStudent, setSelectedStudent] = useState<Student>();
     const modal = {
         headTitle: 'Bạn có chắc chắn muốn xóa học viên này không?',
         successMessage: 'Xóa học viên thành công',
@@ -115,27 +117,27 @@ function ClassDetail() {
         setSearch(e.target.value);
     }
     useEffect(() => {
-        
-            get(course + '/' + params.id).then(res => {
-                setClassDetail(convertDataToClass(res.data.data));
-                setNameTerm(res.data.data.term.name);
-            }).catch(err => {
-                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-                setError(firstValue);
-            }).finally(() => setLoading(false));
-        
-    }, [ params.id]);
+
+        get(course + '/' + params.id).then(res => {
+            setClassDetail(convertDataToClass(res.data.data));
+            setNameTerm(res.data.data.term.name);
+        }).catch(err => {
+            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+            setError(firstValue);
+        }).finally(() => setLoading(false));
+
+    }, [params.id]);
     useEffect(() => {
-        
-            get(course + '/' + params.id + '/students').then(res => {
-                setStudents(res.data.data.map((data: any) => convertDataToStudent(data)));
-            }
-            ).catch(err => {
-                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-                setError(firstValue);
-            }
-            ).finally(() => setLoadingStudent(false));
-        
+
+        get(course + '/' + params.id + '/students').then(res => {
+            setStudents(res.data.data.map((data: any) => convertDataToStudent(data)));
+        }
+        ).catch(err => {
+            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+            setError(firstValue);
+        }
+        ).finally(() => setLoadingStudent(false));
+
     }, [params.id]);
     const handleOnConfirmDeleteClass = () => {
         toast.promise(
@@ -158,7 +160,7 @@ function ClassDetail() {
     }
     return (
         <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
-            {loading  ?
+            {loading ?
                 <>
                     <div className='w-full flex justify-center items-center mb-10'>
                         <LoaderLine height='h-7' width='w-50' />
@@ -185,42 +187,70 @@ function ClassDetail() {
                     <div className='w-full flex justify-center items-center'>
                         <h1 className='text-2xl font-bold mb-6 text-center text-(--color-text)'>Lớp học: {classDetail.subjectName}</h1>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 xl:gap-x-90 lg:gap-x-50">
-                        <p>Mã lớp học: {classDetail.code}</p>
-                        <p>Tên học kỳ: {nameTerm}</p>
-                        <p>Số lượng đăng ký tối đa: {classDetail.enrollLimit}</p>
-                        <p>Trọng số giữa kỳ: {classDetail.midtermWeight}</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {/* Course Code Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-blue-500">
+                            <h2 className="text-lg font-semibold mb-3 text-blue-600">Mã lớp học</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faGraduationCap} className="text-blue-500 mr-2" />
+                                <p className="font-medium">{classDetail.code}</p>
+                            </div>
+                        </div>
+
+                        {/* Term Name Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-green-500">
+                            <h2 className="text-lg font-semibold mb-3 text-green-600">Kỳ học</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faGraduationCap} className="text-green-500 mr-2" />
+                                <p className="font-medium">{nameTerm}</p>
+                            </div>
+                        </div>
+
+                        {/* Enrollment Limit Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-purple-500">
+                            <h2 className="text-lg font-semibold mb-3 text-purple-600">Số lượng đăng ký tối đa</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faUser} className="text-purple-500 mr-2" />
+                                <p className="font-medium">{classDetail.enrollLimit}</p>
+                            </div>
+                        </div>
+
+                        {/* Midterm Weight Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-red-500">
+                            <h2 className="text-lg font-semibold mb-3 text-red-600">Trọng số giữa kỳ</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faGraduationCap} className="text-red-500 mr-2" />
+                                <p className="font-medium">{classDetail.midtermWeight}</p>
+                            </div>
+                        </div>
                     </div>
 
 
-                    <div className="flex flex-col lg:flex-row justify-between gap-5 mt-4 mb-2">
-                    <div className="flex flex-wrap gap-3">
-                    <button
+                    <div className="flex flex-col lg:flex-row justify-between gap-5 mt-6">
+                        <div className="flex flex-wrap gap-3 items-center">
+                            <button
                                 className="btn-text text-white h-10 px-4 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all transform hover:scale-[1.02] active:scale-[0.98]"
                                 onClick={() => setShowAddStudent(true)}
                             >
                                 <FontAwesomeIcon icon={faPlus} className="mr-2" />
                                 <span>Thêm học viên</span>
                             </button>
-                            <div className="relative flex-grow max-w-md">
-                                <FontAwesomeIcon
-                                    icon={faSearch}
-                                    className="absolute opacity-50 top-1/2 transform -translate-y-1/2 left-3"
-                                />
-                                <input
-                                    value={search}
-                                    onChange={handleOnChangeSearch}
-                                    type="text"
-                                    placeholder="Tìm kiếm học viên..."
-                                    className="w-full shadow appearance-none border rounded-lg py-2 pl-10 pr-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-(--background-button) focus:border-transparent border-(--border-color) hover:border-(--border-color-hover)"
-                                />
-                            </div>
-                            <button className="btn-text text-white h-10 w-36 rounded-lg"
+                            <button className="btn-text text-white h-10 px-4 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all transform hover:scale-[1.02] active:scale-[0.98]"
                                 onClick={() => setShowEnterGrade(true)}
                             >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
                                 Nhập điểm
                             </button>
                         </div>
+
+                        <div className='relative'>
+                            <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
+                            <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm học viên...' className='w-full shadow appearance-none border rounded-lg py-2 pl-10 pr-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-(--background-button) focus:border-transparent border-(--border-color) hover:border-(--border-color-hover)' />
+                        </div>
+
                         <div className="flex gap-3 shrink-0">
                             <button
                                 className="btn-text text-white h-10 px-5 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all transform hover:scale-[1.02] active:scale-[0.98]"
@@ -293,8 +323,28 @@ function ClassDetail() {
                     }
                     {loadingStudent ? <LoaderTable /> :
                         <>
-                            <TableComponent dataCells={students} headCells={headCells} search={search} onRowClick={() => { }} setDatas={setStudents}  EditComponent={EditStudentModal} modal={modal} midTermWeight={classDetail.midtermWeight}/>
+                            <TableComponent
+                                dataCells={students}
+                                headCells={headCells}
+                                search={search}
+                                onRowClick={(studentId) => {
+                                    setSelectedStudent(students.find(student => student.id === studentId));
+                                    setShowStudentDetail(true);
+                                }}
+                                setDatas={setStudents}
+                                EditComponent={EditStudentModal}
+                                modal={modal}
+                                midTermWeight={classDetail.midtermWeight}
+                            />
                             {showEnterGrade && <EnterGradeModal classId={classDetail.id} midtermWeight={classDetail.midtermWeight} dataCells={students} showModal={showEnterGrade} setShowModal={setShowEnterGrade} setStudents={setStudents} />}
+                            {showStudentDetail &&
+                                <StudentDetail
+
+                                    student={selectedStudent}
+                                    showDetail={showStudentDetail}
+                                    setShowDetail={setShowStudentDetail}
+                                />
+                            }
                         </>
                     }
                 </>

@@ -39,6 +39,7 @@ const LoginPage: React.FC = () => {
         toast.promise(
             post(login, { email, password }).then((res) => {
                 localStorage.setItem("token", res.data.data.token);
+                localStorage.setItem("image", res.data.data.user.image);
                 switch (res.data.data.user.role) {
                     case 'admin':
                         router.push("/admin");

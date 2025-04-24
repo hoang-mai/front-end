@@ -77,11 +77,11 @@ function convertRoleToString(role: string): string {
 function convertStatusToString(status: string): string {
     switch (status) {
         case 'active':
-            return 'Hoạt động';
+            return 'Đang học';
         case 'suspended':
             return 'Đình chỉ';
         default:
-            return 'Hoạt động';
+            return 'Đang học';
     }
 }
 
@@ -142,94 +142,94 @@ function StudentDetail({
             onClose={() => setShowStudentDetail(false)}
             className="flex items-center justify-center"
         >
-            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] w-[95%] max-h-[90vh] flex flex-col bg-white p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
-                {/* Header with close button */}
-                <div className='relative w-full mb-4'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Thông tin học viên</h2>
+            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] w-[95%] max-h-[95%] bg-white rounded-2xl shadow-2xl overflow-hidden'>
+                <div className='bg-[color:var(--background-button)] p-4 relative'>
                     <button
-                        className='w-8 h-8 rounded-full absolute top-0 right-0 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700 active:scale-90 transition-transform duration-200'
+                        className='absolute right-5 top-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200'
                         onClick={() => setShowStudentDetail(false)}
                     >
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
-                    <hr className='my-2 border-gray-300' />
+                    <h2 className='text-center text-2xl font-bold text-white'>Thông tin học viên</h2>
                 </div>
 
-                {loading ? (
-                    <>
-                        <div className='w-full flex justify-center items-center mb-10'>
-                            <LoaderLine height='h-7' width='w-50' />
-                        </div>
-                        <div className='w-full flex flex-row gap-20'>
-                            <LoaderLine width='w-1/2' height='h-5' />
-                            <LoaderLine width='w-1/2' height='h-5' />
-                        </div>
-                        <div className='w-full flex flex-row gap-20 mb-10'>
-                            <LoaderLine width='w-1/2' height='h-5' />
-                            <LoaderLine width='w-1/2' height='h-5' />
-                        </div>
-                    </>
-                ) : (
-                    <>
-                        {/* Student name header section */}
-                        <div className='w-full flex flex-col items-center justify-center mb-6'>
-                            <h1 className='text-xl md:text-2xl font-bold text-(--color-text)'>
-                                {studentDetail.student.name}
-                            </h1>
-                        </div>
-
-                        {/* Status badge */}
-                        <div className="flex justify-center mb-6">
-                            <div className={`px-4 py-2 rounded-full ${statusColor === 'text-green-500' ? 'bg-green-100' : 'bg-yellow-100'} flex items-center`}>
-                                <FontAwesomeIcon icon={statusColor === 'text-green-500' ? faCheckCircle : faClock} className={`${statusColor} mr-2`} />
-                                <span className={`font-medium ${statusColor}`}>{convertStatusToString(studentDetail.status)}</span>
+                <div className="p-6">
+                    {loading ? (
+                        <>
+                            <div className='w-full flex justify-center items-center mb-10'>
+                                <LoaderLine height='h-7' width='w-50' />
                             </div>
-                        </div>
+                            <div className='w-full flex flex-row gap-20'>
+                                <LoaderLine width='w-1/2' height='h-5' />
+                                <LoaderLine width='w-1/2' height='h-5' />
+                            </div>
+                            <div className='w-full flex flex-row gap-20 mb-10'>
+                                <LoaderLine width='w-1/2' height='h-5' />
+                                <LoaderLine width='w-1/2' height='h-5' />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            {/* Student name header section */}
+                            <div className='w-full flex flex-col items-center justify-center mb-6'>
+                                <h1 className='text-xl md:text-2xl font-bold text-(--color-text)'>
+                                    {studentDetail.student.name}
+                                </h1>
+                            </div>
 
-                        {/* Main content - information cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 md:px-4">
-                            <InfoItem
-                                icon={faEnvelope}
-                                label="Email"
-                                value={studentDetail.student.email}
-                            />
+                            {/* Status badge */}
+                            <div className="flex justify-center mb-6">
+                                <div className={`px-4 py-2 rounded-full ${statusColor === 'text-green-500' ? 'bg-green-100' : 'bg-yellow-100'} flex items-center`}>
+                                    <FontAwesomeIcon icon={statusColor === 'text-green-500' ? faCheckCircle : faClock} className={`${statusColor} mr-2`} />
+                                    <span className={`font-medium ${statusColor}`}>{convertStatusToString(studentDetail.status)}</span>
+                                </div>
+                            </div>
 
-                            <InfoItem
-                                icon={faUserTag}
-                                label="Vai trò"
-                                value={convertRoleToString(studentDetail.role)}
-                            />
-
-                            <InfoItem
-                                icon={faCircleInfo}
-                                label="Lý do"
-                                value={studentDetail.reason || 'Không có'}
-                            />
-
-                            <InfoItem
-                                icon={faClipboard}
-                                label="Ghi chú"
-                                value={studentDetail.note || 'Không có'}
-                            />
-
-                            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Main content - information cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 md:px-4">
                                 <InfoItem
-                                    icon={faCalendar}
-                                    label="Ngày tạo"
-                                    value={formatDate(studentDetail.createdAt)}
-                                    small={true}
+                                    icon={faEnvelope}
+                                    label="Email"
+                                    value={studentDetail.student.email}
                                 />
 
                                 <InfoItem
-                                    icon={faCalendar}
-                                    label="Cập nhật ngày"
-                                    value={formatDate(studentDetail.updatedAt)}
-                                    small={true}
+                                    icon={faUserTag}
+                                    label="Vai trò"
+                                    value={convertRoleToString(studentDetail.role)}
                                 />
+
+                                <InfoItem
+                                    icon={faCircleInfo}
+                                    label="Lý do"
+                                    value={studentDetail.reason || 'Không có'}
+                                />
+
+                                <InfoItem
+                                    icon={faClipboard}
+                                    label="Ghi chú"
+                                    value={studentDetail.note || 'Không có'}
+                                />
+
+                                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <InfoItem
+                                        icon={faCalendar}
+                                        label="Ngày tạo"
+                                        value={formatDate(studentDetail.createdAt)}
+                                        small={true}
+                                    />
+
+                                    <InfoItem
+                                        icon={faCalendar}
+                                        label="Cập nhật ngày"
+                                        value={formatDate(studentDetail.updatedAt)}
+                                        small={true}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    </>
-                )}
+                        </>
+                    )}
+                </div>
             </Box>
         </Modal>
     );

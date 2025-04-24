@@ -10,11 +10,12 @@ import LoaderTable from '@/app/Components/Loader/loaderTable'
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faReply, faSearch, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import EditTermModal from './editTermModal';
 import TableComponent from '@/app/Components/table';
 import EditClassModal from '../class/[id]/editClassModal';
 import { set } from 'date-fns';
+import Head from 'next/head';
 
 interface HeadCell {
     id: keyof Course;
@@ -121,8 +122,14 @@ export default function TermDetail() {
         return <div className='text-red-500'>{error}</div>
     }
     return (
+        <>
+            <Head>
+                <title>Quản lý lớp họcgdddđf</title>
+                <meta name="description" content="Quản lý kỳ học" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            </Head>
         <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
-            {loading  ? (
+            {loading ? (
                 <>
                     <div className='w-full flex justify-center items-center mb-10'>
                         <LoaderLine height='h-7' width='w-50' />
@@ -138,24 +145,58 @@ export default function TermDetail() {
                     <LoaderTable />
                 </>
             ) : (
-                <><div className="self-start">
-                    <Link href="/admin">
-                        <FontAwesomeIcon
-                            icon={faReply}
-                            className='text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
-                        />
-                    </Link>
-                </div>
+                <>
+                    <div className="self-start">
+                        <Link href="/admin">
+                            <FontAwesomeIcon
+                                icon={faReply}
+                                className='text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
+                            />
+                        </Link>
+                    </div>
                     <div className='w-full flex justify-center items-center'>
                         <h1 className='text-2xl font-bold mb-6 text-center text-(--color-text)'>Kỳ học: {termData.nameTerm}</h1>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 xl:gap-x-90 lg:gap-x-50">
-                        <p>Ngày bắt đầu: {formatDate(termData.startDate)}</p>
-                        <p>Ngày kết thúc: {formatDate(termData.endDate)}</p>
-                        <p>Ngày hạn đăng ký: {formatDate(termData.rosterDeadline)}</p>
-                        <p>Ngày nhập điểm: {formatDate(termData.gradeEntryDate)}</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Start Date Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-blue-500">
+                            <h2 className="text-lg font-semibold mb-3 text-blue-600">Ngày bắt đầu</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-500 mr-2" />
+                                <p className="font-medium">{formatDate(termData.startDate)}</p>
+                            </div>
+                        </div>
+
+                        {/* End Date Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-red-500">
+                            <h2 className="text-lg font-semibold mb-3 text-red-600">Ngày kết thúc</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faCalendarAlt} className="text-red-500 mr-2" />
+                                <p className="font-medium">{formatDate(termData.endDate)}</p>
+                            </div>
+                        </div>
+
+                        {/* Roster Deadline Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-green-500">
+                            <h2 className="text-lg font-semibold mb-3 text-green-600">Hạn đăng ký</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faCalendarAlt} className="text-green-500 mr-2" />
+                                <p className="font-medium">{formatDate(termData.rosterDeadline)}</p>
+                            </div>
+                        </div>
+
+                        {/* Grade Entry Date Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-purple-500">
+                            <h2 className="text-lg font-semibold mb-3 text-purple-600">Ngày nhập điểm</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faCalendarAlt} className="text-purple-500 mr-2" />
+                                <p className="font-medium">{formatDate(termData.gradeEntryDate)}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div className='flex justify-between'>
+
+                    <div className='flex justify-between mt-6'>
                         <div className='relative'>
                             <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
                             <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm khóa học...' className='w-full shadow appearance-none border rounded-lg py-2 pl-10 pr-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-(--background-button) focus:border-transparent border-(--border-color) hover:border-(--border-color-hover)' />
@@ -225,5 +266,6 @@ export default function TermDetail() {
                 </>
             )}
         </div>
+        </>
     )
 }

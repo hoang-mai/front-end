@@ -3,11 +3,16 @@ import React from "react";
 import { useSessionExpired } from "./hooks/useSessionExpired";
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 const SessionExpiredModal = () => {
     const router = useRouter();
+    const path= usePathname();
     const { isSessionExpired, hideSessionExpiredModal } = useSessionExpired();
     if (!isSessionExpired) return null;
+    else if (path === "/login"){
+        hideSessionExpiredModal();
+        return null;
+    }
 
     return (
         <Modal

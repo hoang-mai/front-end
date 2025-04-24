@@ -79,7 +79,7 @@ function AddStudent({
                         ...student,
                         note: '',
                         role: 'Học viên',
-                        status: 'Hoạt động',
+                        status: 'Đang học',
                         reason: null,
                     };
                 });

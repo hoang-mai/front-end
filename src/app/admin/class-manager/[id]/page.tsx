@@ -2,7 +2,7 @@
 import LoaderLine from "@/app/Components/Loader/loaderLine";
 import { adminClasses } from "@/app/Services/api";
 import { del, get } from "@/app/Services/callApi";
-import { faPlus, faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faReply, faSearch, faUsers, faUserTie } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -65,11 +65,11 @@ function convertRoleToText(role: string): string {
 function convertStatusToText(status: string): string {
     switch (status) {
         case 'active':
-            return 'Hoạt động';
+            return 'Đang học';
         case 'suspended':
             return 'Đình chỉ';
         default:
-            return 'Hoạt động';
+            return 'Đang học';
     }
 }
 function convertDataToClassManager(data: any): ClassManager {
@@ -193,16 +193,39 @@ function ClassManagerDetail() {
                     <div className='w-full flex justify-center items-center'>
                         <h1 className='text-2xl font-bold mb-6 text-center text-(--color-text)'>Lớp quản lý: {classManager.name}</h1>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 xl:gap-x-90 lg:gap-x-50">
-                        <p>Tên quản lý: {classManager.managerName ?? 'Chưa cập nhật'}</p>
-                        <p>Email: {classManager.managerEmail ?? 'Chưa cập nhật'}</p>
-                        <p>Số lượng học viên: {students.length}</p>
-                        <p>Ngày tạo: {classManager.createdAt.toLocaleDateString("vi-VN")}</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Manager Info Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-blue-500">
+                            <h2 className="text-lg font-semibold mb-3 text-blue-600">Quản lý lớp</h2>
+                            <div className="space-y-2">
+                                <p><span className="font-medium">Tên:</span> {classManager.managerName ?? 'Chưa cập nhật'}</p>
+                                <p><span className="font-medium">Email:</span> {classManager.managerEmail ?? 'Chưa cập nhật'}</p>
+                            </div>
+                        </div>
+
+                        {/* Class Info Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-green-500">
+                            <h2 className="text-lg font-semibold mb-3 text-green-600">Thông tin lớp</h2>
+                            <div className="space-y-2">
+                                <p><span className="font-medium">Ngày tạo:</span> {classManager.createdAt.toLocaleDateString("vi-VN")}</p>
+                                <p><span className="font-medium">Ngày cập nhật:</span> {classManager.updatedAt.toLocaleDateString("vi-VN")}</p>
+                            </div>
+                        </div>
+
+                        {/* Student Count Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-purple-500">
+                            <h2 className="text-lg font-semibold mb-3 text-purple-600">Số lượng học viên</h2>
+                            <div className="space-y-2 flex items-center">
+                                <FontAwesomeIcon icon={faUsers} className="text-purple-500 mr-2" />
+                                <p className="font-medium text-lg">{students.length} học viên</p>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Action buttons with improved styling */}
-                    <div className="flex flex-col lg:flex-row justify-between gap-5 mt-4 mb-2">
-                        <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-col lg:flex-row justify-between gap-5 mt-6">
+                        <div className="flex flex-wrap gap-3 items-center">
                             <button
                                 className="btn-text text-white h-10 px-4 rounded-lg flex items-center justify-center shadow-sm hover:shadow transition-all transform hover:scale-[1.02] active:scale-[0.98]"
                                 onClick={() => setShowAddStudent(true)}
@@ -210,20 +233,11 @@ function ClassManagerDetail() {
                                 <FontAwesomeIcon icon={faPlus} className="mr-2" />
                                 <span>Thêm học viên</span>
                             </button>
+                        </div>
 
-                            <div className="relative flex-grow max-w-md">
-                                <FontAwesomeIcon
-                                    icon={faSearch}
-                                    className="absolute opacity-50 top-1/2 transform -translate-y-1/2 left-3"
-                                />
-                                <input
-                                    value={search}
-                                    onChange={handleOnChangeSearch}
-                                    type="text"
-                                    placeholder="Tìm kiếm học viên..."
-                                    className="w-full shadow appearance-none border rounded-lg py-2 pl-10 pr-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-(--background-button) focus:border-transparent border-(--border-color) hover:border-(--border-color-hover)"
-                                />
-                            </div>
+                        <div className='relative'>
+                            <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
+                            <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm học viên...' className='w-full shadow appearance-none border rounded-lg py-2 pl-10 pr-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-(--background-button) focus:border-transparent border-(--border-color) hover:border-(--border-color-hover)' />
                         </div>
 
                         <div className="flex gap-3 shrink-0">

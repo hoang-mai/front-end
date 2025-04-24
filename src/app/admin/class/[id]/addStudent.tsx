@@ -1,4 +1,3 @@
-
 'use client'
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
@@ -10,16 +9,19 @@ import { post } from '@/app/Services/callApi';
 import { course, searchStudent } from '@/app/Services/api';
 import LoaderSpinner from '@/app/Components/Loader/loaderSpinner';
 import { toast } from 'react-toastify';
+import PersonIcon from '@mui/icons-material/Person';
 
 interface Student {
     id: number;
     name: string;
     email: string;
+    image : string | null;
 }
 interface AddStudentToCourse extends Record<string, unknown> {
     id: number;
     name: string;
     email: string;
+    image: string | null;
     midtermGrade: string;
     finalGrade: string;
     totalGrade: string;
@@ -78,6 +80,7 @@ function AddStudent({
                         ...student,
                         midtermGrade: '',
                         finalGrade: '',
+                        image: student.image,
                         totalGrade: '',
                         status: 'Đã đăng ký',
                         notes: ''
@@ -166,9 +169,22 @@ function AddStudent({
                                                             setStudents(undefined);
                                                         }}
                                                     >
-                                                        <div className="text-left">
-                                                            <h3>{student.name}</h3>
-                                                            <p className="text-gray-500 text-sm">{student.email}</p>
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                                                {student.image ? (
+                                                                    <img 
+                                                                        src={student.image} 
+                                                                        alt={student.name} 
+                                                                        className="w-full h-full object-cover"
+                                                                    />
+                                                                ) : (
+                                                                    <PersonIcon className="text-gray-500" />
+                                                                )}
+                                                            </div>
+                                                            <div className="text-left">
+                                                                <h3>{student.name}</h3>
+                                                                <p className="text-gray-500 text-sm">{student.email}</p>
+                                                            </div>
                                                         </div>
                                                     </button>
                                                 </li>
@@ -191,9 +207,22 @@ function AddStudent({
                             {addStudents.map(student => (
                                 <li key={student.id} className='w-full'>
                                     <div className="flex items-center justify-between p-2 cursor-pointer">
-                                        <div className="text-left">
-                                            <h3>{student.name}</h3>
-                                            <p className="text-gray-500 text-sm">{student.email}</p>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                                {student.image ? (
+                                                    <img 
+                                                        src={student.image} 
+                                                        alt={student.name} 
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <PersonIcon className="text-gray-500" />
+                                                )}
+                                            </div>
+                                            <div className="text-left">
+                                                <h3>{student.name}</h3>
+                                                <p className="text-gray-500 text-sm">{student.email}</p>
+                                            </div>
                                         </div>
                                         <button className="p-2"
                                             onClick={() => {

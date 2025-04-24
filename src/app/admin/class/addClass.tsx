@@ -227,7 +227,7 @@ function AddClass({
                         <span>Tạo lớp học</span>
                     </button>
                     <button 
-                        className='bg-[var(--color-danger)] text-white py-2 px-6 rounded-lg hover:bg-[var(--color-danger-hover)] active:bg-[var(--color-danger-active)] flex items-center gap-2 transition-colors duration-200' 
+                        className='bg-red-600  text-white py-2 px-6 rounded-lg hover:bg-red-700  active:bg-red-800 flex items-center gap-2 transition-colors duration-200' 
                         onClick={() => setShowModal(false)}
                     >
                         <CancelIcon fontSize="small" />

@@ -119,25 +119,24 @@ function AddClassManager({
             onClose={() => setShowModal(false)}
             className="flex items-center justify-center"
         >
-            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] h-[70%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg border border-(--border-color)'>
-                <div className='relative w-full flex items-center justify-center mb-2'>
-                    <FontAwesomeIcon icon={faUsers} className="text-(--color-text) mr-2 text-xl" />
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Thêm lớp quản lý</h2>
-                    <button className='absolute right-0 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center text-lg active:scale-90 transition-transform duration-200 text-(--color-text) hover:text-(--color-text-hover) hover:bg-gray-200'
+            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] h-[70%] w-[99%] flex flex-col bg-white rounded-xl shadow-2xl border border-(--border-color) overflow-hidden'>
+                <div className='bg-[var(--color-text)] text-white p-5 relative'>
+                    <h2 className='text-2xl font-semibold text-center'>Thêm lớp quản lý</h2>
+                    <button className='absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:bg-[var(--color-text-hover)] p-1 rounded-full transition-all duration-200'
                         onClick={() => {
                             setShowModal(false);
                         }}>
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-                <hr className='my-3 border-(--border-color)' />
+                
 
-                <div className="w-full flex justify-center flex-1">
+                <div className="p-6  flex flex-col flex-1 items-center justify-center">
                     <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8 flex flex-col flex-1">
                         <div className="flex flex-col relative mb-5">
                             <div className="flex items-center mb-1">
                                 <FontAwesomeIcon icon={faInfoCircle} className="text-(--color-text) mr-2" />
-                                <label htmlFor="name" className="text-(--color-text) font-medium">Tên lớp quản lý (<span className='text-red-500'>*</span>)</label>
+                                <label htmlFor="name" className="text-(--color-text) font-medium">Tên lớp quản lý <span className='text-red-500'>*</span></label>
                             </div>
                             <div className="relative">
                                 <input
@@ -233,7 +232,7 @@ function AddClassManager({
                             </p>
                         )}
 
-                        <div className='flex items-center justify-center mt-auto'>
+                        <div className='flex items-center justify-center mt-auto gap-4'>
                             <button
                                 onClick={handleOnSubmit}
                                 disabled={!classManagerName}
@@ -241,6 +240,12 @@ function AddClassManager({
                                 className="btn-text text-white py-2.5 px-8 rounded-lg focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
                                 <FontAwesomeIcon icon={faPlus} className="mr-2" />
                                 Tạo lớp quản lý
+                            </button>
+                            <button 
+                                onClick={() => setShowModal(false)}
+                                className="bg-red-700 text-white py-2.5 px-8 rounded-lg hover:bg-red-800 active:bg-red-900 focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
+                                <FontAwesomeIcon icon={faXmark} className="mr-2" />
+                                Hủy
                             </button>
                         </div>
                     </form>

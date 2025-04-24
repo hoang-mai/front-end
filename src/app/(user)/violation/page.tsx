@@ -1,76 +1,104 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SelectComponent from '@/app/Components/select';
-interface PerformanceEvent {
-  name: string;
-  term: string;
-  code: string;
-  subject: string;
-  credits: number;
-  time: string;
-  room: string;
-  score: string;
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import LoaderTable from "@/app/Components/Loader/loaderTable";
+import { get } from "@/app/Services/callApi";
+import { toast } from "react-toastify";
+import { studentViolations } from '@/app/Services/api';
+import TableComponent from '@/app/Components/table';
+import ViolationDetail from './violationDetail';
+
+interface Violation extends Record<string, unknown> {
+  id: number;
+  recordedAt: Date;
+  managerId: number;
+  violationName: string;
+  violationDate: Date;
+  isEditable: boolean;
+  updatedAt: Date;
+  managerName: string;
+
 }
 
-const performanceData: PerformanceEvent[] = [
-  { name: '1', term: '2024A', code: 'CS101', subject: 'Math', credits: 3, time: '10:00', room: '101', score: 'A' },
-  // Add more data as needed
+function convertDataToViolation(data: any): Violation {
+  return {
+    id: data.id,
+    managerId: data.manager_id,
+    violationName: data.violation_name,
+    violationDate: new Date(data.violation_date),
+    recordedAt: new Date(data.recorded_at),
+    updatedAt: new Date(data.updated_at),
+    managerName: data.manager_name,
+    isEditable: data.is_editable,
+  }
+}
+
+const formatDate = (date: Date): string => {
+  return date.toLocaleDateString('vi-VN');
+};
+
+interface HeadCell {
+  id: keyof Violation;
+  label: string;
+}
+const headCells: HeadCell[] = [
+  { id: 'violationName', label: 'Tên vi phạm' },
+  { id: 'violationDate', label: 'Ngày vi phạm' },
+  { id: 'recordedAt', label: 'Ngày ghi nhận' },
+  { id: 'managerName', label: 'Người ghi nhận' },
 ];
 
-const results: { [key: string]: string } = {
-  '1': 'A',
-  // Add more results as needed
-};
-
-const evaluatePerformance = (event: PerformanceEvent, result: string): string => {
-  // Implement your evaluation logic here
-  return result;
-};
-
 const Violation = () => {
-  const [selectedCount, setSelectedCount] = useState<string>('5')
-  const [selectedTerm, setSelectedTerm] = useState<string>('Tất cả')
+  const [violations, setViolations] = useState<Violation[]>([]);
+  const [search, setSearch] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [studentDetail, setStudentDetail] = useState<any>(null);
+
+  const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  }
+
+  useEffect(() => {
+
+    get(studentViolations)
+      .then((res) => {
+
+        setViolations(res.data.data.map((violation: any) => convertDataToViolation(violation)));
+      })
+      .catch((res) => {
+
+        toast.error(res.data?.message || 'Không thể tải dữ liệu vi phạm');
+        setError(res.data?.message || 'Đã xảy ra lỗi khi tải dữ liệu vi phạm');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+
+  if (error) {
+    return <div className='text-red-500'>{error}</div>
+  }
+
   return (
-    <div className='md:p-4 pt-4 flex w-full justify-center items-center'>
-      <div className='md:w-[90%] w-full bg-white rounded-lg shadow-md p-4 flex flex-col gap-4 justify-center items-center'>
-        <h1 className=' font-bold text-2xl text-center text-(--color-text)'>Kết quả học tập</h1>
-        <div className='flex w-full justify-between gap-4'>
-          <SelectComponent width='w-[70px]' options={['5', '10', '20']} defaultOption='5' opacity={false} selected={selectedCount} setSelected={setSelectedCount} />
-          <SelectComponent width='w-[90px]' options={['Tất cả', 'Tuần 1', 'Tuần 2', 'Tuần 2']} defaultOption='Tất cả' opacity={false} selected={selectedTerm} setSelected={setSelectedTerm} />
-        </div>
-        <table className=' w-full border border-(--border-color) border-separate border-spacing-0 rounded-lg'>
-          <thead>
-            <tr >
-              <th className='rounded-tl-lg border-(--border-color)   lg:p-4 md:p-2 bg-gradient-to-r from-green-100 to-gray-100 '>STT</th>
-              <th className='border-l border-(--border-color)  lg:p-4 md:p-2 bg-gradient-to-r from-green-100 to-gray-100 '>Ngày</th>
-              <th className='border-l border-(--border-color)  lg:p-4 md:p-2 bg-gradient-to-r from-green-100 to-gray-100 '>Tên học viên</th>
-              <th className='border-l border-(--border-color)  lg:p-4 md:p-2 bg-gradient-to-r from-green-100 to-gray-100 '>Cấp bậc</th>
-              <th className='border-l border-(--border-color)  lg:p-4 md:p-2 bg-gradient-to-r from-green-100 to-gray-100 '>Chức vụ</th>
-              <th className='border-l border-(--border-color) rounded-tr-lg  lg:p-4 md:p-2 bg-gradient-to-r from-green-100 to-gray-100 '>Lỗi vi phạm</th>
-            </tr>
-          </thead>
-          <tbody>
-            {performanceData.map((event) => (
-              <tr key={event.name} className='text-center'>
-                <td className='border-t border-(--border-color) lg:p-4 md:p-2 '>{event.name}</td>
-                <td className='border-t border-l border-(--border-color) lg:p-4 md:p-2 '>{event.name}</td>
-                <td className='border-t border-l border-(--border-color) lg:p-4 md:p-2 '>
-                  <p>{event.name}</p>
-                </td>
-                <td className='border-t border-l border-(--border-color) lg:p-4 md:p-2  font-bold'>
-                  {results[event.name] !== undefined ? evaluatePerformance(event, results[event.name]) : '-'}
-                </td>
-                <td className='border-t border-l border-(--border-color) lg:p-4 md:p-2  font-bold'>
-                  {results[event.name] !== undefined ? evaluatePerformance(event, results[event.name]) : '-'}
-                </td>
-                <td className='border-t border-l border-(--border-color) lg:p-4 md:p-2   font-bold'>
-                  {results[event.name] !== undefined ? evaluatePerformance(event, results[event.name]) : '-'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
+      <h1 className='font-bold text-2xl text-center text-(--color-text) mb-10'>Vi phạm</h1>
+      <div className='relative'>
+        <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
+        <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
       </div>
+      {loading ? (
+        <LoaderTable />
+      ) : (
+        <>
+          <TableComponent actionCell={false} index={true} dataCells={violations} headCells={headCells} search={search} onRowClick={(id) => { setShowModal(true); setStudentDetail(violations.find(violation => violation.id === id)); }} />
+          {showModal && studentDetail && <ViolationDetail showModal={showModal} setShowModal={setShowModal} violation={studentDetail} />}
+        </>
+      )}
     </div>
   );
 };

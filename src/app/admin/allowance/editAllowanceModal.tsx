@@ -7,25 +7,20 @@ import { toast } from 'react-toastify';
 import { put } from '@/app/Services/callApi';
 import { adminAllowances } from '@/app/Services/api';
 import SelectComponent from '@/app/Components/select';
+import PersonIcon from '@mui/icons-material/Person';
 
 interface AllowanceStudent extends Record<string, unknown> {
     id: number;
     userId: number;
-    month: string;
-    year: number;
-    amount: string;
-    received: string;
-    receivedAt: Date | null;
-    notes: string;
-    createdAt: Date;
-    updatedAt: Date;
-    studentId: number;
-    studentName: string;
-    studentEmail: string;
-    studentEmailVerifiedAt: string | null;
-    studentCreatedAt: Date | null;
-    studentUpdatedAt: Date | null;
-    studentRole: 'student';
+    name: string;
+    email: string;
+    image: string | null;
+    allowanceMonth: string;
+    allowanceYear: number;
+    allowanceAmount: string;
+    allowanceNotes: string;
+    allowanceCreatedAt: Date;
+
 }
 
 interface EditAllowanceModalProps {
@@ -41,10 +36,10 @@ function EditAllowanceModal({
     setShowEdit,
     setDatas,
 }: EditAllowanceModalProps) {
-    const [amount, setAmount] = useState<string>(data.amount.replace(/\./g, '').replace(',', '.'));
-    const [notes, setNotes] = useState<string>(data.notes);
-    const [month, setMonth] = useState<string>(data.month.split('/')[0]);
-    const [year, setYear] = useState<string>(data.year.toString());
+    const [amount, setAmount] = useState<string>(data.allowanceAmount.replace(/\./g, '').replace(',', '.'));
+    const [notes, setNotes] = useState<string>(data.allowanceNotes);
+    const [month, setMonth] = useState<string>(data.allowanceMonth.split('/')[0]);
+    const [year, setYear] = useState<string>(data.allowanceYear.toString());
     const [error, setError] = useState<string>('');
     const [errorMonth, setErrorMonth] = useState<string>('');
     const [errorYear, setErrorYear] = useState<string>('');
@@ -145,19 +140,22 @@ function EditAllowanceModal({
         ).then((res) => {
             const displayAmount = formatAmountForDisplay(apiAmount);
 
-            setDatas?.((prev) => prev.map((allowance) =>
-                allowance.id === data.id
-                    ? {
-                        ...allowance,
-                        amount: displayAmount,
-                        notes: notes,
-                        received: received ? 'Đã nhận' : 'Chưa nhận',
-                        receivedAt: received ? new Date() : null,
-                        month: `${month}/${year}`,
-                        year: parseInt(year),
-                    }
-                    : allowance
-            ));
+            setDatas?.((prev) =>
+                prev
+                    .filter((allowance) => allowance.id !== data.id || !received) // nếu received = true → loại
+                    .map((allowance) =>
+                        allowance.id === data.id
+                            ? {
+                                ...allowance,
+                                allowanceAmount: displayAmount,
+                                allowanceNotes: notes,
+                                allowanceMonth: `${month}/${year}`,
+                                allowanceYear: parseInt(year),
+                            }
+                            : allowance
+                    )
+            );
+
             setShowEdit(false);
         }).catch((err) => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
@@ -186,7 +184,7 @@ function EditAllowanceModal({
         >
             <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] w-[95%] max-h-[95%] bg-white rounded-2xl shadow-2xl overflow-hidden'>
                 <div className='bg-[color:var(--background-button)] p-4 relative'>
-                    <button 
+                    <button
                         className='absolute right-5 top-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200'
                         onClick={() => setShowEdit(false)}
                     >
@@ -201,14 +199,21 @@ function EditAllowanceModal({
                             <FontAwesomeIcon icon={faInfoCircle} className="mr-2 text-[color:var(--color-text)]" />
                             Thông tin học viên
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="flex flex-col">
-                                <span className="text-sm text-gray-500">Tên học viên</span>
-                                <span className="font-medium text-gray-800">{data.studentName}</span>
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                {data.image ? (
+                                    <img
+                                        src={data.image}
+                                        alt={data.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <PersonIcon className="text-gray-500" />
+                                )}
                             </div>
-                            <div className="flex flex-col">
-                                <span className="text-sm text-gray-500">Email</span>
-                                <span className="font-medium text-gray-800">{data.studentEmail}</span>
+                            <div className="text-left">
+                                <h3>{data.name}</h3>
+                                <p className="text-gray-500 text-sm">{data.email}</p>
                             </div>
                         </div>
                     </div>
@@ -291,9 +296,7 @@ function EditAllowanceModal({
                                     defaultOption={defaultReceivedOption}
                                     width="w-full"
                                 />
-                                <p className="text-xs text-gray-500 mt-1">
-                                    {data.receivedAt ? `Đã nhận vào: ${new Date(data.receivedAt).toLocaleDateString('vi-VN')}` : 'Chưa nhận'}
-                                </p>
+
                             </div>
 
                             <div className="form-group">
@@ -320,14 +323,6 @@ function EditAllowanceModal({
                         )}
 
                         <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 mt-6 items-center justify-center" >
-                            <button 
-                                type="button"
-                                onClick={() => setShowEdit(false)} 
-                                className="inline-flex justify-center items-center px-4 py-2.5 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[color:var(--border-color-focus)] transition-all duration-200"
-                            >
-                                <FontAwesomeIcon icon={faTimes} className="mr-2" />
-                                Hủy
-                            </button>
                             <button
                                 type="submit"
                                 disabled={month === '' || year === '' || amount === '' || errorMonth !== '' || errorYear !== '' || errorAmount !== '' || year.length < 4}
@@ -337,6 +332,13 @@ function EditAllowanceModal({
                                 <FontAwesomeIcon icon={faSave} className="mr-2" />
                                 Cập nhật trợ cấp
                             </button>
+                            <button
+                                onClick={() => setShowEdit(false)}
+                                className="bg-red-700 text-white py-2.5 px-8 rounded-lg hover:bg-red-800 active:bg-red-900 focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
+                                <FontAwesomeIcon icon={faXmark} className="mr-2" />
+                                Hủy
+                            </button>
+
                         </div>
                     </form>
                 </div>

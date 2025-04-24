@@ -4,13 +4,14 @@ import { faHome, faSignOut, faExclamation } from '@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { post } from '@/app/Services/callApi';
 import { logout } from '@/app/Services/api';
 import { toast } from 'react-toastify';
-
+import PersonIcon from '@mui/icons-material/Person';
 const LeftSidebar = () => {
     const router = useRouter();
+    const [image, setImage] = useState<string | null>(null);
     const pathname = usePathname();
     const handleLogout = () => {
         toast.promise(
@@ -25,7 +26,12 @@ const LeftSidebar = () => {
             router.push("/login");
         })
     }
-    
+    useEffect(() => {
+        const storedImage = localStorage.getItem("image");
+        if (storedImage && storedImage !== "null") {
+            setImage(storedImage);
+        }
+    }, []);
     return (
         <aside className={` lg:w-64 md:w-48 bg-gray-100 flex flex-col justify-between border-r border-(--border-color) shadow-2xl`}>
             <div>
@@ -88,8 +94,16 @@ const LeftSidebar = () => {
                 <hr className="mx-4 border border-gray-400" />
                 <Link href="/manager/profile" >
                     <div className={`m-2 p-2 cursor-pointer flex items-center ${pathname === '/manager/profile' ? "shadow rounded-lg shadow-gray-300" : ""} transition-all duration-300 active:scale-95`}>
-                        <div className='relative flex items-center justify-center w-8 h-8'>
-                            <Image fill src="/avatarDefault.svg" alt="profile" className="rounded-full border border-(--border-color)" />
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                            {image ? (
+                                <img
+                                    src={image}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <PersonIcon className="text-gray-500" />
+                            )}
                         </div>
                         <span className="ml-2">Cá nhân</span>
                     </div>

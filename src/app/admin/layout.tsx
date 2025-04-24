@@ -1,5 +1,12 @@
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Quản lý học kỳ",
+  description: "Quản lý học kỳ",
+}
+
 export default function DashboardLayout({
   children,
 }: Readonly<{

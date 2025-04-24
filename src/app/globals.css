@@ -27,7 +27,6 @@ body {
 }
 .btn-text{
   background-color: var(--background-button);
-
 }
 .btn-text:hover{
   background-color: var(--background-button-hover);

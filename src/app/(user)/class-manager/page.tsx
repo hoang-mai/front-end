@@ -5,7 +5,7 @@ import LoaderTable from "@/app/Components/Loader/loaderTable";
 import TableComponent from "@/app/Components/table";
 import { studentClass, studentClassmates } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -186,34 +186,54 @@ function ClassManager() {
                     <div className='w-full flex justify-center items-center'>
                         <h1 className='text-2xl font-bold mb-6 text-center text-(--color-text)'>Lớp quản lý: {studentData?.class.name}</h1>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 xl:gap-x-90 lg:gap-x-50">
-                        <p>Tên quản lý: {studentData?.class.manager.name ?? 'Chưa cập nhật'}</p>
-                        <p>Email: {studentData?.class.manager.email ?? 'Chưa cập nhật'}</p>
-                        <p>Tên lớp trưởng: {studentData?.monitor.name ?? 'Chưa cập nhật'}</p>
-                        <p>Email lớp trưởng: {studentData?.monitor.email ?? 'Chưa cập nhật'}</p>
-                        {studentData?.viceMonitors && (
-                            <>
-                                
-                                {studentData.viceMonitors.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Manager Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-blue-500">
+                            <h2 className="text-lg font-semibold mb-3 text-blue-600">Quản lý lớp</h2>
+                            <div className="space-y-2">
+                                <p><span className="font-medium">Tên:</span> {studentData?.class.manager.name ?? 'Chưa cập nhật'}</p>
+                                <p><span className="font-medium">Email:</span> {studentData?.class.manager.email ?? 'Chưa cập nhật'}</p>
+                            </div>
+                        </div>
+
+                        {/* Monitor Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-green-500">
+                            <h2 className="text-lg font-semibold mb-3 text-green-600">Lớp trưởng</h2>
+                            <div className="space-y-2">
+                                <p><span className="font-medium">Tên:</span> {studentData?.monitor.name ?? 'Chưa cập nhật'}</p>
+                                <p><span className="font-medium">Email:</span> {studentData?.monitor.email ?? 'Chưa cập nhật'}</p>
+                            </div>
+                        </div>
+
+                        {/* Vice Monitor Card */}
+                        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-purple-500">
+                            <h2 className="text-lg font-semibold mb-3 text-purple-600">Lớp phó</h2>
+                            <div className="space-y-2">
+                                {studentData?.viceMonitors && studentData.viceMonitors.length > 0 ? (
                                     studentData.viceMonitors.map((vm, index) => (
-                                        <>
-                                            <p>Tên lớp phó: {vm.name}</p>
-                                            <p>Email lớp phó: {vm.email}</p>
-                                        </>
+                                        <div key={vm.id} className={index > 0 ? "mt-3 pt-3 border-t border-gray-100" : ""}>
+                                            <p><span className="font-medium">Tên:</span> {vm.name}</p>
+                                            <p><span className="font-medium">Email:</span> {vm.email}</p>
+                                        </div>
                                     ))
                                 ) : (
                                     <p>Không có lớp phó</p>
                                 )}
-                            </>
-                        )}
-
-                        <p>Số lượng học viên: {studentData?.classmatesCount}</p>
-                        <p>Ngày tạo: {studentData?.class.createdAt.toLocaleDateString("vi-VN")}</p>
-                        <p>Ngày cập nhật: {studentData?.class.updatedAt.toLocaleDateString("vi-VN")}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div className='relative'>
-                        <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
-                        <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='xl:w-auto lg:w-30 shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
+
+                    
+
+                    <div className="flex flex-row justify-between items-center mt-6 gap-4">
+                        <div className='relative '>
+                            <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
+                            <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='xl:w-auto lg:w-30 shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <FontAwesomeIcon icon={faUsers} className="text-(--color-text) " />
+                            <p className="font-bold text-(--color-text)"><span>{studentData?.classmatesCount} học viên</span></p>
+                        </div>
                     </div>
                     {loadingClassmates ? <LoaderTable /> :
 

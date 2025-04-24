@@ -12,6 +12,7 @@ interface DatePickerComponentProps {
     mdWidth?: string;
     smWidth?: string;
     xsWidth?: string;
+    
 }
 
 const DatePickerComponent: FC<DatePickerComponentProps> = ({ value, onChange, lgWidth, mdWidth,smWidth,xsWidth }) => {

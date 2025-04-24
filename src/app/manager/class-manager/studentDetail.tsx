@@ -30,7 +30,7 @@ function StudentDetail({
     setShowStudentDetail
 }: StudentDetailProps) {
     const [statusColor, setStatusColor] = useState(
-        student?.status === 'Hoạt động' ? 'text-green-500' : 'text-yellow-500'
+        student?.status === 'Đang học' ? 'text-green-500' : 'text-yellow-500'
     );
 
     const formatDate = (date: Date | null | undefined) => {

@@ -1,13 +1,16 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Dispatch, SetStateAction, useState } from "react";
+'use client'
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark, faSave, faStickyNote, faCalendar, faUser, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { Dispatch, SetStateAction, useState, useEffect } from "react";
 import DatePickerComponent from "@/app/Components/datePicker";
 import { toast } from "react-toastify";
 import { put } from "@/app/Services/callApi";
 import { managerViolations } from "@/app/Services/api";
-interface Violation extends Record<string, any> {
+import PersonIcon from '@mui/icons-material/Person';
+
+interface Violation {
     id: number;
     studentId: number;
     managerId: number;
@@ -18,125 +21,189 @@ interface Violation extends Record<string, any> {
     isEditable: boolean;
     managerName: string;
     managerEmail: string;
+    studentName: string;
+    studentEmail: string;
+    studentImage: string | null;
 }
+
 interface EditViolationModalProps {
     data: Violation;
     showEdit: boolean;
     setDatas?: Dispatch<SetStateAction<Violation[]>>;
-    setData?: Dispatch<SetStateAction<Violation>>;
     setShowEdit: (show: boolean) => void;
 }
 
-function EditViolationModal({ data, showEdit, setDatas, setData, setShowEdit }: EditViolationModalProps) {
+function EditViolationModal({ data, showEdit, setDatas, setShowEdit }: EditViolationModalProps) {
     const [violationName, setViolationName] = useState<string>(data.violationName);
-    const [violationDate, setViolationDate] = useState<Date | null>(data.violationDate);
+    const [violationDate, setViolationDate] = useState<Date | null>(new Date(data.violationDate));
+    const [errorDate, setErrorDate] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const [errorViolationDate, setErrorViolationDate] = useState<string>('');
-    const handleOnChangeViolationDate = (date: Date) => {
+
+
+
+    const handleDateChange = (date: Date) => {
         if (date > new Date()) {
-            setErrorViolationDate('Ngày vi phạm không được sau ngày hiện tại!');
-            setViolationDate(null);
+            setErrorDate("Ngày vi phạm không được lớn hơn ngày hiện tại!");
             return;
         }
-
-        setErrorViolationDate('');
+        setErrorDate("");
         setViolationDate(date);
-    }
-    const handleOnChangeViolationName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setViolationName(e.target.value);
-    }
+        
+    };
 
-    const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-                e.preventDefault();
-                toast.promise(put(managerViolations + '/' + data.id, {
-                    
-                    violation_name: violationName,
-                    violation_date: violationDate,
-                }), {
-                    pending: "Đang xử lý...",
-                    success: "Cập nhật vi phạm thành công",
-                    error: "Cập nhật vi phạm thất bại",
-                }).then((res) => {
-                    setDatas?.((prev) => prev.map((item) => 
-                            item.id === data.id ? {
-                                    ...item,
-                                    violationName: violationName,
-                                    violationDate: violationDate ?? item.violationDate,
-                                    updatedAt: new Date(res.data.data.updated_at),
-                                }
-                            : item
-                    ));
-                    setShowEdit(false);
-                }).catch((err) => {
-                    const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-                    setError(firstValue);
-                });
+    const handleViolationNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setViolationName(e.target.value);
+        
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        toast.promise(
+            put(`${managerViolations}/${data.id}`, {
+                violation_name: violationName,
+                violation_date: violationDate,
+            }), {
+            pending: "Đang xử lý...",
+            success: "Cập nhật vi phạm thành công",
+            error: "Cập nhật vi phạm thất bại",
+        }
+        ).then((res) => {
+            if (setDatas) {
+                setDatas((prev) => prev.map((item) =>
+                    item.id === data.id ? {
+                        ...item,
+                        violationName: violationName,
+                        violationDate: violationDate ?? item.violationDate,
+                        updatedAt: new Date(res.data.data.updated_at),
+                    } : item
+                ));
             }
+        
+
+            setShowEdit(false);
+        }).catch((err) => {
+            
+                const firstValue = Object.values(err.errors as Record<string, string[]>)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+        });
+    };
+
     return (
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center "
+            className="flex items-center justify-center"
         >
-            <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%] h-[65%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
-                <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa vi phạm</h2>
-                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
-                        onClick={() => {
-                            setShowEdit(false);
-                        }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+            <Box className="w-full max-w-xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
+                <div className="bg-[color:var(--background-button)] p-4 relative">
+                    <button
+                        className="absolute right-4 top-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200"
+                        onClick={() => setShowEdit(false)}
+                        aria-label="Đóng"
+                    >
+                        <FontAwesomeIcon icon={faXmark} />
                     </button>
-                    <hr className='my-2' />
+                    <h2 className="text-center text-xl font-bold text-white">Chỉnh sửa vi phạm</h2>
                 </div>
-                <form action="" className=" space-y-4 flex-1 w-full" >
-                        <div className="flex flex-row  ">
-                            <label htmlFor="name" className="w-1/3 text-left pr-4 ">Mã học viên:</label>
-                            <div className="flex flex-row w-2/3">
-                                <p>{data?.studentId}</p>
+
+                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                    {/* Student Info Section */}
+                    <div className="space-y-3">
+                        <label className="block text-sm font-medium text-gray-700">
+                            Học viên
+                        </label>
+                        <div className="bg-green-50 rounded-lg p-4 flex items-center gap-4 border border-green-200">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                {data.studentImage ? (
+                                    <img
+                                        src={data.studentImage}
+                                        alt={data.studentName}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <PersonIcon className="text-gray-500" />
+                                )}
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="font-medium">{data.studentName}</h3>
+                                <p className="text-gray-600 text-sm">{data.studentEmail}</p>
                             </div>
                         </div>
-                        <div className="flex flex-row ">
-                            <label htmlFor="email" className="w-1/3 text-left pr-4 ">Tên quản lý: </label>
-                            <div className="flex flex-row w-2/3">
-                                <p>{data?.managerName}</p>
+                    </div>
+
+                    {/* Manager Info Section */}
+                    <div className="space-y-3">
+                        <label className="block text-sm font-medium text-gray-700">
+                            Người quản lý
+                        </label>
+                        <div className="bg-green-50 rounded-lg p-4 flex items-center gap-4 border border-green-200">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                <FontAwesomeIcon icon={faUserTie} className="text-gray-500" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="font-medium">{data.managerName}</h3>
+                                <p className="text-gray-600 text-sm">{data.managerEmail}</p>
                             </div>
                         </div>
-                        <div className="flex flex-row ">
-                            <label htmlFor="email" className="w-1/3 text-left pr-4 ">Email quản lý: </label>
-                            <div className="flex flex-row w-2/3">
-                                <p>{data?.managerEmail}</p>
+                    </div>
+
+                    {/* Violation Name Field */}
+                    <div className="space-y-2">
+                        <label htmlFor="violationName" className="block text-sm font-medium text-gray-700">
+                            Tên vi phạm <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <FontAwesomeIcon icon={faStickyNote} className="text-gray-400" />
                             </div>
+                            <input
+                                id="violationName"
+                                name="violationName"
+                                placeholder="Nhập tên vi phạm"
+                                type="text"
+                                value={violationName}
+                                onChange={handleViolationNameChange}
+                                className={`appearance-none block w-full pl-10 py-2.5 border border-[color:var(--border-color)] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200`}
+                            />
                         </div>
-                        <div className="flex flex-row ">
-                            <label htmlFor="violationName" className="w-1/3 text-left pr-4 ">Tên vi phạm:</label>
-                            <div className="flex flex-col w-2/3">
-                                <input
-                                    placeholder="Tên vi phạm"
-                                    type="text"
-                                    id="violationName"
-                                    value={violationName}
-                                    onChange={handleOnChangeViolationName}
-                                    className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex flex-row ">
-                            <label htmlFor="violationDate" className="w-1/3 text-left pr-4 ">Ngày vi phạm:</label>
-                            <div className="flex flex-col w-2/3">
-                                <DatePickerComponent value={violationDate} onChange={handleOnChangeViolationDate} />
-                                <p className='h-5 text-red-500 text-sm'>{errorViolationDate}</p>
-                            </div>
-                        </div>
-                        <p className='h-5 text-red-500 text-sm my-2 '>{error}</p>
-                    <div className='flex items-center justify-center'>
+                        
+                    </div>
+
+                    {/* Violation Date Field */}
+                    <div className="space-y-2 flex flex-col ">
+                        <label htmlFor="violationDate" className="block text-sm font-medium text-gray-700">
+                            Ngày vi phạm <span className="text-red-500">*</span>
+                        </label>
+                        
+                            <DatePickerComponent
+                                value={violationDate}
+                                onChange={handleDateChange}
+                                lgWidth="w-full"
+                            />
+                        
+                        
+                            <p className="h-5 text-sm text-red-600">{error || errorDate}</p>
+
+                    </div>
+
+                   
+                    {/* Action buttons */}
+                    <div className="pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-3 items-center justify-center">
                         <button
-                            onClick={handleOnSubmit}
-                            disabled={ !violationName || !violationDate}
+                            disabled={!violationDate || !!errorDate}
                             type="submit"
-                            className="btn-text bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Cập nhật vi phạm
+                            className="inline-flex justify-center items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-green-600 hover:bg-green-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
+                        >
+                            <FontAwesomeIcon icon={faSave} className="mr-2" />
+                            Cập nhật
                         </button>
+                        <button
+                                onClick={() => setShowEdit(false)}
+                                className="bg-red-700 text-white py-2.5 px-8 rounded-lg hover:bg-red-800 active:bg-red-900 focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
+                                <FontAwesomeIcon icon={faXmark} className="mr-2" />
+                                Hủy
+                            </button>
                     </div>
                 </form>
             </Box>

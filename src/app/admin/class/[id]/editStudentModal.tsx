@@ -1,17 +1,20 @@
+'use client'
 import { Dispatch, SetStateAction, useState } from "react";
 import { Box, Modal } from "@mui/material";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { put } from "@/app/Services/callApi";
 import { useParams } from "next/navigation";
 import { course } from "@/app/Services/api";
+import PersonIcon from '@mui/icons-material/Person';
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark, faUser, faEnvelope, faGraduationCap, faPenToSquare, faClipboard, faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 interface Student extends Record<string, unknown> {
     id: number;
     name: string;
     email: string;
+    image: string | null;
     midtermGrade: string;
     finalGrade: string;
     totalGrade: string;
@@ -39,6 +42,7 @@ function EditStudentModal({
     const [errorMidtermGrade, setErrorMidtermGrade] = useState<string>('');
     const [errorFinalGrade, setErrorFinalGrade] = useState<string>('');
     const [error, setError] = useState<string>('');
+
     const handelOnChangeMidtermGrade = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.trim();
         if (value === '') {
@@ -51,10 +55,11 @@ function EditStudentModal({
             setErrorMidtermGrade('Chỉ nhập số từ 0-10, tối đa 2 chữ số thập phân');
             return;
         }
-        
+
         setErrorMidtermGrade('');
         setMidtermGrade(value);
     }
+
     const handelOnChangeFinalGrade = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.trim();
         if (value === '') {
@@ -70,15 +75,16 @@ function EditStudentModal({
         setErrorFinalGrade('');
         setFinalGrade(value);
     }
-    const handleOnChangeNotes = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const handleOnChangeNotes = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setNotes(e.target.value);
     }
-    const handleOnSubmit = () => {
 
+    const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         toast.promise(
             put(course + '/' + params.id + '/students/' + data.id + '/grade', {
                 midterm_grade: midtermGrade,
-
                 final_grade: finalGrade,
                 notes: notes
             }), {
@@ -105,91 +111,156 @@ function EditStudentModal({
                 };
             }));
             setShowEdit(false);
-        }
-        ).catch((err) => {
+        }).catch((err) => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
             setError(firstValue);
-        }
-
-        )
+        });
     }
+
     return (
         <Modal
             open={showEdit}
             onClose={() => setShowEdit(false)}
-            className="flex items-center justify-center "
+            className="flex items-center justify-center"
         >
-            <Box className='xl:w-[60%] lg:w-[70%] md:w-[90%]  h-[80%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
-                <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Chỉnh sửa điểm</h2>
-                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
-                        onClick={() => {
-                            setShowEdit(false);
-                        }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] w-[95%] max-h-[95%] bg-white rounded-2xl shadow-2xl overflow-hidden'>
+                <div className='bg-[color:var(--background-button)] p-4 relative'>
+                    <button
+                        className='absolute right-5 top-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200'
+                        onClick={() => setShowEdit(false)}
+                    >
+                        <FontAwesomeIcon icon={faXmark} />
                     </button>
-                    <hr className='my-2' />
+                    <h2 className='text-center text-2xl font-bold text-white'>Chỉnh sửa điểm</h2>
                 </div>
-                <form action="" className="space-y-4 flex-1">
-                    <div className="flex flex-row items-center ">
-                        <label htmlFor="name" className="w-1/3 text-left pr-4 ">Tên học viên</label>
-                        <div className="flex flex-col w-2/3">
-                            <p>{data.name}</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center">
-                        <label htmlFor="enrollLimit" className="w-1/3 text-left pr-4 ">Email</label>
-                        <div className="flex flex-col w-2/3">
-                            <p>{data.email}</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center">
-                        <label htmlFor="midtermWeight" className="w-1/3 text-left pr-4 relative bottom-2">Điểm giữa kỳ</label>
-                        <div className="flex flex-col w-2/3">
-                            <input
-                                placeholder="Điểm giữa kỳ"
-                                value={midtermGrade}
-                                onChange={handelOnChangeMidtermGrade}
-                                type="text"
-                                id="midtermWeight"
-                                className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                            <p className="h-5 text-red-500 text-sm">{errorMidtermGrade}</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center">
-                        <label htmlFor="midtermWeight" className="w-1/3 text-left pr-4 relative bottom-2">Điểm cuối kỳ</label>
-                        <div className="flex flex-col w-2/3">
-                            <input
-                                placeholder="Điểm cuối kỳ"
-                                value={finalGrade}
-                                onChange={handelOnChangeFinalGrade}
-                                type="text"
-                                id="midtermWeight"
-                                className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                            <p className="h-5 text-red-500 text-sm">{errorFinalGrade}</p>
-                        </div>
-                    </div>
-                    <div className="flex flex-row items-center">
-                        <label htmlFor="midtermWeight" className="w-1/3 text-left pr-4 relative bottom-2">Ghi chú</label>
-                        <div className="flex flex-col w-2/3">
-                            <input
-                                placeholder="Ghi chú"
-                                value={notes}
-                                onChange={handleOnChangeNotes}
-                                type="text"
-                                id="midtermWeight"
-                                className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                            />
-                        </div>
-                    </div>
-                    <p className="h-5 text-red-500 text-sm my-2">{error}</p>
-                </form>
 
-                <div className='flex justify-center gap-4 w-full mt-4'>
-                    <button className='btn-text text-white w-20 h-10 rounded-lg' onClick={handleOnSubmit}>Lưu</button>
-                    <button className='bg-red-700 text-white w-20 h-10 rounded-lg hover:bg-red-800 active:bg-red-900' onClick={() => setShowEdit(false)}>Hủy</button>
+                <div className="p-6 overflow-y-auto max-h-[calc(100vh-100px)]">
+                    <div className="bg-green-50 rounded-xl p-4 mb-4">
+                        <h3 className='text-lg font-semibold text-[color:var(--color-text)] flex items-center mb-3'>
+                            <FontAwesomeIcon icon={faUser} className="mr-2 text-[color:var(--color-text)]" />
+                            Thông tin học viên
+                        </h3>
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                {data.image ? (
+                                    <img
+                                        src={data.image}
+                                        alt={data.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <PersonIcon className="text-gray-500" />
+                                )}
+                            </div>
+                            <div className="text-left">
+                                <h3>{data.name}</h3>
+                                <p className="text-gray-500 text-sm">{data.email}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="form-group">
+                                <label htmlFor="midtermGrade" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Điểm giữa kỳ <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <FontAwesomeIcon icon={faGraduationCap} className="text-gray-400" />
+                                    </div>
+                                    <input
+                                        placeholder="Điểm giữa kỳ"
+                                        value={midtermGrade}
+                                        onChange={handelOnChangeMidtermGrade}
+                                        type="text"
+                                        id="midtermGrade"
+                                        className="appearance-none block w-full pl-10 py-3 border border-[color:var(--border-color)] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--border-color-focus)] focus:border-transparent transition-all duration-200 hover:border-[color:var(--border-color-hover)]"
+                                    />
+                                </div>
+                                <p className="h-5 text-red-500 text-sm mt-1">{errorMidtermGrade}</p>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="finalGrade" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Điểm cuối kỳ <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <FontAwesomeIcon icon={faGraduationCap} className="text-gray-400" />
+                                    </div>
+                                    <input
+                                        placeholder="Điểm cuối kỳ"
+                                        value={finalGrade}
+                                        onChange={handelOnChangeFinalGrade}
+                                        type="text"
+                                        id="finalGrade"
+                                        className="appearance-none block w-full pl-10 py-3 border border-[color:var(--border-color)] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--border-color-focus)] focus:border-transparent transition-all duration-200 hover:border-[color:var(--border-color-hover)]"
+                                    />
+                                </div>
+                                <p className="h-5 text-red-500 text-sm mt-1">{errorFinalGrade}</p>
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="totalGrade" className="block text-sm font-medium text-gray-700 mb-1">
+                                Điểm tổng kết
+                            </label>
+                            <div className="relative">
+                                <div className="absolute top-4 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FontAwesomeIcon icon={faPenToSquare} className="text-gray-400" />
+                                </div>
+                                <div className="bg-gray-100 border rounded-lg w-full py-3 pl-10 px-4 text-gray-700">
+                                    {midtermGrade && finalGrade ?
+                                        (Number(midTermWeight) * Number(midtermGrade) + (1 - Number(midTermWeight)) * Number(finalGrade)).toFixed(2)
+                                        : "Chưa có điểm"}
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">Điểm tổng kết = {midTermWeight} × Điểm giữa kỳ + {(1 - Number(midTermWeight)).toFixed(2)} × Điểm cuối kỳ</p>
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+                                Ghi chú
+                            </label>
+                            <div className="relative">
+                                <div className="absolute top-3 left-3 pointer-events-none">
+                                    <FontAwesomeIcon icon={faClipboard} className="text-gray-400" />
+                                </div>
+                                <textarea
+                                    placeholder="Thêm ghi chú (nếu có)"
+                                    value={notes}
+                                    onChange={handleOnChangeNotes}
+                                    id="notes"
+                                    rows={4}
+                                    className="resize-none appearance-none block w-full pl-10 py-2 px-3 border border-[color:var(--border-color)] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--border-color-focus)] focus:border-transparent transition-all duration-200 hover:border-[color:var(--border-color-hover)]"
+                                >
+                                </textarea>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+                                <span className="block sm:inline">{error}</span>
+                            </div>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 mt-6 items-center justify-center">
+                            <button
+                                className="btn-text inline-flex justify-center items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white transition-all duration-200 w-full sm:w-auto"
+                                onClick={handleOnSubmit}
+                            >
+                                <FontAwesomeIcon icon={faSave} className="mr-2" />
+                                Lưu thay đổi
+                            </button>
+                            <button
+                                onClick={() => setShowEdit(false)}
+                                className="bg-red-700 text-white py-2.5 px-8 rounded-lg hover:bg-red-800 active:bg-red-900 focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
+                                <FontAwesomeIcon icon={faTimes} className="mr-2" />
+                                Hủy
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </Box>
         </Modal>

@@ -2,8 +2,6 @@
 import React, { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -18,6 +16,14 @@ import { styled } from '@mui/material/styles';
 import { put } from '@/app/Services/callApi';
 import { course } from '@/app/Services/api';
 import { toast } from 'react-toastify';
+
+// Import MUI icons
+import CloseIcon from '@mui/icons-material/Close';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import GradeIcon from '@mui/icons-material/Grade';
+import SchoolIcon from '@mui/icons-material/School';
+
 interface HeadCell {
     id: keyof Student;
     label: string;
@@ -73,6 +79,7 @@ interface Student extends Record<string, unknown> {
     totalGrade: string;
     status: string;
     notes: string;
+    image: string | null;
 }
 interface EnterGradeModalProps {
     classId: number;
@@ -91,9 +98,9 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
     setShowModal,
     dataCells,
 }) => {
-    
-    const [midtermGrades, setMidtermGrades] = useState<string[]>(dataCells.map(s => (s.midtermGrade ) ));
-    const [finalGrades, setFinalGrades] = useState< string[]>(dataCells.map(s => (s.finalGrade )));
+
+    const [midtermGrades, setMidtermGrades] = useState<string[]>(dataCells.map(s => (s.midtermGrade)));
+    const [finalGrades, setFinalGrades] = useState<string[]>(dataCells.map(s => (s.finalGrade)));
     const [error, setError] = useState<string>('');
 
     const handleMidtermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,10 +108,10 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
         const value = e.target.value;
         const index = Number(e.target.id);
         const validFormat = /^(10(\.0{0,2})?|\d{0,1}(\.\d{0,2})?)?$/;
-        if(validFormat.test(value) || value === ''){
-        const newMidtermGrades = [...midtermGrades];
-        newMidtermGrades[index] = value;
-        setMidtermGrades(newMidtermGrades);
+        if (validFormat.test(value) || value === '') {
+            const newMidtermGrades = [...midtermGrades];
+            newMidtermGrades[index] = value;
+            setMidtermGrades(newMidtermGrades);
         }
 
     };
@@ -113,10 +120,10 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
         const value = e.target.value;
         const index = Number(e.target.id);
         const validFormat = /^(10(\.0{0,2})?|\d{0,1}(\.\d{0,2})?)?$/;
-        if(validFormat.test(value) || value === ''){
-        const newFinalGrades = [...finalGrades];
-        newFinalGrades[index] = value;
-        setFinalGrades(newFinalGrades);
+        if (validFormat.test(value) || value === '') {
+            const newFinalGrades = [...finalGrades];
+            newFinalGrades[index] = value;
+            setFinalGrades(newFinalGrades);
         }
     };
     const [order, setOrder] = useState<Order | null>(null);
@@ -155,23 +162,24 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
 
     const handleOnSubmit = () => {
         toast.promise(
-        put(course+'/'+classId+'/grades/bulk', {grades:
-            dataCells.map((s, index) => ({
-                user_id: s.id,
-                midterm_grade: midtermGrades[index],
-                final_grade: finalGrades[index],
-                
-            }))
-        }),
-        {
-            pending: 'Đang lưu điểm',
-            success: {
-                render({ data }) {
-                    return data.data.message;
+            put(course + '/' + classId + '/grades/bulk', {
+                grades:
+                    dataCells.map((s, index) => ({
+                        user_id: s.id,
+                        midterm_grade: midtermGrades[index],
+                        final_grade: finalGrades[index],
+
+                    }))
+            }),
+            {
+                pending: 'Đang lưu điểm',
+                success: {
+                    render({ data }) {
+                        return data.data.message;
+                    },
                 },
-            },
-            error: 'Lưu điểm thất bại'
-        }
+                error: 'Lưu điểm thất bại'
+            }
         ).then(() => {
             setShowModal(false);
             setStudents((prev) => prev.map((student, index) => ({
@@ -182,11 +190,11 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                 status: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))) >= 4 ? 'Hoàn thành' : 'Trượt',
             })));
         }).catch((err) => {
-            
+
             setError(err.message);
-            });
+        });
     };
-            
+
     return (
         <Modal
             open={showModal}
@@ -200,13 +208,17 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                         onClick={() => {
                             setShowModal(false);
                         }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
+                        <CloseIcon className="text-(--color-text)" />
                     </button>
                     <hr className='my-2' />
                 </div>
                 <div className='flex flex-col gap-4 overflow-y-auto flex-1'>
                     <Box sx={{ width: '100%' }}>
                         <Paper sx={{ width: '100%', mb: 2 }}>
+                            <div className="text-xl font-bold text-black p-4 text-center flex justify-center items-center">
+                                <SchoolIcon className="mr-2" />
+                                Điểm tổng kết = {midtermWeight} × Điểm giữa kỳ + {(1 - Number(midtermWeight)).toFixed(2)} × Điểm cuối kỳ
+                            </div>
                             <TableContainer>
                                 <Table aria-labelledby="tableTitle" size='medium'>
                                     <TableHead>
@@ -256,25 +268,30 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                                                     {dataCell.email}
                                                 </TableCell>
                                                 <TableCell align="center" className='w-1/7'>
-                                                    <input
-                                                        type="text"
-                                                        
-                                                        title="Chỉ nhập số từ 0-10, tối đa 2 chữ số thập phân"
-                                                        className="w-full shadow appearance-none border rounded-2xl py-2 pl-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                                                        value={midtermGrades[index]}
-                                                        onChange={handleMidtermChange}
-                                                        id={index.toString()}
-                                                    />
+                                                    <div className="relative">
+                                                        <input
+                                                            type="text"
+                                                            title="Chỉ nhập số từ 0-10, tối đa 2 chữ số thập phân"
+                                                            className="w-full shadow appearance-none border rounded-2xl py-2 pl-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
+                                                            value={midtermGrades[index]}
+                                                            onChange={handleMidtermChange}
+                                                            id={index.toString()}
+                                                        />
+                                                        <GradeIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400" fontSize="small" />
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell align="center" className='w-1/7'>
-                                                    <input
-                                                        type="text"
-                                                        title="Chỉ nhập số từ 0-10, tối đa 2 chữ số thập phân"
-                                                        className="w-full shadow appearance-none border rounded-2xl py-2 pl-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                                                        value={finalGrades[index]}
-                                                        onChange={handleFinalChange}
-                                                        id={index.toString()}
-                                                    />
+                                                    <div className="relative">
+                                                        <input
+                                                            type="text"
+                                                            title="Chỉ nhập số từ 0-10, tối đa 2 chữ số thập phân"
+                                                            className="w-full shadow appearance-none border rounded-2xl py-2 pl-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
+                                                            value={finalGrades[index]}
+                                                            onChange={handleFinalChange}
+                                                            id={index.toString()}
+                                                        />
+                                                        <GradeIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400" fontSize="small" />
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell align="center">
                                                     {
@@ -283,7 +300,7 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                                                             : "-"
                                                     }
                                                 </TableCell>
-                                                
+
                                             </StyledTableRow>
                                         ))}
                                         {emptyRows > 0 && (
@@ -314,8 +331,14 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                 </div>
                 <p className="h-5 text-red-500 text-sm my-2">{error}</p>
                 <div className='flex justify-center gap-4 w-full '>
-                    <button className='btn-text text-white w-20 h-10 rounded-lg' onClick={handleOnSubmit}>Lưu</button>
-                    <button className='bg-red-700 text-white w-20 h-10 rounded-lg hover:bg-red-800 active:bg-red-900' onClick={() => setShowModal(false)}>Hủy</button>
+                    <button className='btn-text text-white px-4 h-10 rounded-lg flex items-center' onClick={handleOnSubmit}>
+                        <SaveIcon className="mr-2" fontSize="small" />
+                        Lưu
+                    </button>
+                    <button className='bg-red-700 text-white px-4 h-10 rounded-lg hover:bg-red-800 active:bg-red-900 flex items-center' onClick={() => setShowModal(false)}>
+                        <CancelIcon className="mr-2" fontSize="small" />
+                        Hủy
+                    </button>
                 </div>
             </Box>
         </Modal>

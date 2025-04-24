@@ -31,8 +31,6 @@ function CheckRole() {
                         }
                         return;
                 }
-            }).catch((err) => {
-                console.error("Error fetching user role:", err);
             });
         }
     }, [])
