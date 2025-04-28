@@ -42,7 +42,6 @@ interface ManagerDetail {
     hometown: string ;
     phoneNumber: string ;
     isPartyMember: boolean;
-    photoUrl: string ;
     managementUnit: string;
     fatherName: string ;
     fatherBirthYear: number | null;
@@ -72,7 +71,6 @@ function convertManager(data: any): Manager {
             hometown: data.detail.hometown,
             phoneNumber: data.detail.phone_number,
             isPartyMember: data.detail.is_party_member,
-            photoUrl: data.detail.photo_url,
             managementUnit: data.detail.management_unit,
             workYear: data.detail.work_year,
             fatherName: data.detail.father_name,
@@ -103,7 +101,6 @@ const defaultProfileData: Manager = {
         hometown: '',
         phoneNumber: '',
         isPartyMember: false,
-        photoUrl: '',
         managementUnit: '',
         fatherName: '',
         fatherBirthYear: null,
@@ -163,7 +160,7 @@ const ProfilePage: React.FC = () => {
                             <div className="relative mb-4">
                                 <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto">
                                     <Image
-                                        src={profileData.detail.photoUrl || "/avatarDefault.svg"}
+                                        src={(profileData.image && profileData.image !== 'default') ? profileData.image : '/avatarDefault.svg'}
                                         alt="Ảnh đại diện"
                                         width={112}
                                         height={112}

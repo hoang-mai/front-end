@@ -30,6 +30,8 @@ interface Manager {
     id: number;
     name: string;
     email: string;
+    
+    image: string | null;
     detail: Detail;
 }
 interface Detail {
@@ -40,7 +42,6 @@ interface Detail {
     hometown: string;
     phoneNumber: string;
     isPartyMember: boolean;
-    photoUrl: string;
     managementUnit: string;
     fatherName: string;
     motherName: string;
@@ -77,7 +78,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
 }) => {
     const [file, setFile] = React.useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [isUrlImage, setIsUrlImage] = React.useState<boolean>(!!manager.detail.photoUrl);
+    const [isUrlImage, setIsUrlImage] = React.useState<boolean>(!!manager.image);
     const [selected, setSelected] = React.useState<Option>(convertPartyMember(manager.detail.isPartyMember));
     const [fullName, setFullName] = React.useState<string>(manager.detail.fullName);
     const [rank, setRank] = React.useState<string>(manager.detail.rank);
@@ -110,7 +111,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
         }
         toast.promise(
             put(adminAdminManager + `/${manager.id}`, {
-                photo_url:isUrlImage ? manager.detail.photoUrl : urlImage,
+                image: isUrlImage ? manager.image : urlImage,
                 full_name: fullName,
                 rank: rank,
                 birth_year: birthYear,
@@ -147,7 +148,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                     ...prev,
                     detail: {
                         ...prev.detail,
-                        photoUrl: isUrlImage ? manager.detail.photoUrl : urlImage,
+                        image: isUrlImage ? manager.image : urlImage,
                         fullName,
                         rank,
                         birthYear,
@@ -173,9 +174,9 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
     }
     const imageSrc = useMemo(() => {
         if (file) return URL.createObjectURL(file);
-        if (isUrlImage) return manager.detail.photoUrl;
+        if (isUrlImage && manager.image) return manager.image;
         return "/avatarDefault.svg";
-    }, [file, manager?.detail?.photoUrl, isUrlImage]);
+    }, [file, manager?.image, isUrlImage]);
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsUrlImage(false);
         if (e.target.files?.[0]) {

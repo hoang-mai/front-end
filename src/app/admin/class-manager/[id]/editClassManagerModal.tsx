@@ -9,30 +9,51 @@ import { toast } from 'react-toastify';
 import { get, put } from '@/app/Services/callApi';
 import { adminAdminManager, adminClasses } from '@/app/Services/api';
 
-interface Manager {
-    readonly id: number;
-    readonly name: string;
-    readonly email: string;
-}
-
-
-interface ClassManager extends Record<string, unknown> {
+export interface UserBasicInfo {
     id: number;
     name: string;
-    managerId: number | null;
+    email: string;
+    image: string | null;
+  }
+  
+  export interface ViceMonitor extends UserBasicInfo {}
+  
+  export interface Manager extends UserBasicInfo {}
+  
+  export interface Monitor extends UserBasicInfo {}
+  
+
+  
+  export interface ClassDetail {
+    id: number;
+    name: string;
     createdAt: Date;
     updatedAt: Date;
+    manager: Manager | null;
+    monitor: Monitor | null;
+    viceMonitors: ViceMonitor[] | null;
+    students: Student[];
     studentCount: number;
-    managerName: string | null;
-    managerEmail: string | null;
-
+  }
+  
+interface Student extends Record<string, unknown> {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+    role: string;
+    status: string;
+    reason: string | null;
+    note: string | null;
+    createdAt: Date;
+    updatedAt: Date;
 }
 interface EditClassManagerModalProps {
-    readonly data: ClassManager;
+    readonly data: ClassDetail;
     readonly showEdit: boolean;
     readonly setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
-    readonly setDatas?: React.Dispatch<React.SetStateAction<ClassManager[]>>;
-    readonly setData?: React.Dispatch<React.SetStateAction<ClassManager>>;
+    readonly setDatas?: React.Dispatch<React.SetStateAction<ClassDetail[]>>;
+    readonly setData?: React.Dispatch<React.SetStateAction<ClassDetail>>;
 }
 function EditClassManagerModal({
     data,
@@ -43,11 +64,11 @@ function EditClassManagerModal({
 }: EditClassManagerModalProps
 ) {
     const searchRef = useRef<HTMLDivElement>(null);
-    const [search, setSearch] = useState(data.managerName ?? '');
+    const [search, setSearch] = useState(data.manager?.name ?? '');
     const [dataFetch, setDataFetch] = useState<Manager[]>([]);
     const [loading, setLoading] = useState(false);
     const [managers, setManagers] = useState<Manager[]>();
-    const [selectedManager, setSelectedManager] = useState<Manager | null>(data.managerId && data.managerName && data.managerEmail ? { id: data.managerId, name: data.managerName, email: data.managerEmail } : null);
+    const [selectedManager, setSelectedManager] = useState<Manager | null>(data.manager?.id && data.manager?.name && data.manager?.email ? { id: data.manager.id, name: data.manager.name, email: data.manager.email, image: data.manager.image } : null);
     const debouncedQuery = useDebounce(search, 500, setLoading);
     const [error, setError] = useState<string>('');
     const [classManagerName, setClassManagerName] = useState<string>(data.name);
@@ -70,22 +91,17 @@ function EditClassManagerModal({
                     ? {
                         ...classManager,
                         name: classManagerName,
-                        managerId: selectedManager?.id ?? null,
-                        managerName: selectedManager?.name ?? null,
-                        managerEmail: selectedManager?.email ?? null,
+                        manager:selectedManager
                     }
                     : classManager
 
             )
-
             );
             setData?.((prev) => {
                 return {
                     ...prev,
                     name: classManagerName,
-                    managerId: selectedManager?.id ?? null,
-                    managerName: selectedManager?.name ?? null,
-                    managerEmail: selectedManager?.email ?? null,
+                    manager: selectedManager,   
                 }
             });
             setShowEdit(false);

@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { faHome, faSignOut, faExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faSignOut, faExclamation, faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -28,8 +28,10 @@ const LeftSidebar = () => {
     }
     useEffect(() => {
         const storedImage = localStorage.getItem("image");
-        if (storedImage && storedImage !== "null") {
+        if (storedImage && storedImage !== "null" && storedImage !== "default") {
             setImage(storedImage);
+        } else {
+            setImage(null);
         }
     }, []);
     return (
@@ -46,8 +48,8 @@ const LeftSidebar = () => {
 
 
                         >
-                            <FontAwesomeIcon icon={faHome} className='mr-2' />
-                            Trang chủ
+                            <FontAwesomeIcon icon={faClipboard} className='mr-2' />
+                            Quản lý rèn luyện
                         </Link>
 
                         {pathname !== '/manager' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}

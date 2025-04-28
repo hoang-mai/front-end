@@ -13,6 +13,7 @@ function CheckRole() {
             router.push("/login");
         } else {
             get(authTest).then((res) => {
+                localStorage.setItem("image", res.data.user.image);
                 switch (res.data.user.role) {
                     case 'manager':
                         if(path !== "manager") {

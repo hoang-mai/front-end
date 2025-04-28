@@ -2,11 +2,12 @@
 import LoaderLine from "@/app/Components/Loader/loaderLine";
 import { adminClasses } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
-import { faXmark, faUser, faEnvelope, faUserTag, faClipboard, faCalendar, faCircleInfo, faCheckCircle, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faEnvelope, faUserTag, faClipboard, faCalendar, faCircleInfo, faCheckCircle, faCircleCheck, faTimesCircle, faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Box, Modal } from "@mui/material";
+import PersonIcon from '@mui/icons-material/Person';
 
 interface StudentDetail extends Record<string, unknown> {
     id: number;
@@ -22,6 +23,7 @@ interface StudentDetail extends Record<string, unknown> {
         id: number;
         name: string;
         email: string;
+        image?: string | null;
     };
 }
 
@@ -40,6 +42,7 @@ function convertDataToStudentDetail(data: any): StudentDetail {
             id: data.student.id,
             name: data.student.name,
             email: data.student.email,
+            image: data.student.image || null,
         }
     }
 }
@@ -58,6 +61,7 @@ const studentDetailDefault: StudentDetail = {
         id: 0,
         name: '',
         email: '',
+        image: null,
     }
 }
 
@@ -136,6 +140,15 @@ function StudentDetail({
         });
     };
 
+    const getStatusIcon = () => {
+        if (studentDetail.status === 'active') {
+            return faCircleCheck;
+        } else if (studentDetail.status === 'suspended') {
+            return faTimesCircle;
+        }
+        return faClock;
+    };
+
     return (
         <Modal
             open={showStudentDetail}
@@ -153,7 +166,7 @@ function StudentDetail({
                     <h2 className='text-center text-2xl font-bold text-white'>Thông tin học viên</h2>
                 </div>
 
-                <div className="p-6">
+                <div className="p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
                     {loading ? (
                         <>
                             <div className='w-full flex justify-center items-center mb-10'>
@@ -170,8 +183,21 @@ function StudentDetail({
                         </>
                     ) : (
                         <>
-                            {/* Student name header section */}
+                            {/* Student name header section with image */}
                             <div className='w-full flex flex-col items-center justify-center mb-6'>
+                                <div className="w-25 h-25 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
+                                    {studentDetail.student.image ? (
+                                        <img
+                                            src={studentDetail.student.image}
+                                            alt={studentDetail.student.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                            <PersonIcon sx={{ fontSize: 64, color: 'rgba(107, 114, 128, 0.8)' }} />
+                                        </div>
+                                    )}
+                                </div>
                                 <h1 className='text-xl md:text-2xl font-bold text-(--color-text)'>
                                     {studentDetail.student.name}
                                 </h1>
@@ -180,13 +206,13 @@ function StudentDetail({
                             {/* Status badge */}
                             <div className="flex justify-center mb-6">
                                 <div className={`px-4 py-2 rounded-full ${statusColor === 'text-green-500' ? 'bg-green-100' : 'bg-yellow-100'} flex items-center`}>
-                                    <FontAwesomeIcon icon={statusColor === 'text-green-500' ? faCheckCircle : faClock} className={`${statusColor} mr-2`} />
+                                    <FontAwesomeIcon icon={getStatusIcon()} className={`${statusColor} mr-2`} />
                                     <span className={`font-medium ${statusColor}`}>{convertStatusToString(studentDetail.status)}</span>
                                 </div>
                             </div>
 
                             {/* Main content - information cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 md:px-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 md:px-4 ">   
                                 <InfoItem
                                     icon={faEnvelope}
                                     label="Email"
@@ -197,6 +223,7 @@ function StudentDetail({
                                     icon={faUserTag}
                                     label="Vai trò"
                                     value={convertRoleToString(studentDetail.role)}
+                                    highlighted={studentDetail.role === 'monitor' || studentDetail.role === 'vice_monitor'}
                                 />
 
                                 <InfoItem
@@ -209,6 +236,7 @@ function StudentDetail({
                                     icon={faClipboard}
                                     label="Ghi chú"
                                     value={studentDetail.note || 'Không có'}
+                                    
                                 />
 
                                 <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -241,18 +269,19 @@ interface InfoItemProps {
     value: string;
     fullWidth?: boolean;
     small?: boolean;
+    highlighted?: boolean;
 }
 
-const InfoItem = ({ icon, label, value, fullWidth = false, small = false }: InfoItemProps) => {
+const InfoItem = ({ icon, label, value, fullWidth = false, small = false, highlighted = false }: InfoItemProps) => {
     return (
-        <div className={`bg-gray-50 rounded-lg p-3 shadow-sm border border-gray-200 ${fullWidth ? 'md:col-span-2' : ''}`}>
+        <div className={`${highlighted ? 'bg-green-50' : 'bg-gray-50'} rounded-lg p-3 shadow-sm border ${highlighted ? 'border-green-200' : 'border-gray-200'} ${fullWidth ? 'md:col-span-2' : ''}`}>
             <div className="flex items-center mb-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${highlighted ? 'text-green-600' : ''}`}>
                     <FontAwesomeIcon icon={icon} />
                 </div>
                 <span className={`ml-2 text-gray-500 ${small ? 'text-sm' : ''}`}>{label}</span>
             </div>
-            <div className={`pl-10 font-medium text-gray-800 ${small ? 'text-sm' : 'text-base'} whitespace-pre-wrap break-words`}>
+            <div className={`pl-10 font-medium ${highlighted ? 'text-green-700' : 'text-gray-800'} ${small ? 'text-sm' : 'text-base'} whitespace-pre-wrap break-words`}>
                 {value}
             </div>
         </div>

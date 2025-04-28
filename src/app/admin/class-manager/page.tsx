@@ -15,25 +15,30 @@ import EditClassManagerModal from "./[id]/editClassManagerModal";
 interface ClassManager extends Record<string, unknown> {
     id: number;
     name: string;
-    managerId: number | null;
+    
     createdAt: Date;
     updatedAt: Date;
     studentCount: number;
-    managerName: string | null;
-    managerEmail: string | null;
-
+    manager:{
+        id: number | null;
+        name: string | null;
+        email: string | null;
+    }
 }
 
 function convertDataToClassManager(data: any): ClassManager {
     return {
         id: data.id,
-        name: data.name, 
-        managerId: data.manager?.id,
+        name: data.name,
+        managerId: data.manager ? data.manager.id : null,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
         studentCount: data.student_count,
-        managerName: data.manager?.name,
-        managerEmail: data.manager?.email,
+        manager: {
+            id: data.manager ? data.manager.id : null,
+            name: data.manager ? data.manager.name : null,
+            email: data.manager ? data.manager.email : null,
+        }
 
     }
 }
@@ -43,8 +48,8 @@ interface HeadCell {
 }
 const headCells: HeadCell[] = [
     { id: 'name', label: 'Tên lớp quản lý', },
-    { id: 'managerName', label: 'Tên quản lý', },
-    { id: 'managerEmail', label: 'Email' ,},
+    { id: 'manager.name', label: 'Tên quản lý', },
+    { id: 'manager.email', label: 'Email' ,},
     { id: 'studentCount', label: 'Số lượng sinh viên', },
     { id: 'createdAt', label: 'Ngày tạo', },
 ];

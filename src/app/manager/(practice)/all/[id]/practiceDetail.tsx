@@ -1,48 +1,65 @@
-import { faXmark, faUser, faEnvelope, faMoneyBill, faCalendar, faClipboard, faClock, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faEnvelope, faDumbbell, faCalendar, faClipboard, faRuler, faTrophy, faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
-import { useEffect, useState } from "react";
 import PersonIcon from '@mui/icons-material/Person';
-interface AllowanceStudent extends Record<string, unknown> {
+import { Dispatch, SetStateAction } from "react";
+
+interface PerformanceRecord extends Record<string, unknown> {
     id: number;
     userId: number;
-    month: string;
-    year: number;
-    amount: string;
-    received: string;
-    receivedAt: Date | null;
+    managerId: number;
+    fitnessTestId: number;
+    assessmentSessionId: number;
+    performance: string;
+    rating: string;
     notes: string;
     createdAt: Date;
     updatedAt: Date;
-    studentId: number;
-    studentName: string;
-    studentEmail: string;
-    studentImage: string | null;
-    studentEmailVerifiedAt: string | null;
-    studentCreatedAt: Date | null;
-    studentUpdatedAt: Date | null;
-    studentRole: 'student';
+    student: Student;
+    fitnessTest: FitnessTest;
+    manager: Manager;
 }
 
-interface AllowanceDetailProps {
-    readonly allowanceStudent: AllowanceStudent | undefined;
+export interface Student {
+    id: number;
+    name: string;
+    email: string;
+    emailVerifiedAt: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    role: string;
+    image: string | null;
+}
+
+export interface FitnessTest {
+    id: number;
+    name: string;
+    unit: string;
+    higherIsBetter: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt: Date | null;
+}
+
+export interface Manager {
+    id: number;
+    name: string;
+    email: string;
+    emailVerifiedAt: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    role: string;
+    image: string | null;
+}
+
+interface PracticeDetailProps {
+    readonly performanceRecord: PerformanceRecord;
     readonly showModal: boolean;
-    readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    readonly setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
-function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: AllowanceDetailProps) {
-    const [statusColor, setStatusColor] = useState<string>('text-yellow-500');
-
-    useEffect(() => {
-        if (allowanceStudent?.received === 'Đã nhận') {
-            setStatusColor('text-green-500');
-        } else if (allowanceStudent?.received === 'Chưa nhận') {
-            setStatusColor('text-yellow-500');
-        } else {
-            setStatusColor('text-gray-500');
-        }
-    }, [allowanceStudent]);
+function PracticeDetail({ performanceRecord, showModal, setShowModal }: PracticeDetailProps) {
 
     const formatDate = (date: Date | null | undefined) => {
         if (!date) return 'N/A';
@@ -51,6 +68,22 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
             month: '2-digit',
             year: 'numeric'
         });
+    };
+
+    // Function to get color based on rating
+    const getRatingColor = (rating: string) => {
+        switch (rating) {
+            case 'Xuất sắc':
+                return 'bg-green-100 text-green-500';
+            case 'Giỏi':
+                return 'bg-blue-100 text-blue-500';
+            case 'Vượt qua':
+                return 'bg-yellow-100 text-yellow-500';
+            case 'Không đạt':
+                return 'bg-red-100 text-red-500';
+            default:
+                return 'bg-gray-100 text-gray-500';
+        }
     };
 
     return (
@@ -67,17 +100,17 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                     >
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
-                    <h2 className='text-center text-2xl font-bold text-white'>Thông tin trợ cấp</h2>
+                    <h2 className='text-center text-2xl font-bold text-white'>Chi tiết đánh giá</h2>
                 </div>
 
                 <div className="p-6 overflow-y-auto max-h-[80vh]">
                     {/* Student name header section */}
                     <div className='w-full flex flex-col items-center justify-center mb-6'>
-                    <div className="w-25 h-25 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
-                            {allowanceStudent?.studentImage ? (
+                        <div className="w-25 h-25 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
+                            {performanceRecord?.student?.image ? (
                                 <img
-                                    src={allowanceStudent?.studentImage}
-                                    alt={allowanceStudent?.studentName}
+                                    src={performanceRecord.student.image}
+                                    alt={performanceRecord.student.name}
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
@@ -87,15 +120,15 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                             )}
                         </div>
                         <h1 className='text-xl md:text-2xl font-bold text-[color:var(--color-text)]'>
-                            {allowanceStudent?.studentName ?? "Không tìm thấy thông tin"}
+                            {performanceRecord?.student?.name ?? "Không tìm thấy thông tin"}
                         </h1>
                     </div>
 
-                    {/* Status badge */}
+                    {/* Rating badge */}
                     <div className="flex justify-center mb-6">
-                        <div className={`px-4 py-2 rounded-full ${statusColor === 'text-green-500' ? 'bg-green-100' : 'bg-yellow-100'} flex items-center`}>
-                            <FontAwesomeIcon icon={statusColor === 'text-green-500' ? faCheck : faClock} className={`${statusColor} mr-2`} />
-                            <span className={`font-medium ${statusColor}`}>{allowanceStudent?.received ?? 'N/A'}</span>
+                        <div className={`px-4 py-2 rounded-full ${getRatingColor(performanceRecord.rating)} flex items-center`}>
+                            <FontAwesomeIcon icon={faTrophy} className="mr-2" />
+                            <span className="font-medium">{performanceRecord.rating}</span>
                         </div>
                     </div>
 
@@ -104,57 +137,58 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                         <InfoItem
                             icon={faEnvelope}
                             label="Email"
-                            value={allowanceStudent?.studentEmail ?? 'N/A'}
+                            value={performanceRecord?.student?.email ?? 'N/A'}
+                        />
+
+<InfoItem
+                            icon={faUser}
+                            label="Tên quản lý"
+                            value={performanceRecord?.manager?.name ?? 'N/A'}
+                            
                         />
 
                         <InfoItem
-                            icon={faMoneyBill}
-                            label="Số tiền"
-                            value={allowanceStudent?.amount ? `${allowanceStudent.amount} VND` : 'N/A'}
+                            icon={faDumbbell}
+                            label="Bài kiểm tra"
+                            value={performanceRecord?.fitnessTest?.name ?? 'N/A'}
+                        />
+
+                        <InfoItem
+                            icon={faRuler}
+                            label="Kết quả"
+                            value={`${performanceRecord.performance} ${performanceRecord?.fitnessTest?.unit ?? ''}`}
+                        />
+
+                        <InfoItem
+                            icon={faChartLine}
+                            label="Đánh giá"
+                            value={performanceRecord.rating}
                         />
 
                         <InfoItem
                             icon={faCalendar}
-                            label="Tháng/Năm"
-                            value={`${allowanceStudent?.month ?? 'N/A'}`}
+                            label="Ngày tạo"
+                            value={formatDate(performanceRecord?.createdAt)}
                         />
 
                         <InfoItem
                             icon={faCalendar}
-                            label="Nhận ngày"
-                            value={allowanceStudent?.receivedAt ? formatDate(allowanceStudent.receivedAt) : 'Chưa nhận'}
+                            label="Ngày cập nhật"
+                            value={formatDate(performanceRecord?.updatedAt)}
                         />
 
                         <InfoItem
                             icon={faClipboard}
                             label="Ghi chú"
-                            value={allowanceStudent?.notes ?? 'N/A'}
-                            fullWidth={true}
+                            value={performanceRecord?.notes ?? ''}
+                            
                         />
-
-                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <InfoItem
-                                icon={faCalendar}
-                                label="Tạo ngày"
-                                value={formatDate(allowanceStudent?.createdAt)}
-                                small={true}
-                            />
-
-                            <InfoItem
-                                icon={faCalendar}
-                                label="Cập nhật ngày"
-                                value={formatDate(allowanceStudent?.updatedAt)}
-                                small={true}
-                            />
-                        </div>
                     </div>
                 </div>
             </Box>
         </Modal>
     );
 }
-
-
 
 interface InfoItemProps {
     icon: typeof faUser;
@@ -180,4 +214,4 @@ const InfoItem = ({ icon, label, value, fullWidth = false, small = false }: Info
     );
 };
 
-export default AllowanceDetail;
+export default PracticeDetail;

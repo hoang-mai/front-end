@@ -60,6 +60,18 @@ export interface ParentInfo {
     occupation: string | null;
 }
 
+function convertPoliticalStatusToString(status: string | null): string {
+    if (status === 'party_member') {
+        return 'Đảng viên';
+    } else if (status === 'youth_union_member') {
+        return 'Đoàn viên';
+    }else if (status === 'none') {
+        return 'Không';
+    } else {
+        return 'Chưa cập nhật';
+    }
+}
+
 export function convertUserWithStudentDetail(data: any): UserWithStudentDetail {
     return {
         id: data.id,
@@ -77,7 +89,7 @@ export function convertUserWithStudentDetail(data: any): UserWithStudentDetail {
             placeOfOrigin: data.student_detail.place_of_origin,
             workingUnit: data.student_detail.working_unit,
             yearOfStudy: data.student_detail.year_of_study,
-            politicalStatus: data.student_detail.political_status,
+            politicalStatus: convertPoliticalStatusToString(data.student_detail.political_status),
             phoneNumber: data.student_detail.phone_number,
             permanentResidence: data.student_detail.permanent_residence,
             father: {
@@ -180,7 +192,7 @@ function ProfilePage() {
                             <div className="relative mb-4">
                                 <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto">
                                     <Image
-                                        src={userProfile?.image || "/avatarDefault.svg"}
+                                        src={(userProfile.image && userProfile.image !== 'default') ? userProfile.image : '/avatarDefault.svg'}
                                         alt="Ảnh đại diện"
                                         width={112}
                                         height={112}
@@ -250,7 +262,7 @@ function ProfilePage() {
                                         <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text)">
                                             <FlagIcon sx={{ fontSize: 18 }} />
                                         </div>
-                                        <span>Đảng viên: {userProfile?.studentDetail?.politicalStatus ? (userProfile.studentDetail.politicalStatus === 'party_member' ? 'Có' : 'Không') : "Chưa cập nhật"}</span>
+                                        <span>Đảng viên/Đoàn viên: {userProfile?.studentDetail?.politicalStatus ? userProfile.studentDetail.politicalStatus : "Chưa cập nhật"}</span>
                                     </div>
 
                                 </div>

@@ -4,7 +4,13 @@ import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import { useEffect, useState } from "react";
 import PersonIcon from '@mui/icons-material/Person';
-interface AllowanceStudent extends Record<string, unknown> {
+interface Student {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
+export interface Allowance extends Record<string, any> {
     id: number;
     userId: number;
     month: string;
@@ -12,26 +18,20 @@ interface AllowanceStudent extends Record<string, unknown> {
     amount: string;
     received: string;
     receivedAt: Date | null;
-    notes: string;
+    notes: string | null;
     createdAt: Date;
     updatedAt: Date;
-    studentId: number;
-    studentName: string;
-    studentEmail: string;
-    studentImage: string | null;
-    studentEmailVerifiedAt: string | null;
-    studentCreatedAt: Date | null;
-    studentUpdatedAt: Date | null;
-    studentRole: 'student';
 }
-
 interface AllowanceDetailProps {
-    readonly allowanceStudent: AllowanceStudent | undefined;
+    readonly allowanceStudent: Allowance | undefined;
     readonly showModal: boolean;
     readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    readonly student: Student | undefined;
+    
 }
 
-function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: AllowanceDetailProps) {
+function AllowanceDetail({ allowanceStudent, showModal, setShowModal, student }: AllowanceDetailProps) {
+
     const [statusColor, setStatusColor] = useState<string>('text-yellow-500');
 
     useEffect(() => {
@@ -45,6 +45,7 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
     }, [allowanceStudent]);
 
     const formatDate = (date: Date | null | undefined) => {
+        console.log(date)
         if (!date) return 'N/A';
         return new Date(date).toLocaleDateString("vi-VN", {
             day: '2-digit',
@@ -74,10 +75,10 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                     {/* Student name header section */}
                     <div className='w-full flex flex-col items-center justify-center mb-6'>
                     <div className="w-25 h-25 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
-                            {allowanceStudent?.studentImage ? (
+                            {student?.image ? (
                                 <img
-                                    src={allowanceStudent?.studentImage}
-                                    alt={allowanceStudent?.studentName}
+                                    src={student?.image}
+                                    alt={student?.name}
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
@@ -87,7 +88,7 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                             )}
                         </div>
                         <h1 className='text-xl md:text-2xl font-bold text-[color:var(--color-text)]'>
-                            {allowanceStudent?.studentName ?? "Không tìm thấy thông tin"}
+                            {student?.name ?? "Không tìm thấy thông tin"}
                         </h1>
                     </div>
 
@@ -104,7 +105,7 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                         <InfoItem
                             icon={faEnvelope}
                             label="Email"
-                            value={allowanceStudent?.studentEmail ?? 'N/A'}
+                            value={student?.email ?? 'N/A'}
                         />
 
                         <InfoItem
@@ -122,39 +123,38 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                         <InfoItem
                             icon={faCalendar}
                             label="Nhận ngày"
-                            value={allowanceStudent?.receivedAt ? formatDate(allowanceStudent.receivedAt) : 'Chưa nhận'}
+                            value={'Chưa nhận'}
                         />
 
                         <InfoItem
                             icon={faClipboard}
                             label="Ghi chú"
-                            value={allowanceStudent?.notes ?? 'N/A'}
+                            value={allowanceStudent?.notes ?? ''}
                             fullWidth={true}
                         />
 
-                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <InfoItem
-                                icon={faCalendar}
-                                label="Tạo ngày"
-                                value={formatDate(allowanceStudent?.createdAt)}
-                                small={true}
-                            />
 
-                            <InfoItem
-                                icon={faCalendar}
-                                label="Cập nhật ngày"
-                                value={formatDate(allowanceStudent?.updatedAt)}
-                                small={true}
-                            />
-                        </div>
+                        <InfoItem
+                            icon={faCalendar}
+                            label="Tạo ngày"
+                            value={formatDate(allowanceStudent?.createdAt)}
+                            small={true}
+                            
+                        />
+                        <InfoItem
+                            icon={faCalendar}
+                            label="Cập nhật ngày"
+                            value={formatDate(allowanceStudent?.updatedAt)}
+                            small={true}
+                            
+                        />
+
                     </div>
                 </div>
             </Box>
         </Modal>
     );
 }
-
-
 
 interface InfoItemProps {
     icon: typeof faUser;

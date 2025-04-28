@@ -14,6 +14,8 @@ interface Manager extends Record<string, unknown> {
     id: number;
     name: string;
     email: string;
+    phone: string;
+    rank : string;
 }
 interface HeadCell {
     id: keyof Manager;
@@ -22,6 +24,9 @@ interface HeadCell {
 const headCells: HeadCell[] = [
     { id: 'name', label: 'Tên quản lý', },
     { id: 'email', label: 'Email', },
+    { id: 'phone', label: 'Số điện thoại', },
+    { id: 'rank', label: 'Cấp bậc', },
+    
 ];
 
 function AdminManager() {

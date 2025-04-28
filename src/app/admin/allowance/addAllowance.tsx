@@ -602,22 +602,22 @@ function AddAllowance({ showModal, setShowModal, setDatas }: AllowanceProps) {
                                         {selectedStudents.map(student => (
                                             <div key={student.id} className="flex justify-between items-center py-2 border-b border-blue-100 last:border-0">
                                                 <div className="flex items-center gap-3">
-                                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                                                {student.image ? (
-                                                                    <img 
-                                                                        src={student.image} 
-                                                                        alt={student.name} 
-                                                                        className="w-full h-full object-cover"
-                                                                    />
-                                                                ) : (
-                                                                    <PersonIcon className="text-gray-500" />
-                                                                )}
-                                                            </div>
-                                                            <div className="text-left">
-                                                                <h3>{student.name}</h3>
-                                                                <p className="text-gray-500 text-sm">{student.email}</p>
-                                                            </div>
-                                                        </div>
+                                                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                                        {student.image ? (
+                                                            <img
+                                                                src={student.image}
+                                                                alt={student.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <PersonIcon className="text-gray-500" />
+                                                        )}
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <h3>{student.name}</h3>
+                                                        <p className="text-gray-500 text-sm">{student.email}</p>
+                                                    </div>
+                                                </div>
                                                 <button
                                                     type="button"
                                                     onClick={() => setSelectedStudents(selectedStudents.filter(s => s.id !== student.id))}

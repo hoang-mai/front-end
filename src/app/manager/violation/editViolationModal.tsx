@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { put } from "@/app/Services/callApi";
 import { managerViolations } from "@/app/Services/api";
 import PersonIcon from '@mui/icons-material/Person';
+import { format } from 'date-fns/format';
 
 interface Violation {
     id: number;
@@ -27,10 +28,10 @@ interface Violation {
 }
 
 interface EditViolationModalProps {
-    data: Violation;
-    showEdit: boolean;
-    setDatas?: Dispatch<SetStateAction<Violation[]>>;
-    setShowEdit: (show: boolean) => void;
+    readonly data: Violation;
+    readonly showEdit: boolean;
+    readonly setDatas?: Dispatch<SetStateAction<Violation[]>>;
+    readonly setShowEdit: (show: boolean) => void;
 }
 
 function EditViolationModal({ data, showEdit, setDatas, setShowEdit }: EditViolationModalProps) {
@@ -62,7 +63,7 @@ function EditViolationModal({ data, showEdit, setDatas, setShowEdit }: EditViola
         toast.promise(
             put(`${managerViolations}/${data.id}`, {
                 violation_name: violationName,
-                violation_date: violationDate,
+                violation_date: violationDate ? format(violationDate, 'yyyy-MM-dd') : null,
             }), {
             pending: "Đang xử lý...",
             success: "Cập nhật vi phạm thành công",

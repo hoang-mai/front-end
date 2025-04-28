@@ -101,20 +101,14 @@ function Allowance() {
         return <div className="text-red-500">{error}</div>
     }
     return (
-        <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
-            <h1 className='font-bold text-2xl text-center text-(--color-text)'>Danh sách trợ cấp chưa nhận</h1>
-            <div className='w-full flex justify-between items-center relative px-6'>
+        <>
+            
+            <div className='mb-4 w-full flex justify-between items-center relative px-6'>
                 <div className='flex gap-4 items-center'>
                     <div className='relative'>
                         <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
                         <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
                     </div>
-                    <button className='btn-text text-white py-2 px-4 w-45 rounded-md'
-                    onClick={() => router.push('/admin/allowance/all')}
-                >
-                    
-                    Tất cả trợ cấp
-                </button>
                 </div>
                 <button className='btn-text text-white py-2 px-4 w-45 rounded-md'
                     onClick={() => setShowModal(true)}
@@ -133,7 +127,7 @@ function Allowance() {
             }
             {showModal && <AddAllowance setShowModal={setShowModal} showModal={showModal} setDatas={setAllowanceStudents} />}
             {showAllowanceDetail && <AllowanceDetail allowanceStudent={allowanceDetail} showModal={showAllowanceDetail} setShowModal={setShowAllowanceDetail} />}
-        </div>
+        </>
     );
 }
 

@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import AddEquipmentDistribution from "./addEquipmentDistribution";
 import EditEquipmentDistribution from "./[id]/editEquipmentDistribution";
 import { useRouter } from "next/navigation";
+import NotReceived from "./notRecevied";
 
 interface EquipmentDistribution extends Record<string, any> {
 
@@ -81,6 +82,7 @@ function Equipment() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState<string>('');
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'phases' | 'notReceived' | 'deploymentList'>('phases');
 
   const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -116,22 +118,81 @@ function Equipment() {
   return (
     <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
       <h1 className='font-bold text-2xl text-center text-(--color-text)'>Quản lý cấp phát quân tư trang</h1>
+      
+      {/* Tabs navigation */}
+      <div className='flex justify-center border-b border-(--border-color) mb-3'>
+        <div className='flex space-x-1'>
+          <button
+            onClick={() => setActiveTab('phases')}
+            className={`py-2 px-4 font-medium transition-colors duration-200
+              ${activeTab === 'phases' 
+                ? 'text-(--color-text) border-b-2 border-(--color-text)' 
+                : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Đợt cấp phát
+          </button>
+          <button
+            onClick={() => setActiveTab('notReceived')}
+            className={`py-2 px-4 font-medium transition-colors duration-200
+              ${activeTab === 'notReceived' 
+                ? 'text-(--color-text) border-b-2 border-(--color-text)' 
+                : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Học viên chưa nhận
+          </button>
+          <button
+            onClick={() => setActiveTab('deploymentList')}
+            className={`py-2 px-4 font-medium transition-colors duration-200
+              ${activeTab === 'deploymentList' 
+                ? 'text-(--color-text) border-b-2 border-(--color-text)' 
+                : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            Danh sách cấp phát học viên
+          </button>
+        </div>
+      </div>
+
       <div className='w-full flex justify-between items-center relative px-6'>
         <div className='relative'>
           <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
-          <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' /></div>
-        <button className='btn-text text-white py-2 px-4 w-60 rounded-md'
-
-          onClick={() => setShowModal(true)}>
-          <FontAwesomeIcon icon={faPlus} className='mr-2' />
-          Tạo đợt cấp phát mới
-        </button>
+          <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' />
+        </div>
+        {activeTab === 'phases' && (
+          <button className='btn-text text-white py-2 px-4 w-60 rounded-md' onClick={() => setShowModal(true)}>
+            <FontAwesomeIcon icon={faPlus} className='mr-2' />
+            Tạo đợt cấp phát mới
+          </button>
+        )}
       </div>
-      {loading ? <LoaderTable />
-        : <TableComponent dataCells={equipmentDistribution} headCells={headCells} search={search} onRowClick={(id) => {
-          router.push(`/admin/equipment/${id}`);
-         }} modal={modal} EditComponent={EditEquipmentDistribution} setDatas={setEquipmentDistribution} />
-      }
+
+      {loading ? (
+        <LoaderTable />
+      ) : (
+        <>
+          {activeTab === 'phases' && (
+            <TableComponent 
+              dataCells={equipmentDistribution} 
+              headCells={headCells} 
+              search={search} 
+              onRowClick={(id) => {
+                router.push(`/admin/equipment/${id}`);
+              }} 
+              modal={modal} 
+              EditComponent={EditEquipmentDistribution} 
+              setDatas={setEquipmentDistribution} 
+            />
+          )}
+        </>
+      )}
+                {activeTab === 'notReceived' && (
+            <NotReceived />
+          )}
+
+          {activeTab === 'deploymentList' && (
+            <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200 text-center">
+              <p className="text-gray-600">Chức năng danh sách cấp phát học viên đang được phát triển.</p>
+            </div>
+          )}
       {showModal && <AddEquipmentDistribution equipmentType={equipmentType} setShowModal={setShowModal} showModal={showModal} setDatas={setEquipmentDistribution} />}
     </div>
   );

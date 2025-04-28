@@ -32,6 +32,7 @@ interface Manager {
     id: number;
     name: string;
     email: string;
+    image: string | null;
     detail: Detail;
 }
 interface Detail {
@@ -42,7 +43,6 @@ interface Detail {
     hometown: string;
     phoneNumber: string;
     isPartyMember: boolean;
-    photoUrl: string;
     managementUnit: string;
     fatherName: string;
     motherName: string;
@@ -58,6 +58,7 @@ const managerDefault: Manager = {
     id: 0,
     name: '',
     email: '',
+    image: null,
     detail: {
         userId: 0,
         fullName: '',
@@ -66,7 +67,6 @@ const managerDefault: Manager = {
         hometown: '',
         phoneNumber: '',
         isPartyMember: false,
-        photoUrl: '',
         managementUnit: '',
         fatherName: '',
         motherName: '',
@@ -84,6 +84,7 @@ function convertDataToManager(data: any): Manager {
         id: data.id,
         name: data.name,
         email: data.email,
+        image: data.image,
         detail: {
             userId: data.detail.user_id,
             fullName: data.detail.full_name,
@@ -92,7 +93,6 @@ function convertDataToManager(data: any): Manager {
             hometown: data.detail.hometown,
             phoneNumber: data.detail.phone_number,
             isPartyMember: data.detail.is_party_member,
-            photoUrl: data.detail.photo_url,
             managementUnit: data.detail.management_unit,
             fatherName: data.detail.father_name,
             motherName: data.detail.mother_name,
@@ -162,7 +162,7 @@ function ManagerDetail() {
                             <div className="relative mb-4">
                                 <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto">
                                     <Image
-                                        src={manager.detail.photoUrl || "/avatarDefault.svg"}
+                                        src={manager.image || "/avatarDefault.svg"}
                                         alt="Ảnh đại diện"
                                         width={112}
                                         height={112}

@@ -71,8 +71,11 @@ function getComparator<T>(
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
+function getNestedValue(obj: any, path: string) {
+    return path.split('.').reduce((acc, key) => acc?.[key], obj);
+  } 
 const renderCellValue = <T extends Record<string, unknown>>(row: T, id: keyof T) => {
-    const value = row[id];
+    const value = getNestedValue(row, String(id));
 
     if (value instanceof Date) return value.toLocaleDateString("vi-VN");
     if (value === null || value === undefined || value === '') return "-";
@@ -138,22 +141,31 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dataCells.length) : 0;
 
+    const searchInObject = (obj: any, keyword: string): boolean => {
+        if (obj == null) return false;
+        if (typeof obj === "string" || typeof obj === "number") {
+            return String(obj).toLowerCase().includes(keyword.toLowerCase());
+        }
+        if (obj instanceof Date) {
+            return obj.toLocaleDateString("vi-VN").toLowerCase().includes(keyword.toLowerCase());
+        }
+        if (typeof obj === "object") {
+            return Object.values(obj).some(value => searchInObject(value, keyword));
+        }
+        return false;
+    };
+    
     const visibleAndFilterRows = useMemo(() => {
         return dataCells
             .filter((dataCell) => {
                 if (!search) return true;
-
-                return Object.values(dataCell).some(value => {
-                    if (value == null) return false;
-                    if (value instanceof Date) return value.toLocaleDateString("vi-VN").toLowerCase().includes(search.toLowerCase());
-                    if (typeof value === "object") return false;
-                    return String(value).toLowerCase().includes(search.toLowerCase());
-                });
-
+                return searchInObject(dataCell, search);
             })
             .sort(getComparator(order, orderBy))
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
     }, [order, orderBy, page, rowsPerPage, dataCells, search]);
+    
+    
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
           if (e.key === 'ArrowRight') {

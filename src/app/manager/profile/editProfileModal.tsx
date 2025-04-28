@@ -41,7 +41,6 @@ interface Detail {
     hometown: string;
     phoneNumber: string;
     isPartyMember: boolean;
-    photoUrl: string;
     managementUnit: string;
     fatherName: string;
     motherName: string;
@@ -78,7 +77,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
 }) => {
     const [file, setFile] = React.useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [isUrlImage, setIsUrlImage] = React.useState<boolean>(!!manager.detail.photoUrl);
+    const [isUrlImage, setIsUrlImage] = React.useState<boolean>(!!manager.image);
     const [selected, setSelected] = React.useState<Option>(convertPartyMember(manager.detail.isPartyMember));
     const [fullName, setFullName] = React.useState<string>(manager.detail.fullName);
     const [rank, setRank] = React.useState<string>(manager.detail.rank);
@@ -95,7 +94,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
     const [motherHometown, setMotherHometown] = React.useState<string>(manager.detail.motherHometown);
 
     const handleOnSubmit = async () => {
-        let urlImage: string= "";
+        let urlImage: string= (isUrlImage && manager.image) ? manager.image : 'default';
         if (!isUrlImage && file) {
             if(file.size > 10 * 1024 * 1024){
                 toast.error('Kích thước ảnh không được vượt quá 10MB');
@@ -111,7 +110,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
         }
         toast.promise(
             put(managerProfile, {
-                photo_url:isUrlImage ? manager.detail.photoUrl : urlImage,
+                image: isUrlImage ? manager.image : urlImage,
                 full_name: fullName,
                 rank: rank,
                 birth_year: birthYear,
@@ -143,12 +142,13 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                 }
             }
         ).then((res) => {
+            localStorage.setItem('image', urlImage);
             setManager((prev) => {
                 return {
                     ...prev,
+                    image: isUrlImage ? prev.image : urlImage,
                     detail: {
                         ...prev.detail,
-                        photoUrl: isUrlImage ? manager.detail.photoUrl : urlImage,
                         fullName,
                         rank,
                         birthYear,
@@ -174,9 +174,9 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
     }
     const imageSrc = useMemo(() => {
         if (file) return URL.createObjectURL(file);
-        if (isUrlImage) return manager.detail.photoUrl;
+        if (isUrlImage && manager.image) return manager.image;
         return "/avatarDefault.svg";
-    }, [file, manager?.detail?.photoUrl, isUrlImage]);
+    }, [file, manager?.image, isUrlImage]);
 
 
     

@@ -93,7 +93,6 @@ const modal = {
 }
 
 function Allowance() {
-    const router = useRouter();
     const [allowanceStudents, setAllowanceStudents] = useState<AllowanceStudent[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [search, setSearch] = useState<string>('');
@@ -123,15 +122,8 @@ function Allowance() {
         return <div className="text-red-500">{error}</div>
     }
     return (
-        <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4 relative' >
-            <button onClick={() => router.push('/admin/allowance')}>
-                <FontAwesomeIcon
-                    icon={faReply}
-                    className='absolute left-8 top-8 text-(--background-button) transition-transform duration-200 hover:scale-110 active:scale-95'
-                />
-            </button>
-            <h1 className='font-bold text-2xl text-center text-(--color-text)'>Quản lý trợ cấp</h1>
-            <div className='w-full flex justify-between items-center relative px-6'>
+        <>
+            <div className='mb-4 w-full flex justify-between items-center relative px-6'>
                 <div className='relative'>
                     <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
                     <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' /></div>
@@ -146,7 +138,7 @@ function Allowance() {
             }
             {showModal && <AddAllowance setShowModal={setShowModal} showModal={showModal} setDatas={setAllowanceStudents} />}
             {showAllowanceDetail && <AllowanceDetail allowanceStudent={allowanceDetail} showModal={showAllowanceDetail} setShowModal={setShowAllowanceDetail} />}
-        </div>
+        </>
     );
 }
 

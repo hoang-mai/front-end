@@ -8,11 +8,12 @@ import { put } from "@/app/Services/callApi";
 import { useParams } from "next/navigation";
 import { adminClasses } from "@/app/Services/api";
 import SelectComponent from "@/app/Components/select";
-
+import PersonIcon from '@mui/icons-material/Person';
 interface Student extends Record<string, unknown> {
     id: number;
     name: string;
     email: string;
+    image: string | null;
     role: string;
     status: string;
     reason: string | null;
@@ -158,14 +159,21 @@ function EditStudentModal({
                             <FontAwesomeIcon icon={faUser} className="mr-2 text-[color:var(--color-text)]" />
                             Thông tin học viên
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="flex flex-col">
-                                <span className="text-sm text-gray-500">Tên học viên</span>
-                                <span className="font-medium text-gray-800">{data.name}</span>
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                {data.image ? (
+                                    <img
+                                        src={data.image}
+                                        alt={data.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <PersonIcon className="text-gray-500" />
+                                )}
                             </div>
-                            <div className="flex flex-col">
-                                <span className="text-sm text-gray-500">Email</span>
-                                <span className="font-medium text-gray-800">{data.email}</span>
+                            <div className="text-left">
+                                <h3>{data.name}</h3>
+                                <p className="text-gray-500 text-sm">{data.email}</p>
                             </div>
                         </div>
                     </div>

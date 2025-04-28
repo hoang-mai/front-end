@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { faExclamation, faHandHoldingDollar, faHome, faSignOut, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard, faExclamation, faHandHoldingDollar, faHome, faSignOut, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -29,8 +29,10 @@ const LeftSidebar = () => {
     const [image, setImage] = useState<string | null>(null);
     useEffect(() => {
         const storedImage = localStorage.getItem("image");
-        if (storedImage && storedImage !== "null") {
+        if (storedImage && storedImage !== "null" && storedImage !== "default") {
             setImage(storedImage);
+        }else {
+            setImage(null);
         }
     }, []);
     return (
@@ -106,6 +108,19 @@ const LeftSidebar = () => {
                             Vi phạm
                         </Link>
                         {pathname !== '/violation' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/practice"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/practice"
+                            className={`p-2 w-full h-full block ${pathname !== "/practice" ? "relative z-10" : ""}`}
+
+                        ><FontAwesomeIcon icon={faClipboard} className='mr-2' />
+                            Rèn luyện thể chất
+                        </Link>
+                        {pathname !== '/practice' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                 </ul>
             </div>

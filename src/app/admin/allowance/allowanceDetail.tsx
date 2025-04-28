@@ -118,13 +118,7 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                         />
 
 
-                        <InfoItem
-                            icon={faCalendar}
-                            label="Tạo ngày"
-                            value={formatDate(allowanceStudent?.allowanceCreatedAt)}
-                            small={true}
-                            fullWidth={true}
-                        />
+                        
 
                     </div>
                 </div>

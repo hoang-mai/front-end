@@ -69,7 +69,18 @@ interface EditProfileModalProps {
     selectedStudent: Student;
     setSelectedStudent: Dispatch<SetStateAction<Student | undefined>>
 }
-
+function convertStringToPoliticalStatus(value: string): string | null {
+    switch (value) {
+        case 'Đảng viên':
+            return 'party_member';
+        case 'Đoàn viên':
+            return 'youth_union_member';
+        case 'Không':
+            return 'none';
+        default:
+            return null;
+    }
+}
 const EditProfileModal: React.FC<EditProfileModalProps> = ({
     showEdit,
     setShowEdit,
@@ -81,7 +92,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     const [file, setFile] = React.useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isUrlImage, setIsUrlImage] = React.useState<boolean>(!!selectedStudent?.image);
-    const [selected, setSelected] = React.useState<Option>({ label: 'Đảng viên', id: 'Đảng viên' });
+    const [selected, setSelected] = React.useState<Option>({ label: userProfile.politicalStatus || 'Không', id: userProfile.politicalStatus || 'Không' });
 
     // User profile state variables (keeping birthDate as Date object)
     const [birthDate, setBirthDate] = React.useState<Date | null>(userProfile?.dateOfBirth);
@@ -108,7 +119,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
 
     const handleOnSubmit = async () => {
-        let urlImage: string = '';
+        let urlImage: string = isUrlImage && selectedStudent.image ? selectedStudent.image : 'default';
         if (!isUrlImage && file) {
             if (file.size > 10 * 1024 * 1024) {
                 toast.error('Kích thước ảnh không được vượt quá 10MB');
@@ -132,7 +143,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     place_of_origin: hometown,
                     working_unit: workingUnit,
                     year_of_study: yearOfStudy,
-                    political_status: "party_member",
+                    political_status: convertStringToPoliticalStatus(selected.label),
                     phone_number: phoneNumber,
                     permanent_residence: permanentAddress,
                     father_name: fatherFullName,
@@ -166,7 +177,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 if (!prev) return prev;
                 return {
                     ...prev,
-                    image: urlImage ,
+                    image: isUrlImage ? prev.image : urlImage,
                 }
             })
             setUserProfile((prev) => {
@@ -177,7 +188,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     placeOfOrigin: hometown,
                     workingUnit: workingUnit,
                     yearOfStudy: yearOfStudy ? parseInt(yearOfStudy) : null,
-                    politicalStatus: selected.id as string,
+                    politicalStatus: selected.label,
                     phoneNumber: phoneNumber,
                     permanentResidence: permanentAddress,
                     father: {
@@ -203,7 +214,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
     const imageSrc = useMemo(() => {
         if (file) return URL.createObjectURL(file);
-        if (isUrlImage && selectedStudent?.image) return selectedStudent.image;
+        if (isUrlImage && selectedStudent?.image && selectedStudent.image !== 'default') return selectedStudent.image;
         return "/avatarDefault.svg";
     }, [file,isUrlImage, selectedStudent?.image]);
 

@@ -78,6 +78,9 @@ function AddViolation({ showModal, setShowModal, setDatas, preSelectedStudent }:
                     id : res.data.data.id,
                     violationName: violationName,
                     violationDate: violationDate,
+                    managerName: res.data.data.manager_name,
+                    managerEmail: res.data.data.manager_email,
+                    updatedAt: new Date(),
                 }, ...prev]
             });
             setShowModal(false);

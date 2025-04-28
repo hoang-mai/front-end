@@ -23,8 +23,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WorkIcon from '@mui/icons-material/Work';
 import { uploadImage } from "@/app/Services/uploadImage";
-import { put } from "@/app/Services/callApi";
-import { studentProfileDetail } from "@/app/Services/api";
+import { post, put } from "@/app/Services/callApi";
+import { studentProfileDetail, updateImage } from "@/app/Services/api";
 import { format } from "date-fns/format";
 
 
@@ -42,7 +42,7 @@ export interface UserWithStudentDetail {
 export interface StudentDetail {
     id: number;
     userId: number;
-    dateOfBirth: Date  | null;
+    dateOfBirth: Date | null;
     rank: string | null;
     placeOfOrigin: string | null;
     workingUnit: string | null;
@@ -70,6 +70,19 @@ interface EditProfileModalProps {
     setUserWithStudentDetail: Dispatch<SetStateAction<UserWithStudentDetail>>;
 }
 
+function convertStringToPoliticalStatus(value: string): string | null {
+    switch (value) {
+        case 'Đảng viên':
+            return 'party_member';
+        case 'Đoàn viên':
+            return 'youth_union_member';
+        case 'Không':
+            return 'none';
+        default:
+            return null;
+    }
+}
+
 
 const EditProfileModal: React.FC<EditProfileModalProps> = ({
     showEdit,
@@ -80,7 +93,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     const [file, setFile] = React.useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isUrlImage, setIsUrlImage] = React.useState<boolean>(!!userWithStudentDetail.image);
-    const [selected, setSelected] = React.useState<Option>({ label: 'Đảng viên', id: 'Đảng viên' });
+    const [selected, setSelected] = React.useState<Option>({ label: userWithStudentDetail.studentDetail.politicalStatus || 'Không', id: userWithStudentDetail.studentDetail.politicalStatus || 'Không' });
 
     // User profile state variables (keeping birthDate as Date object)
     const [birthDate, setBirthDate] = React.useState<Date | null>(userWithStudentDetail?.studentDetail.dateOfBirth);
@@ -107,7 +120,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
 
     const handleOnSubmit = async () => {
-        let urlImage: string = '';
+        let urlImage: string = isUrlImage && userWithStudentDetail.image ? userWithStudentDetail.image : 'default';
         if (!isUrlImage && file) {
             if (file.size > 10 * 1024 * 1024) {
                 toast.error('Kích thước ảnh không được vượt quá 10MB');
@@ -121,6 +134,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 return;
             }
         }
+        post(updateImage, { image: urlImage })
+        .then((res) => {
+            localStorage.setItem("image", urlImage);
+        })
+        .catch((res) => {
+            toast.error(res.data.message);
+            return;
+        });
         toast.promise(
             put(studentProfileDetail,
                 {
@@ -129,7 +150,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     place_of_origin: hometown,
                     working_unit: workingUnit,
                     year_of_study: yearOfStudy,
-                    political_status: "party_member",
+                    political_status: convertStringToPoliticalStatus(selected.label),
                     phone_number: phoneNumber,
                     permanent_residence: permanentAddress,
                     father_name: fatherFullName,
@@ -162,6 +183,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             setUserWithStudentDetail((prev) => {
                 return {
                     ...prev,
+                    image: isUrlImage ? prev?.image : urlImage,
                     studentDetail: {
                         ...prev?.studentDetail,
                         dateOfBirth: birthDate || prev?.studentDetail.dateOfBirth,
@@ -169,7 +191,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                         placeOfOrigin: hometown,
                         workingUnit: workingUnit,
                         yearOfStudy: yearOfStudy ? parseInt(yearOfStudy) : null,
-                        politicalStatus: selected.id as string,
+                        politicalStatus: selected.label,
                         phoneNumber: phoneNumber,
                         permanentResidence: permanentAddress,
                         father: {
@@ -196,9 +218,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
     const imageSrc = useMemo(() => {
         if (file) return URL.createObjectURL(file);
-        if (isUrlImage && userWithStudentDetail.image) return userWithStudentDetail.image;
+        if (isUrlImage && userWithStudentDetail.image && userWithStudentDetail.image !== 'default') return userWithStudentDetail.image;
         return "/avatarDefault.svg";
-    }, [file,isUrlImage]);
+    }, [file, isUrlImage]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsUrlImage(false);
@@ -289,7 +311,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     </div>
 
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        
+
                         <div className='flex flex-col gap-2'>
                             <label htmlFor="dob" className="text-gray-700 font-medium flex items-center">
                                 <CakeIcon sx={{ color: 'var(--color-text)', mr: 1, fontSize: 20 }} />

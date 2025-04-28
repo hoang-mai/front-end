@@ -26,6 +26,7 @@ import EditProfileModal from "./editProfileModal";
 
 import WorkIcon from '@mui/icons-material/Work';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { set } from "date-fns";
 interface Student {
     id: number;
     name: string;
@@ -38,6 +39,17 @@ export interface ParentInfo {
     phoneNumber: string | null;
     placeOfOrigin: string | null;
     occupation: string | null;
+}
+function convertPoliticalStatusToString(status: string | null): string {
+    if (status === 'party_member') {
+        return 'Đảng viên';
+    } else if (status === 'youth_union_member') {
+        return 'Đoàn viên';
+    }else if (status === 'none') {
+        return 'Không';
+    } else {
+        return 'Chưa cập nhật';
+    }
 }
 
 export interface StudentDetail {
@@ -66,7 +78,7 @@ export function convertStudentDetail(data: any): StudentDetail {
         placeOfOrigin: data.place_of_origin,
         workingUnit: data.working_unit,
         yearOfStudy: data.year_of_study,
-        politicalStatus: data.political_status,
+        politicalStatus: convertPoliticalStatusToString(data.political_status),
         phoneNumber: data.phone_number,
         permanentResidence: data.permanent_residence,
         father: {
@@ -263,18 +275,22 @@ function AdminStudent() {
     const [userProfile, setUserProfile] = useState<StudentDetail>(defaultStudentDetail);
     const [loading, setLoading] = useState<boolean>(false);
     const [selectedStudent, setSelectedStudent] = useState<Student>();
+
     const [error, setError] = useState<string>('');
     const [showEdit, setShowEdit] = useState<boolean>(false);
     const searchStudentRef = useRef<HTMLDivElement | null>(null);
 
-
+    const [prevStudent, setPrevStudent] = useState<Student>();
 
     useEffect(() => {
+        if(prevStudent && selectedStudent && prevStudent.id === selectedStudent.id){
+            return;
+        }
+        setPrevStudent(selectedStudent);
         if (!selectedStudent) {
             setUserProfile(defaultStudentDetail);
             return;
         }
-
         setLoading(true);
         get(`${adminStudentProfile}/${selectedStudent.id}/detail`)
             .then((res) => {
@@ -330,7 +346,7 @@ function AdminStudent() {
                                     <div className="relative mb-4">
                                         <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto">
                                             <Image
-                                                src={selectedStudent?.image || "/avatarDefault.svg"}
+                                                src={(selectedStudent.image && selectedStudent.image !== 'default') ? selectedStudent.image : '/avatarDefault.svg'}
                                                 alt="Ảnh đại diện"
                                                 width={112}
                                                 height={112}
@@ -400,7 +416,7 @@ function AdminStudent() {
                                                 <div className="w-8 h-8 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text)">
                                                     <FlagIcon sx={{ fontSize: 18 }} />
                                                 </div>
-                                                <span>Đảng viên: {userProfile?.politicalStatus ? (userProfile.politicalStatus === 'party_member' ? 'Có' : 'Không') : "Chưa cập nhật"}</span>
+                                                <span>Đảng viên/Đoàn viên: {userProfile?.politicalStatus ? userProfile.politicalStatus : "Chưa cập nhật"}</span>
                                             </div>
 
                                         </div>

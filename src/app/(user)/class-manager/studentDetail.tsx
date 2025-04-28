@@ -1,8 +1,9 @@
-import Modal from '@mui/material/Modal'
-import Box from '@mui/material/Box'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faUser, faEnvelope, faUserTag, faClipboard, faCalendar, faCircleInfo, faCheckCircle, faClock } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { faXmark, faUser, faEnvelope, faUserTag, faClipboard, faCalendar, faCircleInfo, faCheckCircle, faClock } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface Student extends Record<string, unknown> {
     id: number;
@@ -10,16 +11,22 @@ interface Student extends Record<string, unknown> {
     email: string;
     role: string;
     status: string;
+    image: string | null;
+
 }
+
 interface StudentDetailProps {
     readonly showModal: boolean;
     readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
     readonly student: Student | undefined;
 }
+
 function StudentDetail({ student, showModal, setShowModal }: StudentDetailProps) {
-    const [statusColor, setStatusColor] = useState(
-        student?.status === 'Đang học' ? 'text-green-500' : 'text-yellow-500'
-    );
+    const [statusColor, setStatusColor] = useState<string>('');
+    
+    useEffect(() => {
+        setStatusColor(student?.status === 'Đang học' ? 'text-green-500' : 'text-yellow-500');
+    }, [student]);
 
     return (
         <Modal
@@ -39,8 +46,23 @@ function StudentDetail({ student, showModal, setShowModal }: StudentDetailProps)
                 </div>
 
                 <div className="p-6">
-                    {/* Student name header section */}
+                    {/* Student name header section with image */}
                     <div className='w-full flex flex-col items-center justify-center mb-6'>
+                        <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
+                            {student?.image && student.image !== 'default' ? (
+                                <Image
+                                    src={student.image}
+                                    alt={student.name || "Ảnh đại diện"}
+                                    width={96}
+                                    height={96}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                    <FontAwesomeIcon icon={faUser} className="text-gray-400 text-3xl" />
+                                </div>
+                            )}
+                        </div>
                         <h1 className='text-xl md:text-2xl font-bold text-(--color-text)'>
                             {student?.name ?? "Không tìm thấy"}
                         </h1>
@@ -49,13 +71,17 @@ function StudentDetail({ student, showModal, setShowModal }: StudentDetailProps)
                     {/* Status badge */}
                     <div className="flex justify-center mb-6">
                         <div className={`px-4 py-2 rounded-full ${statusColor === 'text-green-500' ? 'bg-green-100' : 'bg-yellow-100'} flex items-center`}>
-                            <FontAwesomeIcon icon={statusColor === 'text-green-500' ? faCheckCircle : faClock} className={`${statusColor} mr-2`} />
+                            <FontAwesomeIcon 
+                                icon={statusColor === 'text-green-500' ? faCheckCircle : faClock} 
+                                className={`${statusColor} mr-2`} 
+                            />
                             <span className={`font-medium ${statusColor}`}>{student?.status ?? 'N/A'}</span>
                         </div>
                     </div>
 
                     {/* Main content - information cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 md:px-4">
+                    
                         <InfoItem
                             icon={faEnvelope}
                             label="Email"
