@@ -1,5 +1,12 @@
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Trang chủ",
+  description: "Trang chủ",
+};
+
 export default function DashboardLayout({
   children,
 }: Readonly<{

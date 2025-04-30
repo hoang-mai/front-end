@@ -48,7 +48,7 @@ const LeftSidebar = () => {
                             className={`p-2 w-full h-full block ${pathname !== "/" ? "relative z-10" : ""}`}
                         >
                             <FontAwesomeIcon icon={faHome} className='mr-2' />
-                            Quản lý học kỳ
+                            Trang chủ
                         </Link>
 
                         {pathname !== '/' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
