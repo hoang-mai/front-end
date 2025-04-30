@@ -88,8 +88,8 @@ const LoginPage: React.FC = () => {
                 <div className="bg-white rounded-2xl shadow-xl ">
                     {/* Logo section at the top of the card */}
                     <div className="flex flex-col items-center pt-8 pb-4 px-6">
-                        <div className="bg-[#f0f9e8] rounded-full p-4 shadow-md mb-3 border-2 border-[#124f33]">
-                            <img className="w-16 h-16" src='/favicon.ico' alt="Logo" />
+                        <div className="bg-[#f0f9e8] rounded-full  shadow-md mb-3 border-2 border-[#124f33]">
+                            <img className="w-30 h-30" src='/favicon.ico' alt="Logo" />
                         </div>
                         <h1 className="text-center text-2xl font-bold text-[#124f33] mt-2">HỆ THỐNG QUẢN LÝ HỌC VIÊN</h1>
                     </div>
