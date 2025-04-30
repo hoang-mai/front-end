@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { studentViolations } from '@/app/Services/api';
 import TableComponent from '@/app/Components/table';
 import ViolationDetail from './violationDetail';
+import NoContent from '@/app/Components/noContent';
 
 interface Violation extends Record<string, unknown> {
   id: number;
@@ -93,8 +94,11 @@ const Violation = () => {
       </div>
       {loading ? (
         <LoaderTable />
-      ) : (
+      ) 
+      : violations.length === 0 ? <NoContent title="Không có vi phạm nào" description="" />
+      : (
         <>
+
           <TableComponent actionCell={false} index={true} dataCells={violations} headCells={headCells} search={search} onRowClick={(id) => { setShowModal(true); setStudentDetail(violations.find(violation => violation.id === id)); }} />
           {showModal && studentDetail && <ViolationDetail showModal={showModal} setShowModal={setShowModal} violation={studentDetail} />}
         </>

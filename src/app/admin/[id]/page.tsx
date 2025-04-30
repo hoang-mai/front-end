@@ -14,8 +14,8 @@ import { faReply, faSearch, faCalendarAlt } from "@fortawesome/free-solid-svg-ic
 import EditTermModal from './editTermModal';
 import TableComponent from '@/app/Components/table';
 import EditClassModal from '../class/[id]/editClassModal';
-import { set } from 'date-fns';
-import Head from 'next/head';
+import NoContent from '@/app/Components/noContent';
+
 
 interface HeadCell {
     id: keyof Course;
@@ -122,12 +122,7 @@ export default function TermDetail() {
         return <div className='text-red-500'>{error}</div>
     }
     return (
-        <>
-            <Head>
-                <title>Quản lý lớp họcgdddđf</title>
-                <meta name="description" content="Quản lý kỳ học" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            </Head>
+
         <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
             {loading ? (
                 <>
@@ -222,7 +217,9 @@ export default function TermDetail() {
                             </button>
                         </div>
                     </div>
-                    <TableComponent dataCells={courses} headCells={headCells} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} setDatas={setCourses} EditComponent={EditClassModal} modal={modal} />
+                    {courses.length === 0 ? <NoContent title='Không có lớp học nào' description='Vui lòng thêm lớp học mới' /> :
+                        <TableComponent dataCells={courses} headCells={headCells} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} setDatas={setCourses} EditComponent={EditClassModal} modal={modal} />
+                    }
                     <Modal
                         open={showModal}
                         onClose={() => setShowModal(false)}
@@ -266,6 +263,5 @@ export default function TermDetail() {
                 </>
             )}
         </div>
-        </>
     )
 }

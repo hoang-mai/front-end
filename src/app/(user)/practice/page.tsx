@@ -8,6 +8,7 @@ import TableComponent from "@/app/Components/table";
 import { get } from "@/app/Services/callApi";
 import { studentFitnessAssessments } from "@/app/Services/api";
 import PracticeDetail from "./practiceDetail";
+import NoContent from "@/app/Components/noContent";
 function convertRatingToString(status: string): string {
     switch (status) {
         case 'pass':
@@ -111,6 +112,8 @@ function Practice() {
             </div>
             {loading ?
                 <LoaderTable /> :
+                assessments.length === 0 ?
+                    <NoContent title="Không có bài kiểm tra nào" description="" /> :
                 <TableComponent
                     headCells={headCells}
                     dataCells={assessments}

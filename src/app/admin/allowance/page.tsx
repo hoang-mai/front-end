@@ -11,6 +11,7 @@ import AddAllowance from "./addAllowance";
 import AllowanceDetail from "./allowanceDetail";
 import EditAllowanceModal from "./editAllowanceModal";
 import { useRouter } from "next/navigation";
+import NoContent from "@/app/Components/noContent";
 
 interface AllowanceStudent extends Record<string, unknown> {
     id: number;
@@ -118,6 +119,7 @@ function Allowance() {
                 </button>
             </div>
             {loading ? <LoaderTable />
+            : allowanceStudents.length === 0 ? <NoContent title="Không có trợ cấp nào" description="Vui lòng thêm trợ cấp mới" /> 
                 : <TableComponent dataCells={allowanceStudents} headCells={headCells} search={search} onRowClick={(id) => {
                     setShowAllowanceDetail(true);
                     setAllowanceDetail(allowanceStudents.find((student) => student.id === id));

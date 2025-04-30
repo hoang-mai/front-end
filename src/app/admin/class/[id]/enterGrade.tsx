@@ -329,7 +329,11 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                     </Box>
 
                 </div>
-                <p className="h-5 text-red-500 text-sm my-2">{error}</p>
+                {error &&
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-2" role="alert">
+                    <span className="block sm:inline">{error}</span>
+                </div>
+                }
                 <div className='flex justify-center gap-4 w-full '>
                     <button className='btn-text text-white px-4 h-10 rounded-lg flex items-center' onClick={handleOnSubmit}>
                         <SaveIcon className="mr-2" fontSize="small" />

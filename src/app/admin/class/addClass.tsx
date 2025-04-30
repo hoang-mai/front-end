@@ -125,7 +125,7 @@ function AddClass({
             <Box className='xl:w-[50%] lg:w-[70%] md:w-[90%] w-[95%] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden'>
                 <div className='bg-[var(--color-text)] text-white p-5 relative'>
                     <h2 className='text-2xl font-semibold text-center'>Thêm lớp học</h2>
-                    <button 
+                    <button
                         className='absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:bg-[var(--color-text-hover)] p-1 rounded-full transition-all duration-200'
                         onClick={() => setShowModal(false)}
                     >
@@ -144,7 +144,7 @@ function AddClass({
                                 <p id="termName" className="py-2">{label}</p>
                             </div>
                         </div>
-                        
+
                         <div className="flex flex-col md:flex-row md:items-start gap-2">
                             <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
                                 <SchoolIcon />
@@ -163,7 +163,7 @@ function AddClass({
                                 />
                             </div>
                         </div>
-                        
+
                         <div className="flex flex-col md:flex-row md:items-start gap-2">
                             <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
                                 <GroupIcon />
@@ -180,12 +180,12 @@ function AddClass({
                                     id="enrollLimit"
                                     className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
                                 />
-                                
-                                    <p className="h-5 mt-1 text-red-500 text-sm">{errorEnrollLimit}</p>
-                                
+
+                                <p className="h-5 mt-1 text-red-500 text-sm">{errorEnrollLimit}</p>
+
                             </div>
                         </div>
-                        
+
                         <div className="flex flex-col md:flex-row md:items-start gap-2">
                             <div className="md:w-1/3 flex items-center gap-2 text-[var(--color-text)]">
                                 <BalanceIcon />
@@ -202,16 +202,16 @@ function AddClass({
                                     id="midtermWeight"
                                     className="appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--border-color-focus)] border-[var(--border-color)] hover:border-[var(--border-color-hover)] transition-colors duration-200"
                                 />
-                                
-                                    <p className="h-5 mt-1 text-red-500 text-sm">{errorMidtermWeight}</p>
-                                
+
+                                <p className="h-5 mt-1 text-red-500 text-sm">{errorMidtermWeight}</p>
+
                             </div>
                         </div>
 
                         {error && (
-                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                                {error}
-                            </div>
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-2" role="alert">
+                            <span className="block sm:inline">{error}</span>
+                        </div>
                         )}
                     </form>
                 </div>
@@ -226,8 +226,8 @@ function AddClass({
                         <SaveIcon fontSize="small" />
                         <span>Tạo lớp học</span>
                     </button>
-                    <button 
-                        className='bg-red-600  text-white py-2 px-6 rounded-lg hover:bg-red-700  active:bg-red-800 flex items-center gap-2 transition-colors duration-200' 
+                    <button
+                        className='bg-red-600  text-white py-2 px-6 rounded-lg hover:bg-red-700  active:bg-red-800 flex items-center gap-2 transition-colors duration-200'
                         onClick={() => setShowModal(false)}
                     >
                         <CancelIcon fontSize="small" />

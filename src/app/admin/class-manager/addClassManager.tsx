@@ -26,8 +26,11 @@ function convertDataToClassManager(data: any, manager: Manager | null) {
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
         studentCount: 0,
-        managerName: manager?.name,
-        managerEmail: manager?.email,
+        manager: {
+            id: manager?.id,
+            name: manager?.name,
+            email: manager?.email,
+        }
     }
 }
 

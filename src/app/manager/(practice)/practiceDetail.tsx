@@ -77,7 +77,7 @@ function PracticeDetail({ performanceRecord, showModal, setShowModal }: Practice
                 return 'bg-green-100 text-green-500';
             case 'Giỏi':
                 return 'bg-blue-100 text-blue-500';
-            case 'Vượt qua':
+            case 'Đạt':
                 return 'bg-yellow-100 text-yellow-500';
             case 'Không đạt':
                 return 'bg-red-100 text-red-500';

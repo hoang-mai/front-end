@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AddClassManager from "./addClassManager";
 import EditClassManagerModal from "./[id]/editClassManagerModal";
+import NoContent from "@/app/Components/noContent";
 
 interface ClassManager extends Record<string, unknown> {
     id: number;
@@ -51,6 +52,7 @@ const headCells: HeadCell[] = [
     { id: 'manager.name', label: 'Tên quản lý', },
     { id: 'manager.email', label: 'Email' ,},
     { id: 'studentCount', label: 'Số lượng sinh viên', },
+    { id: 'updatedAt', label: 'Ngày cập nhật', },
     { id: 'createdAt', label: 'Ngày tạo', },
 ];
 const modal = {
@@ -101,6 +103,7 @@ function ClassManager() {
                 </button>
             </div>
             {loading ? <LoaderTable />
+                : classManagers.length === 0 ? <NoContent title="Không có lớp quản lý nào" description="Vui lòng thêm lớp quản lý mới" />
                 : <TableComponent dataCells={classManagers} headCells={headCells} search={search} onRowClick={(id) => { router.push(`/admin/class-manager/${id}`) }} modal={modal} EditComponent={EditClassManagerModal} setDatas={setClassManagers}/>
             }
             {showModal && <AddClassManager  setShowModal={setShowModal} showModal={showModal} setDatas={setClassManagers} />}

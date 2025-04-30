@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import AddFitnessTest from "./addPractice";
 import EditPractice from "./editPractice";
 import PracticeDetail from "./practiceDetail";
+import NoContent from "@/app/Components/noContent";
 
 
 interface FitnessTest extends Record<string, any> {
@@ -25,7 +26,7 @@ interface FitnessTest extends Record<string, any> {
 }
 
 function convertDataToFitnessTest(data: any): FitnessTest[] {
-    
+
     return data.map((item: any) => ({
         id: item.id,
         name: item.name,
@@ -47,12 +48,13 @@ interface HeadCell {
 const headCells: HeadCell[] = [
     { id: 'name', label: 'Tên bài kiểm tra thể lực', },
     { id: 'unit', label: 'Đơn vị', },
-    { id: 'higherIsBetter', label: 'Giá trị cao hơn là tốt hơn', },
-    { id: 'createdAt', label: 'Ngày tạo', },
-    { id: 'updatedAt', label: 'Ngày cập nhật', },
-    { id: 'thresholdsExcellentThreshold', label: 'Ngưỡng giỏi', },
-    { id: 'thresholdsGoodThreshold', label: 'Ngưỡng khá', },
+    { id: 'higherIsBetter', label: 'Càng cao càng tốt', },
+    { id: 'thresholdsExcellentThreshold', label: 'Ngưỡng xuất sắc', },
+    { id: 'thresholdsGoodThreshold', label: 'Ngưỡng giỏi', },
     { id: 'thresholdsPassThreshold', label: 'Ngưỡng đạt', },
+    { id: 'updatedAt', label: 'Ngày cập nhật', },
+    { id: 'createdAt', label: 'Ngày tạo', },
+
 ];
 
 const modal = {
@@ -63,7 +65,7 @@ const modal = {
 }
 
 function Practice() {
-    
+
     const [fitnessTests, setFitnessTests] = useState<FitnessTest[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -76,7 +78,7 @@ function Practice() {
         setSearch(e.target.value);
     }
 
-    
+
     useEffect(() => {
         get(adminFitnessTest, {})
             .then((res) => {
@@ -116,18 +118,20 @@ function Practice() {
                 </button>
             </div>
             {loading ? <LoaderTable />
-                : <TableComponent
-                    dataCells={fitnessTests}
-                    headCells={headCells}
-                    search={search}
-                    onRowClick={(id) => {
-                        setShowFitnessTestDetail(true);
-                        setFitnessTestDetail(fitnessTests.find((fitnessTest) => fitnessTest.id === id));
-                    }}
-                    modal={modal}
-                    setDatas={setFitnessTests}
-                    EditComponent={EditPractice}
-                />
+                : fitnessTests.length === 0 ?
+                    <NoContent title="Không có bài kiểm tra nào" description="Vui lòng thêm bài kiểm tra mới" />
+                    : <TableComponent
+                        dataCells={fitnessTests}
+                        headCells={headCells}
+                        search={search}
+                        onRowClick={(id) => {
+                            setShowFitnessTestDetail(true);
+                            setFitnessTestDetail(fitnessTests.find((fitnessTest) => fitnessTest.id === id));
+                        }}
+                        modal={modal}
+                        setDatas={setFitnessTests}
+                        EditComponent={EditPractice}
+                    />
             }
             {/* Add modal component when needed */}
             {showModal && <AddFitnessTest setShowModal={setShowModal} showModal={showModal} setDatas={setFitnessTests} />}

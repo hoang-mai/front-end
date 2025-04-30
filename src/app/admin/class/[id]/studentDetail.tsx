@@ -38,7 +38,7 @@ function convertDataToStudentDetail(data: any): StudentDetail {
 function convertStatus(status: string): string {
     switch (status) {
         case 'enrolled':
-            return 'Đã đăng ký';
+            return 'Chưa có điểm';
         case 'failed':
             return 'Trượt';
         case 'completed':
@@ -62,8 +62,8 @@ function StudentDetail({
     const [statusColor, setStatusColor] = useState<string>('text-blue-500');
 
     useEffect(() => {
-        if (student?.status.includes('Đã đăng ký')) {
-            setStatusColor('text-blue-500');
+        if (student?.status.includes('Chưa có điểm')) {
+            setStatusColor('text-gray-500');
         } else if (student?.status.includes('Hoàn thành')) {
             setStatusColor('text-green-500');
         } else if (student?.status.includes('Trượt')) {

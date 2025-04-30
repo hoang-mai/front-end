@@ -14,17 +14,17 @@ export interface UserBasicInfo {
     name: string;
     email: string;
     image: string | null;
-  }
-  
-  export interface ViceMonitor extends UserBasicInfo {}
-  
-  export interface Manager extends UserBasicInfo {}
-  
-  export interface Monitor extends UserBasicInfo {}
-  
+}
 
-  
-  export interface ClassDetail {
+export interface ViceMonitor extends UserBasicInfo { }
+
+export interface Manager extends UserBasicInfo { }
+
+export interface Monitor extends UserBasicInfo { }
+
+
+
+export interface ClassDetail {
     id: number;
     name: string;
     createdAt: Date;
@@ -34,8 +34,8 @@ export interface UserBasicInfo {
     viceMonitors: ViceMonitor[] | null;
     students: Student[];
     studentCount: number;
-  }
-  
+}
+
 interface Student extends Record<string, unknown> {
     id: number;
     name: string;
@@ -72,7 +72,7 @@ function EditClassManagerModal({
     const debouncedQuery = useDebounce(search, 500, setLoading);
     const [error, setError] = useState<string>('');
     const [classManagerName, setClassManagerName] = useState<string>(data.name);
-    
+
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         toast.promise(
@@ -91,7 +91,8 @@ function EditClassManagerModal({
                     ? {
                         ...classManager,
                         name: classManagerName,
-                        manager:selectedManager
+                        manager: selectedManager,
+                        updatedAt: new Date(),
                     }
                     : classManager
 
@@ -101,7 +102,7 @@ function EditClassManagerModal({
                 return {
                     ...prev,
                     name: classManagerName,
-                    manager: selectedManager,   
+                    manager: selectedManager,
                 }
             });
             setShowEdit(false);
@@ -145,15 +146,15 @@ function EditClassManagerModal({
         }
     }, [searchRef, selectedManager])
     useEffect(() => {
-            get(adminAdminManager)
-                    .then((res) => {
-                        setDataFetch(res.data.data);
-                    })
-                    .catch((res)=>{
-                        toast.error(res.data.message);
-                        setError(res.data.message);
-                    })
-        },[])
+        get(adminAdminManager)
+            .then((res) => {
+                setDataFetch(res.data.data);
+            })
+            .catch((res) => {
+                toast.error(res.data.message);
+                setError(res.data.message);
+            })
+    }, [])
     return (
         <Modal
             open={showEdit}
@@ -162,7 +163,7 @@ function EditClassManagerModal({
         >
             <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] h-[70%] w-[99%] flex flex-col bg-gray-100  rounded-xl shadow-2xl overflow-hidden border border-(--border-color)'>
                 <div className='bg-[var(--color-text)] text-white p-5 relative'>
-                
+
                     <h2 className='text-2xl font-semibold text-center'>Chỉnh sửa lớp quản lý</h2>
                     <button className='absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:bg-[var(--color-text-hover)] p-1 rounded-full transition-all duration-200'
                         onClick={() => {
@@ -171,7 +172,7 @@ function EditClassManagerModal({
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-               
+
 
                 <div className="p-6 w-full flex justify-center flex-1">
                     <form action="" className="lg:w-150 w-120 lg:px-16 md:px-8 flex flex-col flex-1">
@@ -268,10 +269,9 @@ function EditClassManagerModal({
                         </div>
 
                         {error && (
-                            <p className='text-red-500 text-sm mb-4 flex items-center'>
-                                <FontAwesomeIcon icon={faInfoCircle} className="mr-2" />
-                                {error}
-                            </p>
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-2" role="alert">
+                                <span className="block sm:inline">{error}</span>
+                            </div>
                         )}
 
                         <div className='flex items-center justify-center gap-4 mt-auto'>
@@ -282,7 +282,7 @@ function EditClassManagerModal({
                                 <FontAwesomeIcon icon={faInfoCircle} className="mr-2" />
                                 Cập nhật
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setShowEdit(false)}
                                 className="bg-red-700 text-white py-2.5 px-8 rounded-lg hover:bg-red-800 active:bg-red-900 focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
                                 <FontAwesomeIcon icon={faXmark} className="mr-2" />

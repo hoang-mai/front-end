@@ -290,9 +290,9 @@ const EditTermModal = ({
                         </div>
 
                         {error && (
-                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                                {error}
-                            </div>
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-2" role="alert">
+                            <span className="block sm:inline">{error}</span>
+                        </div>
                         )}
                     </form>
                 </div>

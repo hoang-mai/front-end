@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import NoContent from "@/app/Components/noContent";
 
 interface Manager extends Record<string, unknown> {
     id: number;
@@ -65,7 +66,8 @@ function AdminManager() {
           <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' /></div>
        
       </div>
-      {loading ? <LoaderTable />
+      {loading ? <LoaderTable /> 
+        : managers.length === 0 ? <NoContent title="Không có quản lý nào"  description="Vui lòng thêm quản lý mới" />
         : <TableComponent index={true} dataCells={managers} headCells={headCells} search={search} onRowClick={(id) => { router.push(`/admin/admin-manager/${id}`) }} deleteCell={false} actionCell={false}/>
       }
     </div>

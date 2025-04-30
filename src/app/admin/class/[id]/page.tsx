@@ -16,6 +16,7 @@ import EnterGradeModal from "./enterGrade";
 import TableComponent from "@/app/Components/table";
 import EditStudentModal from "./editStudentModal";
 import StudentDetail from "./studentDetail";
+import NoContent from "@/app/Components/noContent";
 
 interface HeadCell {
     id: keyof Student;
@@ -58,11 +59,11 @@ function convertDataToStudent(data: any): Student {
 function convertStatus(status: string): string {
     switch (status) {
         case 'enrolled':
-            return 'Đã đăng ký';
+            return 'Chưa có điểm';
         case 'failed':
-            return 'Trượt';
+            return 'Trượt môn';
         case 'completed':
-            return 'Hoàn thành';
+            return 'Qua môn';
         default:
             return status;
     }
@@ -145,15 +146,18 @@ function ClassDetail() {
             {
                 pending: "Đang xử lý...",
                 success: "Xóa lớp học thành công",
-                error: "Xóa lớp học thất bại",
+                error: {
+                    render({ data }: any) {
+                        return data.message;
+                    },
+                }
             }
         ).then(() => {
             setShowModal(false);
             router.push('/admin/class');
-        }).catch((err) => {
-            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-            setError(firstValue);
-        })
+        }).catch(() => {
+            setShowModal(false);
+        });
     }
     if (error) {
         return <div className='text-red-500'>{error}</div>;
@@ -322,6 +326,8 @@ function ClassDetail() {
                         />
                     }
                     {loadingStudent ? <LoaderTable /> :
+                        students.length === 0 ?
+                            <NoContent title="Không có học viên nào" description="Vui lòng thêm học viên mới" /> :
                         <>
                             <TableComponent
                                 dataCells={students}

@@ -90,10 +90,23 @@ function AddStudent({
             });
 
             if (res.data.data.failed.length > 0) {
-                const errorMessages = res.data.data.failed
-                    .map((item: any) => `${item.name}: ${item.message}`)
+                const failed = res.data.data.failed;
+
+                const groupedErrors: Record<string, string[]> = {};
+
+                failed.forEach((item: any) => {
+                    if (!groupedErrors[item.message]) {
+                        groupedErrors[item.message] = [];
+                    }
+                    groupedErrors[item.message].push(item.name);
+                });
+
+                const errorMessages = Object.entries(groupedErrors)
+                    .map(([message, names]) => `${names.join(', ')}: ${message}`)
                     .join('\n');
+
                 setError(errorMessages);
+
             } else {
                 setShowAddStudent(false);
             }
@@ -179,9 +192,9 @@ function AddStudent({
                                                         <div className="flex items-center gap-3">
                                                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
                                                                 {student.image ? (
-                                                                    <img 
-                                                                        src={student.image} 
-                                                                        alt={student.name} 
+                                                                    <img
+                                                                        src={student.image}
+                                                                        alt={student.name}
                                                                         className="w-full h-full object-cover"
                                                                     />
                                                                 ) : (
@@ -213,33 +226,33 @@ function AddStudent({
                         <ul className='rounded-lg p-2 bg-white'>
                             {addStudents.map(student => (
                                 <li key={student.id} className='w-full'>
-                                <div className="flex items-center justify-between p-2 cursor-pointer">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                            {student.image ? (
-                                                <img 
-                                                    src={student.image} 
-                                                    alt={student.name} 
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <PersonIcon className="text-gray-500" />
-                                            )}
+                                    <div className="flex items-center justify-between p-2 cursor-pointer">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                                {student.image ? (
+                                                    <img
+                                                        src={student.image}
+                                                        alt={student.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <PersonIcon className="text-gray-500" />
+                                                )}
+                                            </div>
+                                            <div className="text-left">
+                                                <h3>{student.name}</h3>
+                                                <p className="text-gray-500 text-sm">{student.email}</p>
+                                            </div>
                                         </div>
-                                        <div className="text-left">
-                                            <h3>{student.name}</h3>
-                                            <p className="text-gray-500 text-sm">{student.email}</p>
-                                        </div>
+                                        <button className="p-2"
+                                            onClick={() => {
+                                                setAddStudents(addStudents.filter(s => s.id !== student.id));
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={faXmark} className="text-gray-500 " />
+                                        </button>
                                     </div>
-                                    <button className="p-2"
-                                        onClick={() => {
-                                            setAddStudents(addStudents.filter(s => s.id !== student.id));
-                                        }}
-                                    >
-                                        <FontAwesomeIcon icon={faXmark} className="text-gray-500 " />
-                                    </button>
-                                </div>
-                            </li>
+                                </li>
                             ))}
                         </ul>
                     ) : (
@@ -252,7 +265,11 @@ function AddStudent({
                         </div>
                     )}
                 </div>
-                <div className='h-5 text-red-500 text-sm mt-2 whitespace-pre-line'>{error}</div>
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-2" role="alert">
+                        <span className="block sm:inline">{error}</span>
+                    </div>
+                )}
                 <div className='flex justify-center gap-4 w-full mt-4'>
                     <button className='btn-text text-white p-2 rounded-lg w-40'
                         onClick={handleOnClickAddStudent}

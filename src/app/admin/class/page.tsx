@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import EditClassModal from "./[id]/editClassModal";
 import { toast } from "react-toastify";
 import AddClass from "./addClass";
+import NoContent from "@/app/Components/noContent";
 
 
 
@@ -26,7 +27,9 @@ const headCells: HeadCell[] = [
     { id: 'subjectName', label: 'Tên lớp học', },
     { id: 'enrollLimit', label: 'Số lượng đăng ký tối đa', },
     { id: 'midtermWeight', label: 'Trọng số giữa kỳ', },
+    { id: 'updatedAt', label: 'Ngày cập nhật', },
     { id: 'createdAt', label: 'Ngày tạo', },
+
 
 ];
 const modal = {
@@ -82,7 +85,7 @@ function Class() {
         if (selectedTerm.id !== '') {
             console.log('selectedTerm', selectedTerm);
             get(courseByTerm + '/' + selectedTerm.id).then((res) => {
-                
+
                 setClasses(res.data.data.map((term: any) => convertDataToClass(term)));
             }).catch((res) => {
                 toast.error(res.data.message);
@@ -93,9 +96,9 @@ function Class() {
     const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     }
-    if(error){
+    if (error) {
         return <div className='text-red-500'>{error}</div>
-      }
+    }
 
     return (
         <div className='xl:w-[90%] md:w-full bg-white rounded-lg shadow-md lg:p-6 md:p-4 flex flex-col gap-4'>
@@ -118,9 +121,10 @@ function Class() {
                         Thêm lớp học
                     </button>}
             </div>
-            {loadingClass ? <LoaderTable /> :
+            {loadingClass ? <LoaderTable /> : classes.length === 0 ?
+                <NoContent title="Không có lớp học nào" description="Vui lòng thêm lớp học mới" /> :
                 <TableComponent headCells={headCells} dataCells={classes} search={search} onRowClick={(id) => { router.push(`/admin/class/${id}`) }} modal={modal} setDatas={setClasses} EditComponent={EditClassModal} />}
-            {showAddClass && <AddClass id={selectedTerm.id} label={selectedTerm.label} setShowModal={setShowAddClass}  showModal={showAddClass} setDatas={setClasses}/>}
+            {showAddClass && <AddClass id={selectedTerm.id} label={selectedTerm.label} setShowModal={setShowAddClass} showModal={showAddClass} setDatas={setClasses} />}
         </div>
     );
 }

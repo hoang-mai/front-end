@@ -15,7 +15,7 @@ interface Student {
     id: number;
     name: string;
     email: string;
-    image : string | null;
+    image: string | null;
 }
 interface AddStudentToCourse extends Record<string, unknown> {
     id: number;
@@ -91,8 +91,8 @@ function AddStudent({
             });
             setShowAddStudent(false);
         }).catch((err) => {
-            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-            setError(firstValue);
+
+            setError(err.message);
         });
     }
 
@@ -172,9 +172,9 @@ function AddStudent({
                                                         <div className="flex items-center gap-3">
                                                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
                                                                 {student.image ? (
-                                                                    <img 
-                                                                        src={student.image} 
-                                                                        alt={student.name} 
+                                                                    <img
+                                                                        src={student.image}
+                                                                        alt={student.name}
                                                                         className="w-full h-full object-cover"
                                                                     />
                                                                 ) : (
@@ -210,9 +210,9 @@ function AddStudent({
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
                                                 {student.image ? (
-                                                    <img 
-                                                        src={student.image} 
-                                                        alt={student.name} 
+                                                    <img
+                                                        src={student.image}
+                                                        alt={student.name}
                                                         className="w-full h-full object-cover"
                                                     />
                                                 ) : (
@@ -245,7 +245,11 @@ function AddStudent({
                         </div>
                     )}
                 </div>
-                <p className='h-5 text-red-500 text-sm mt-2'>{error}</p>
+                {error &&
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-2" role="alert">
+                        <span className="block sm:inline">{error}</span>
+                    </div>
+                }
                 <div className='flex justify-center gap-4 w-full mt-4'>
                     <button className='btn-text text-white p-2 rounded-lg w-40'
                         onClick={handleOnClickAddStudent}

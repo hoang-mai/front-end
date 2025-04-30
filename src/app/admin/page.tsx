@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
-import Link from 'next/link';
 import { get } from '@/app/Services/callApi';
 import { term } from '@/app/Services/api';
 import LoaderTable from '@/app/Components/Loader/loaderTable';
@@ -12,6 +11,7 @@ import TableComponent from '@/app/Components/table';
 import EditTermModal from './[id]/editTermModal';
 import { toast } from 'react-toastify';
 import CreateTerm from './addTerm';
+import NoContent from '../Components/noContent';
 
 function convertDataToTerm(data: any): Term {
   return {
@@ -76,14 +76,15 @@ export default function HomePage() {
           <FontAwesomeIcon icon={faSearch} className='absolute opacity-50 top-3 left-2 cursor-pointer' />
           <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' /></div>
         <button className='btn-text text-white py-2 px-4 w-40 rounded-md'
-        
+
           onClick={() => setShowModal(true)}>
           <FontAwesomeIcon icon={faPlus} className='mr-2' />
           Thêm học kỳ
         </button>
       </div>
-      {loading ? <LoaderTable />
-        : <TableComponent dataCells={terms} headCells={headCells} search={search} onRowClick={(id) => { router.push(`admin/${id}`) }} modal={modal} EditComponent={EditTermModal} setDatas={setTerms} />
+      {loading ? <LoaderTable /> : terms.length === 0 ?
+        <NoContent title='Không có học kỳ nào' description='Vui lòng thêm học kỳ mới' /> : 
+        <TableComponent dataCells={terms} headCells={headCells} search={search} onRowClick={(id) => { router.push(`admin/${id}`) }} modal={modal} EditComponent={EditTermModal} setDatas={setTerms} />
       }
       {showModal && <CreateTerm setShowModal={setShowModal} showModal={showModal} setDatas={setTerms} />}
     </div>

@@ -11,6 +11,7 @@ import AddAllowance from "../addAllowance";
 import AllowanceDetail from "./allAllowanceDetail";
 import EditAllowanceModal from "./editAllAllowanceModal";
 import { useRouter } from "next/navigation";
+import NoContent from "@/app/Components/noContent";
 
 interface AllowanceStudent extends Record<string, unknown> {
     id: number;
@@ -129,6 +130,8 @@ function Allowance() {
                     <input value={search} onChange={handleOnChangeSearch} type='text' placeholder='Tìm kiếm' className='shadow appearance-none border rounded-2xl py-2 pl-8 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)' /></div>
             </div>
             {loading ? <LoaderTable />
+                : allowanceStudents.length === 0 ?
+                    <NoContent title="Không có trợ cấp nào" description="Vui lòng thêm trợ cấp mới" />
                 : <TableComponent dataCells={allowanceStudents} headCells={headCells} search={search} onRowClick={(id) => {
                     setShowAllowanceDetail(true);
                     setAllowanceDetail(allowanceStudents.find((student) => student.id === id));

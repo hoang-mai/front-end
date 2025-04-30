@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import StudentDetail from "./studentDetail";
 import Image from "next/image";
+import NoContent from "@/app/Components/noContent";
 
 export interface Manager {
     id: number;
@@ -310,7 +311,10 @@ function ClassManager() {
                             </div>
                         </div>
 
-                        {loadingClassmates ? <LoaderTable /> : (
+                        {loadingClassmates ? <LoaderTable /> : 
+                            classmates.length === 0 ?
+                            <NoContent title="Không có học viên nào" description="" /> :
+                        (
                             filteredClassmates.length === 0 ? (
                                 <div className="text-center py-8 bg-gray-50 rounded-lg">
                                     <p className="text-gray-500">Không tìm thấy học viên nào</p>

@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { post } from '@/app/Services/callApi';
 import { logout } from '@/app/Services/api';
 
-const LeftSidebar = () => {
+function LeftSidebar() {
     const router = useRouter();
     const [image, setImage] = useState<string | null>(null);
     const pathname = usePathname();
@@ -79,7 +79,7 @@ const LeftSidebar = () => {
 
                         >
                             <FontAwesomeIcon icon={faUserTie} className='mr-2' />
-                            Quản lý quản lý học viên
+                            Quản lý cán bộ
                         </Link>
 
                         {pathname !== "/admin/admin-manager" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}

@@ -82,7 +82,7 @@ export interface Manager {
 function convertRatingToString(status: string): string {
     switch (status) {
         case 'pass':
-            return 'Vượt qua';
+            return 'Đạt';
         case 'good':
             return 'Giỏi';
         case 'fail':
@@ -216,43 +216,47 @@ function PracticeCurrent() {
             ) : (
                 <>
                     {week && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                            {/* Week Name Card */}
-                            <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-blue-500">
-                                <h2 className="text-lg font-semibold mb-3 text-blue-600">Tên tuần tập</h2>
-                                <div className="space-y-2 flex items-center">
-                                    <FontAwesomeIcon icon={faClipboardList} className="text-blue-500 mr-2" />
-                                    <p className="font-medium">{week.name}</p>
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                                {/* Week Name Card */}
+                                <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-blue-500">
+                                    <h2 className="text-lg font-semibold mb-3 text-blue-600">Tên tuần tập</h2>
+                                    <div className="space-y-2 flex items-center">
+                                        <FontAwesomeIcon icon={faClipboardList} className="text-blue-500 mr-2" />
+                                        <p className="font-medium">{week.name}</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Start Date Card */}
-                            <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-green-500">
-                                <h2 className="text-lg font-semibold mb-3 text-green-600">Ngày bắt đầu</h2>
-                                <div className="space-y-2 flex items-center">
-                                    <FontAwesomeIcon icon={faCalendarAlt} className="text-green-500 mr-2" />
-                                    <p className="font-medium">{formatDate(week.weekStartDate)}</p>
+                                {/* Start Date Card */}
+                                <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-green-500">
+                                    <h2 className="text-lg font-semibold mb-3 text-green-600">Ngày bắt đầu</h2>
+                                    <div className="space-y-2 flex items-center">
+                                        <FontAwesomeIcon icon={faCalendarAlt} className="text-green-500 mr-2" />
+                                        <p className="font-medium">{formatDate(week.weekStartDate)}</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* End Date Card */}
-                            <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-purple-500">
-                                <h2 className="text-lg font-semibold mb-3 text-purple-600">Ngày kết thúc</h2>
-                                <div className="space-y-2 flex items-center">
-                                    <FontAwesomeIcon icon={faCalendarAlt} className="text-purple-500 mr-2" />
-                                    <p className="font-medium">{formatDate(week.weekEndDate)}</p>
+                                {/* End Date Card */}
+                                <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-purple-500">
+                                    <h2 className="text-lg font-semibold mb-3 text-purple-600">Ngày kết thúc</h2>
+                                    <div className="space-y-2 flex items-center">
+                                        <FontAwesomeIcon icon={faCalendarAlt} className="text-purple-500 mr-2" />
+                                        <p className="font-medium">{formatDate(week.weekEndDate)}</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Performance Count Card */}
-                            <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-red-500">
-                                <h2 className="text-lg font-semibold mb-3 text-red-600">Số lượng đánh giá</h2>
-                                <div className="space-y-2 flex items-center">
-                                    <FontAwesomeIcon icon={faUser} className="text-red-500 mr-2" />
-                                    <p className="font-medium">{performanceRecords.length}</p>
+                                {/* Performance Count Card */}
+                                <div className="bg-white p-4 rounded-lg shadow border border-gray-200 border-l-4 border-l-red-500">
+                                    <h2 className="text-lg font-semibold mb-3 text-red-600">Số lượng đánh giá</h2>
+                                    <div className="space-y-2 flex items-center">
+                                        <FontAwesomeIcon icon={faUser} className="text-red-500 mr-2" />
+                                        <p className="font-medium">{performanceRecords.length}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            {showAdd && <AddPractice showModal={showAdd} setShowModal={setShowAdd} setDatas={setPerformanceRecords} weekId={week.id} />}
+                        </>
+
                     )}
 
                     {week?.notes && (
@@ -304,9 +308,10 @@ function PracticeCurrent() {
                         </div>
                     )}
                 </>
-            )}
+            )
+            }
             {showModal && selectedRecord && <PracticeDetail showModal={showModal} setShowModal={setShowModal} performanceRecord={selectedRecord} />}
-            {showAdd && <AddPractice showModal={showAdd} setShowModal={setShowAdd} setDatas={setPerformanceRecords} />}
+
         </>
     );
 }

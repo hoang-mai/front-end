@@ -81,13 +81,13 @@ function PracticeDetail({ practiceStudent, showModal, setShowModal }: PracticeDe
 
                         <InfoItem
                             icon={<EmojiEventsIcon />}
-                            label="Ngưỡng giỏi"
+                            label="Ngưỡng xuất sắc"
                             value={practiceStudent?.thresholdsExcellentThreshold ?? 'N/A'}
                         />
 
                         <InfoItem
                             icon={<ThumbUpIcon />}
-                            label="Ngưỡng khá"
+                            label="Ngưỡng giỏi"
                             value={practiceStudent?.thresholdsGoodThreshold ?? 'N/A'}
                         />
 

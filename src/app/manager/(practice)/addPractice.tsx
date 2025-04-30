@@ -53,7 +53,7 @@ function convertDataToFitnessTest(data: any): FitnessTest[] {
 function convertRatingToString(status: string): string {
     switch (status) {
         case 'pass':
-            return 'Vượt qua';
+            return 'Đạt';
         case 'good':
             return 'Giỏi';
         case 'fail':

@@ -84,15 +84,16 @@ function EditClassModal({
             }
         ).then(() => {
             setDatas?.((prev) => prev.map((course) =>
-                    course.id === data.id
-                        ? {
-                              ...course,
-                              subjectName,
-                              enrollLimit: Number(enrollLimit),
-                              midtermWeight,
-                          }
-                        : course
-                )
+                course.id === data.id
+                    ? {
+                        ...course,
+                        subjectName,
+                        enrollLimit: Number(enrollLimit),
+                        midtermWeight,
+                        updatedAt: new Date(),
+                    }
+                    : course
+            )
             );
             setData?.({
                 ...data,
@@ -115,7 +116,7 @@ function EditClassModal({
             <Box className='xl:w-[50%] lg:w-[70%] md:w-[90%] w-[95%] max-h-[90vh] bg-white rounded-xl shadow-2xl overflow-hidden'>
                 <div className='bg-[var(--color-text)] text-white p-5 relative'>
                     <h2 className='text-2xl font-semibold text-center'>Chỉnh sửa lớp học</h2>
-                    <button 
+                    <button
                         className='absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:bg-[var(--color-text-hover)] p-1 rounded-full transition-all duration-200'
                         onClick={() => setShowEdit(false)}
                     >
@@ -183,24 +184,24 @@ function EditClassModal({
                         </div>
 
                         {error && (
-                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                                {error}
-                            </div>
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-2" role="alert">
+                            <span className="block sm:inline">{error}</span>
+                        </div>
                         )}
                     </form>
                 </div>
 
                 <div className='bg-gray-50 p-5 flex justify-center gap-4 border-t'>
-                    <button 
-                        disabled={!subjectName || !enrollLimit || !midtermWeight} 
+                    <button
+                        disabled={!subjectName || !enrollLimit || !midtermWeight}
                         className='btn-text text-white py-2 px-6 rounded-lg flex items-center gap-2 disabled:opacity-60'
                         onClick={handleOnSubmit}
                     >
                         <SaveIcon fontSize="small" />
                         <span>Lưu</span>
                     </button>
-                    <button 
-                        className='bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 active:bg-red-800 flex items-center gap-2 transition-colors duration-200' 
+                    <button
+                        className='bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 active:bg-red-800 flex items-center gap-2 transition-colors duration-200'
                         onClick={() => setShowEdit(false)}
                     >
                         <CancelIcon fontSize="small" />

@@ -16,6 +16,7 @@ import EditStudentModal from "./editStudentModal";
 import AddStudent from "./addStudent";
 import StudentDetail from "./studentDetail";
 import Image from "next/image";
+import NoContent from "@/app/Components/noContent";
 export interface UserBasicInfo {
     id: number;
     name: string;
@@ -182,14 +183,17 @@ function ClassManagerDetail() {
             {
                 pending: "Đang xử lý...",
                 success: "Xóa lớp quản lý thành công",
-                error: "Xóa lớp quản lý thất bại",
+                error: {
+                    render({ data }: any) {
+                        return data.message;
+                    },
+                }
             }
         ).then(() => {
             setShowModal(false);
             router.push('/admin/class-manager');
         }).catch((err) => {
-            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-            setError(firstValue);
+            
         })
     }
     useEffect(() => {
@@ -433,9 +437,11 @@ function ClassManagerDetail() {
                     {showStudentDetail &&
                         <StudentDetail studentId={studentDetail.toString()} id={id} showStudentDetail={showStudentDetail} setShowStudentDetail={setShowStudentDetail} />
                     }
+
+                    {students.length === 0 ?
+                    <NoContent title="Không có học viên nào" description="Vui lòng thêm học viên mới" /> :    
                     
-                    {/* Tab content based on active tab */}
-                    {activeTab === 'table' ? (
+                    (activeTab === 'table' ? (
                         <TableComponent 
                             headCells={headCells} 
                             dataCells={students} 
@@ -510,7 +516,7 @@ function ClassManagerDetail() {
                                 </div>
                             )}
                         </div>
-                    )}
+                    ))}
                 </>
             }
         </div>

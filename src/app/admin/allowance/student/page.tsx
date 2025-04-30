@@ -13,6 +13,7 @@ import useDebounce from "@/app/hooks/useDebounce";
 import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
 import AllowanceDetail from "./allowanceDetail";
 import EditAllowanceModal from "./editAllowanceModal";
+import NoContent from "@/app/Components/noContent";
 interface Student {
     id: number;
     name: string;
@@ -291,6 +292,7 @@ function Student() {
                     <p>Chọn một học viên để xem và quản lý các trợ cấp</p>
                 </div>
               ) : loading ? <LoaderTable />
+              : allowanceStudents.length === 0 ?  <NoContent title="Không có trợ cấp nào" description="Vui lòng thêm trợ cấp mới" />
                 : <TableComponent dataCells={allowanceStudents} headCells={headCells} search={search} onRowClick={(id) => {
                     setShowAllowanceDetail(true);
                     setAllowanceDetail(allowanceStudents.find((student) => student.id === id));

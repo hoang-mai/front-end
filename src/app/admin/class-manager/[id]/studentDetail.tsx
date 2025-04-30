@@ -121,7 +121,7 @@ function StudentDetail({
         if (studentDetail.status === 'active') {
             setStatusColor('text-green-500');
         } else if (studentDetail.status === 'suspended') {
-            setStatusColor('text-yellow-500');
+            setStatusColor('text-red-500');
         } else {
             setStatusColor('text-gray-500');
         }
@@ -205,7 +205,7 @@ function StudentDetail({
 
                             {/* Status badge */}
                             <div className="flex justify-center mb-6">
-                                <div className={`px-4 py-2 rounded-full ${statusColor === 'text-green-500' ? 'bg-green-100' : 'bg-yellow-100'} flex items-center`}>
+                                <div className={`px-4 py-2 rounded-full ${statusColor === 'text-green-500' ? 'bg-green-100' : 'bg-red-100'} flex items-center`}>
                                     <FontAwesomeIcon icon={getStatusIcon()} className={`${statusColor} mr-2`} />
                                     <span className={`font-medium ${statusColor}`}>{convertStatusToString(studentDetail.status)}</span>
                                 </div>

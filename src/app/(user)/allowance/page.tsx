@@ -9,6 +9,7 @@ import { set } from "date-fns";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AllowanceStudentDetail from "./allowanceDetail";
+import NoContent from "@/app/Components/noContent";
 
 interface AllowanceStudent extends Record<string, unknown> {
     id: number;
@@ -104,6 +105,8 @@ function AllowanceStudent() {
 
             </div>
             {loading ? <LoaderTable />
+                : allowanceStudents.length === 0 ?
+                    <NoContent title="Không có trợ cấp nào" description="" />
                 : 
                 <>
                 <TableComponent dataCells={allowanceStudents} headCells={headCells} search={search} onRowClick={(id) => {

@@ -8,6 +8,7 @@ import LoaderTable from '@/app/Components/Loader/loaderTable';
 import { useRouter } from 'next/navigation';
 import TableComponent from '@/app/Components/table';
 import { toast } from 'react-toastify';
+import NoContent from "@/app/Components/noContent";
 
 interface Course extends Record<string, any> {
     id: number;
@@ -93,6 +94,7 @@ function Class() {
                 </div>
             </div>
             {loading ? <LoaderTable /> : 
+                courses.length === 0 ? <NoContent title="Không có lớp học nào"  description="" /> :
                 <TableComponent 
                     actionCell={false}
                     dataCells={courses} 
