@@ -122,9 +122,9 @@ function EquipmentDistributionDetail() {
                 setDistributionData(responseData);
                 setTableData(responseData.studentReceipts);
             })
-            .catch((res) => {
-                toast.error(res.data?.message || 'Đã có lỗi xảy ra');
-                setError(res.data?.message || 'Đã có lỗi xảy ra');
+            .catch(() => {
+                setError("Không tìm thấy đợt cấp phát này");
+                toast.error("Không tìm thấy đợt cấp phát này");
             })
             .finally(() => {
                 setLoading(false);

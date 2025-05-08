@@ -36,10 +36,10 @@ export interface ViceMonitor {
 export interface ClassInfo {
     id: number;
     name: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date ;
+    updatedAt: Date ;
     manager: Manager;
-    monitor: Monitor;
+    monitor: Monitor | null;
     viceMonitors: ViceMonitor[];
     studentCount: number;
 }
@@ -93,35 +93,26 @@ function convertStatusToString(status: string): string {
     }
 }
 
-interface HeadCell {
-    id: keyof Student;
-    label: string;
-}
-const headCells: HeadCell[] = [
-    { id: 'name', label: 'Tên học viên', },
-    { id: 'email', label: 'Email học viên', },
-    { id: 'role', label: 'Vai trò', },
-    { id: 'status', label: 'Trạng thái', },
-];
+
 function convertDataToStudentData(data: any): ClassDetail {
     return {
         class: {
             id: data.class.id,
             name: data.class.name,
-            createdAt: data.class.created_at,
-            updatedAt: data.class.updated_at,
+            createdAt: new Date(data.class.created_at),
+            updatedAt: new Date(data.class.updated_at),
             manager: {
                 id: data.class.manager.id,
                 name: data.class.manager.name,
                 email: data.class.manager.email,
                 image: data.class.manager.image
             },
-            monitor: {
+            monitor: data.class.monitor ? {
                 id: data.class.monitor.id,
                 name: data.class.monitor.name,
                 email: data.class.monitor.email,
                 image: data.class.monitor.image
-            },
+            } : null,
             viceMonitors: data.class.vice_monitors.map((vm: any) => ({
                 id: vm.id,
                 name: vm.name,
@@ -157,7 +148,6 @@ function ClassManager() {
     useEffect(() => {
         get(studentClass)
             .then(response => {
-                console.log(response.data.data);
                 setStudentData(convertDataToStudentData(response.data.data));
             })
             .catch(err => {
@@ -234,7 +224,7 @@ function ClassManager() {
                             <h2 className="text-lg font-semibold mb-3 text-green-600">Lớp trưởng</h2>
                             <div className="space-y-2 flex items-center">
                                 <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mr-3 overflow-hidden">
-                                    {studentData?.class.monitor.image && studentData?.class.monitor.image !== 'default' ? (
+                                    {studentData?.class.monitor?.image && studentData?.class.monitor?.image !== 'default' ? (
                                         <Image 
                                             src={studentData.class.monitor.image}
                                             alt={studentData.class.monitor.name}
@@ -247,8 +237,8 @@ function ClassManager() {
                                     )}
                                 </div>
                                 <div>
-                                    <p className="font-medium">{studentData?.class.monitor.name ?? 'Chưa cập nhật'}</p>
-                                    <p className="text-sm text-gray-600">{studentData?.class.monitor.email ?? 'Chưa cập nhật'}</p>
+                                    <p className="font-medium">{studentData?.class.monitor?.name ?? 'Chưa cập nhật'}</p>
+                                    <p className="text-sm text-gray-600">{studentData?.class.monitor?.email ?? 'Chưa cập nhật'}</p>
                                 </div>
                             </div>
                         </div>

@@ -120,22 +120,16 @@ function ManagerDetail() {
                 setManager(convertDataToManager(res.data.data));
             })
             .catch((res) => {
-                toast.error(res.data.message);
-                setError(res.data.message);
+
+                toast.error(res.message);
+                setError(res.message);
             }).finally(() => {
                 setLoading(false);
             });
     }, []);
 
     if (error) {
-        return (
-            <div className="w-full px-6 py-8 flex justify-center">
-                <div className="bg-red-50 p-6 rounded-lg border border-red-200 text-red-600 max-w-md">
-                    <p className="font-semibold text-lg mb-2">Đã xảy ra lỗi</p>
-                    <p>{error}</p>
-                </div>
-            </div>
-        );
+        return <div className='text-red-500'>{error}</div>;
     }
 
     return (

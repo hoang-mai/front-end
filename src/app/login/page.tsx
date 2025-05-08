@@ -7,6 +7,7 @@ import { login } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useImage } from '../hooks/useImage';
 
 type ErrorResponse = {
     [key: string]: string[];
@@ -54,6 +55,7 @@ const LoginPage: React.FC = () => {
         toast.promise(
             post(login, { email, password }).then((res) => {
                 localStorage.setItem('token', res.data.data.token);
+                useImage.getState().setImage(res.data.data.user.image);
                 switch (res.data.data.user.role) {
                     case 'admin':
                         router.push('/admin');

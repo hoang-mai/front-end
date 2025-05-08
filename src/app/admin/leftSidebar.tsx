@@ -167,7 +167,7 @@ function LeftSidebar() {
                 </ul>
             </div>
             <div >
-
+            <hr className="mx-4 border border-gray-400" />
                 <button className="m-2 p-2 cursor-pointer flex items-center transition-all duration-300 active:scale-95"
                     onClick={handleLogout}
                 >

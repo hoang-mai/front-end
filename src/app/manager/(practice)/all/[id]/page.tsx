@@ -296,8 +296,8 @@ const PracticeCurrent = () => {
                 setFilteredRecords(records);
             })
             .catch((err) => {
-                toast.error(err.data?.data?.message || 'Đã xảy ra lỗi khi tải dữ liệu');
-                setError(err.data?.data?.message || 'Đã xảy ra lỗi khi tải dữ liệu');
+                toast.error('Không có dữ liệu');
+                setError('Không có dữ liệu');
             })
             .finally(() => setLoading(false));
     }, [params.id]);
@@ -325,23 +325,8 @@ const PracticeCurrent = () => {
         setFilteredRecords(result);
     }, [search, activeFilter, performanceRecords]);
 
-    // Show error message if any
-    if (error) {
-        return (
-            <div className="p-8 bg-red-50 rounded-lg border border-red-200">
-                <div className="flex items-center mb-4">
-                    <FontAwesomeIcon icon={faTimes} className="text-red-500 text-xl mr-3" />
-                    <h3 className="text-lg font-medium text-red-800">Lỗi khi tải dữ liệu</h3>
-                </div>
-                <p className="text-red-600">{error}</p>
-                <button
-                    className="mt-4 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-md transition duration-200"
-                    onClick={() => window.location.reload()}
-                >
-                    Thử lại
-                </button>
-            </div>
-        );
+    if(error){
+        return <div className='text-red-500'>{error}</div>
     }
 
     // Loading skeleton
