@@ -188,7 +188,7 @@ function StudentSelector({
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                      {student.image ? (
+                      {student.image && student.image !== 'default' ? (
                         <img
                           src={student.image}
                           alt={student.name}

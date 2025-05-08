@@ -118,7 +118,7 @@ function AddViolation({ showModal, setShowModal, setDatas, preSelectedStudent }:
                         </label>
                         <div className="bg-green-50 rounded-lg p-4 flex items-center gap-4 border border-green-200">
                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                {preSelectedStudent.image ? (
+                                {preSelectedStudent.image && preSelectedStudent.image !== 'default' ? (
                                     <img
                                         src={preSelectedStudent.image}
                                         alt={preSelectedStudent.name}

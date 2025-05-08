@@ -278,8 +278,8 @@ function AddPracticeSingle({
                     },
                     manager: {
                         id: 0, // This will be filled by the backend
-                        name: '',
-                        email: '',
+                        name: practiceData.manager.name,
+                        email: practiceData.manager.email,
                         emailVerifiedAt: null,
                         createdAt: new Date(),
                         updatedAt: new Date(),
@@ -460,7 +460,7 @@ function AddPracticeSingle({
                                                 >
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                                            {student.image ? (
+                                                            {student.image && student.image !== 'default' ? (
                                                                 <img
                                                                     src={student.image}
                                                                     alt={student.name}
@@ -500,7 +500,7 @@ function AddPracticeSingle({
                     </h3>
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                            {selectedStudent.image ? (
+                            {selectedStudent.image && selectedStudent.image !== 'default' ? (
                                 <img
                                     src={selectedStudent.image}
                                     alt={selectedStudent.name}

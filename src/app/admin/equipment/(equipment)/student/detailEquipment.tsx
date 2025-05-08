@@ -1,41 +1,77 @@
-import { faXmark, faUser, faEnvelope, faMoneyBill, faCalendar, faClipboard, faClock, faCheck } from "@fortawesome/free-solid-svg-icons";
+'use client';
+import { faXmark, faUser, faEnvelope, faBox, faCalendar, faClipboard, faCheckCircle, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Modal from '@mui/material/Modal'
-import Box from '@mui/material/Box'
-import { useEffect, useState } from "react";
+import { Box, Modal } from "@mui/material";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import PersonIcon from '@mui/icons-material/Person';
-interface AllowanceStudent extends Record<string, unknown> {
+import InventoryIcon from '@mui/icons-material/Inventory';
+
+export interface EquipmentType {
+    id: number;
+    name: string;
+    description: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface Distribution {
+    id: number;
+    year: number;
+    equipmentTypeId: number;
+    quantity: number;
+    createdAt: Date;
+    updatedAt: Date;
+    equipmentType: EquipmentType;
+}
+
+export interface EquipmentRecord extends Record<string, unknown> {
     id: number;
     userId: number;
+    distributionId: number;
+    received: string;
+    receivedAt: Date | null;
+    notes: string;
+    createdAt: Date;
+    updatedAt: Date;
+    distribution: Distribution;
+
+}
+
+interface Student {
+    id: number;
     name: string;
     email: string;
     image: string | null;
-    allowanceMonth: string;
-    allowanceYear: number;
-    allowanceAmount: string;
-    allowanceNotes: string;
-    allowanceCreatedAt: Date;
-
 }
 
-interface AllowanceDetailProps {
-    readonly allowanceStudent: AllowanceStudent | undefined;
+interface DetailEquipmentProps {
+    readonly student: Student;
+    readonly equipmentRecord: EquipmentRecord;
     readonly showModal: boolean;
-    readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    readonly setShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
-function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: AllowanceDetailProps) {
-
-
+function DetailEquipment({ equipmentRecord, student, showModal, setShowModal }: DetailEquipmentProps) {
 
     const formatDate = (date: Date | null | undefined) => {
-        console.log(date)
-        if (!date) return 'N/A';
+        if (!date) return 'Chưa nhận';
         return new Date(date).toLocaleDateString("vi-VN", {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
         });
+    };
+
+    // Function to get color based on received status
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'Đã nhận':
+                return 'bg-green-100 text-green-500';
+            case 'Chưa nhận':
+                return 'bg-red-100 text-red-500';
+            default:
+                return 'bg-gray-100 text-gray-500';
+        }
     };
 
     return (
@@ -52,17 +88,17 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                     >
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
-                    <h2 className='text-center text-2xl font-bold text-white'>Thông tin trợ cấp</h2>
+                    <h2 className='text-center text-2xl font-bold text-white'>Chi tiết trang bị</h2>
                 </div>
 
                 <div className="p-6 overflow-y-auto max-h-[80vh]">
                     {/* Student name header section */}
                     <div className='w-full flex flex-col items-center justify-center mb-6'>
-                    <div className="w-25 h-25 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
-                            {allowanceStudent?.image && allowanceStudent?.image !== 'default' ? (
+                        <div className="w-25 h-25 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
+                            {student?.image && student.image !== 'default'? (
                                 <img
-                                    src={allowanceStudent?.image}
-                                    alt={allowanceStudent?.name}
+                                    src={student.image}
+                                    alt={student.name}
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
@@ -72,53 +108,71 @@ function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: Allowanc
                             )}
                         </div>
                         <h1 className='text-xl md:text-2xl font-bold text-[color:var(--color-text)]'>
-                            {allowanceStudent?.name ?? "Không tìm thấy thông tin"}
+                            {student.name ?? "Không tìm thấy thông tin"}
                         </h1>
                     </div>
 
+
+
                     {/* Status badge */}
                     <div className="flex justify-center mb-6">
-                        <div className={`px-4 py-2 rounded-full bg-yellow-100 flex items-center`}>
-                            <FontAwesomeIcon icon={faClock} className={`text-yellow-500 mr-2`} />
-                            <span className={`font-medium text-yellow-500`}>Chưa nhận</span>
+                        <div className={`px-4 py-2 rounded-full ${getStatusColor(equipmentRecord.received)} flex items-center`}>
+                            <FontAwesomeIcon icon={faCheckCircle} className="mr-2" />
+                            <span className="font-medium">{equipmentRecord.received}</span>
                         </div>
                     </div>
 
                     {/* Main content - information cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 md:px-4">
+
+
                         <InfoItem
                             icon={faEnvelope}
                             label="Email"
-                            value={allowanceStudent?.email ?? 'N/A'}
+                            value={student.email ?? 'N/A'}
                         />
 
                         <InfoItem
-                            icon={faMoneyBill}
-                            label="Số tiền"
-                            value={allowanceStudent?.allowanceAmount ? `${allowanceStudent.allowanceAmount} VND` : 'N/A'}
+                            icon={faBox}
+                            label="Trang bị"
+                            value={equipmentRecord?.distribution?.equipmentType?.name ?? 'N/A'}
+                        />
+
+                        <InfoItem
+                            icon={faBoxOpen}
+                            label="Mô tả"
+                            value={equipmentRecord?.distribution?.equipmentType?.description ?? 'N/A'}
                         />
 
                         <InfoItem
                             icon={faCalendar}
-                            label="Tháng/Năm"
-                            value={`${allowanceStudent?.allowanceMonth ?? 'N/A'}`}
+                            label="Năm phân phối"
+                            value={equipmentRecord?.distribution?.year?.toString() ?? 'N/A'}
                         />
 
                         <InfoItem
                             icon={faCalendar}
-                            label="Nhận ngày"
-                            value={'Chưa nhận'}
+                            label="Ngày nhận"
+                            value={formatDate(equipmentRecord?.receivedAt)}
                         />
 
                         <InfoItem
                             icon={faClipboard}
                             label="Ghi chú"
-                            value={allowanceStudent?.allowanceNotes ?? ''}
-                            fullWidth={true}
+                            value={equipmentRecord?.notes ?? ''}
+
+                        />
+                        <InfoItem
+                            icon={faCalendar}
+                            label="Ngày tạo"
+                            value={formatDate(equipmentRecord?.createdAt)}
                         />
 
-
-                        
+                        <InfoItem
+                            icon={faCalendar}
+                            label="Ngày cập nhật"
+                            value={formatDate(equipmentRecord?.updatedAt)}
+                        />
 
                     </div>
                 </div>
@@ -151,4 +205,4 @@ const InfoItem = ({ icon, label, value, fullWidth = false, small = false }: Info
     );
 };
 
-export default AllowanceDetail;
+export default DetailEquipment;

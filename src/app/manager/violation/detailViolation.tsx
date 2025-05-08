@@ -91,7 +91,7 @@ function DetailViolation({ showModal, setShowModal, violation, student, onEdit }
                             {/* Student image and name at the top */}
                             <div className='w-full flex flex-col items-center justify-center mb-6'>
                                 <div className="w-25 h-25 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
-                                    {student?.image ? (
+                                    {student?.image && student.image !== 'default' ? (
                                         <img
                                             src={student.image}
                                             alt={student.name}

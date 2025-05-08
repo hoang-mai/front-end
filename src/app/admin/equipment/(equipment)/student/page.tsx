@@ -1,25 +1,97 @@
-'use client'
-import LoaderTable from "@/app/Components/Loader/loaderTable";
-import TableComponent from "@/app/Components/table";
-import { adminAllowances, adminAllowancesStudent, searchStudent } from "@/app/Services/api";
+'use client';
+import { useState, useEffect, useRef } from "react";
+import { adminEquipmentStudents, managerSearchStudent, searchStudent } from "@/app/Services/api";
 import { get, post } from "@/app/Services/callApi";
-import { faPlus, faReply, faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-
-import PersonIcon from '@mui/icons-material/Person';
-import useDebounce from "@/app/hooks/useDebounce";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faPlus, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import TableComponent from "@/app/Components/table";
+import LoaderTable from "@/app/Components/Loader/loaderTable";
 import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
-import AllowanceDetail from "./allowanceDetail";
-import EditAllowanceModal from "./editAllowanceModal";
-import NoContent from "@/app/Components/noContent";
+import useDebounce from "@/app/hooks/useDebounce";
+import PersonIcon from '@mui/icons-material/Person';
+import DetailEquipment from "./detailEquipment";
+import EditReceivedEquipment from "./editReceivedEquipment";
+
+export interface EquipmentType {
+    id: number;
+    name: string;
+    description: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface Distribution {
+    id: number;
+    year: number;
+    equipmentTypeId: number;
+    quantity: number;
+    createdAt: Date;
+    updatedAt: Date;
+    equipmentType: EquipmentType;
+}
+
+export interface EquipmentRecord extends Record<string, unknown> {
+    id: number;
+    userId: number;
+    distributionId: number;
+    received: string;
+    receivedAt: Date | null;
+    notes: string;
+    createdAt: Date;
+    updatedAt: Date;
+    distribution: Distribution;
+}
+
 interface Student {
     id: number;
     name: string;
     email: string;
     image: string | null;
 }
+
+interface HeadCell {
+    id: keyof EquipmentRecord;
+    label: string;
+}
+
+
+const headCells: HeadCell[] = [
+    { id: 'distribution.equipmentType.name', label: 'Tên thiết bị' },
+    { id: 'distribution.year', label: 'Cấp phát năm' },
+    { id: 'received', label: 'Đã nhận' },
+    { id: 'receivedAt', label: 'Ngày nhận' },
+    { id: 'notes', label: 'Ghi chú' },
+];
+
+function convertDataToEquipmentRecord(data: any): EquipmentRecord {
+    return {
+        id: data.id,
+        userId: data.user_id,
+        distributionId: data.distribution_id,
+        received: data.received ? 'Đã nhận' : 'Chưa nhận',
+        receivedAt: data.received_at ? new Date(data.received_at) : null,
+        notes: data.notes,
+        createdAt: new Date(data.created_at),
+        updatedAt: new Date(data.updated_at),
+        distribution: {
+            id: data.distribution.id,
+            year: data.distribution.year,
+            equipmentTypeId: data.distribution.equipment_type_id,
+            quantity: data.distribution.quantity,
+            createdAt: new Date(data.distribution.created_at),
+            updatedAt: new Date(data.distribution.updated_at),
+            equipmentType: {
+                id: data.distribution.equipment_type.id,
+                name: data.distribution.equipment_type.name,
+                description: data.distribution.equipment_type.description,
+                createdAt: new Date(data.distribution.equipment_type.created_at),
+                updatedAt: new Date(data.distribution.equipment_type.updated_at),
+            },
+        },
+    };
+}
+
 function StudentSelector({
     selectedStudent,
     setSelectedStudent,
@@ -134,7 +206,7 @@ function StudentSelector({
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                            {student.image && student.image !== 'default' ? (
+                                            {student.image && student.image !== 'default'? (
                                                 <img
                                                     src={student.image}
                                                     alt={student.name}
@@ -164,106 +236,64 @@ function StudentSelector({
         </div>
     );
 }
-export interface Allowance extends Record<string, any> {
-    id: number;
-    userId: number;
-    month: string;
-    year: number;
-    amount: string;
-    received: string;
-    receivedAt: Date | null;
-    notes: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-function convertReceivedToString(received: boolean): string {
-    return received ? 'Đã nhận' : 'Chưa nhận'
-}
-function convertAmountToString(amountStr: string): string {
-    const amount = parseFloat(amountStr);
-    const [intPart, decimalPart = ''] = amount.toFixed(2).split('.');
-
-    const formattedInt = Number(intPart).toLocaleString('vi-VN');
-
-    if (decimalPart === '00') {
-        return `${formattedInt}`;
-    } else {
-        return `${formattedInt},${decimalPart}`;
-    }
-}
-
-
-export const convertDataToAllowance = (data: any): Allowance => ({
-    id: data.id,
-    userId: data.user_id,
-    month: `${data.month}/${data.year}`,
-    year: data.year,
-    amount: convertAmountToString(data.amount),
-    received: convertReceivedToString(data.received),
-    receivedAt: data.received_at ? new Date(data.received_at) : null,
-    notes: data.notes,
-    createdAt: new Date(data.created_at),
-    updatedAt: new Date(data.updated_at),
-});
-
-interface HeadCell {
-    id: keyof Allowance;
-    label: string;
-}
-const headCells: HeadCell[] = [
-    { id: 'month', label: 'Tháng', },
-    { id: 'year', label: 'Năm', },
-    { id: 'amount', label: 'Số tiền', },
-    { id: 'received', label: 'Đã nhận', },
-    { id: 'receivedAt', label: 'Ngày nhận', },
-    { id: 'notes', label: 'Ghi chú', },
-];
-const modal = {
-    headTitle: 'Bạn có chắc chắn muốn xóa trợ cấp này không?',
-    successMessage: 'Xóa trợ cấp thành công',
-    errorMessage: 'Xóa trợ cấp thất bại',
-    url: adminAllowances,
-}
 
 function Student() {
-    const [selectedStudent, setSelectedStudent] = useState<Student>();
-    const searchStudentRef = useRef<HTMLDivElement | null>(null);
-    const [allowanceStudents, setAllowanceStudents] = useState<Allowance[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [equipmentRecords, setEquipmentRecords] = useState<EquipmentRecord[]>([]);
     const [search, setSearch] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(true);
+    const [selectedStudent, setSelectedStudent] = useState<Student>();
     const [error, setError] = useState<string>('');
-    const [showAllowanceDetail, setShowAllowanceDetail] = useState<boolean>(false);
-    const [allowanceDetail, setAllowanceDetail] = useState<Allowance>();
-
+    const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
+    const [detailEquipment, setDetailEquipment] = useState<EquipmentRecord>();
+    const searchStudentRef = useRef<HTMLDivElement | null>(null);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
     };
+
+
+    const handleRowClick = (id: number) => {
+        const equipment = equipmentRecords.find(e => e.id === id);
+        if (equipment) {
+            setDetailEquipment(equipment);
+            setShowDetailModal(true);
+        }
+    };
+
     useEffect(() => {
         if (!selectedStudent) {
-            setAllowanceStudents([]);
+            setEquipmentRecords([]);
+            setLoading(false);
             return;
         }
+
         setLoading(true);
-        get(adminAllowancesStudent+`/${selectedStudent.id}`)
+        get(`${adminEquipmentStudents}/${selectedStudent.id}`)
             .then((res) => {
-                setAllowanceStudents(res.data.data.map((student: any) => convertDataToAllowance(student)));
+                setEquipmentRecords(res.data.data.map((record: EquipmentRecord) => convertDataToEquipmentRecord(record)));
             })
             .catch((res) => {
                 toast.error(res.data.message);
                 setError(res.data.message);
-            }).finally(() => {
-                setLoading(false);
             })
+            .finally(() => {
+                setLoading(false);
+            });
     }, [selectedStudent]);
 
     if (error) {
-        return <div className="text-red-500">{error}</div>
+        return (
+            <div className="p-6 bg-red-50 border border-red-200 rounded-lg text-red-700 shadow-sm">
+                <p className="font-medium">Đã xảy ra lỗi:</p>
+                <p>{error}</p>
+            </div>
+        );
     }
+
     return (
-        <>
-            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between mb-4">
+        <div className=" bg-white rounded-lg  p-6 flex flex-col gap-6">
+
+            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                 <div className="flex flex-col md:flex-row gap-4 w-full lg:w-auto" ref={searchStudentRef}>
                     <StudentSelector
                         selectedStudent={selectedStudent}
@@ -280,29 +310,50 @@ function Student() {
                             value={search}
                             onChange={handleSearchChange}
                             type="text"
-                            placeholder="Tìm kiếm trợ cấp"
+                            placeholder="Tìm kiếm thiết bị"
                             className="appearance-none border rounded-lg py-2 pl-10 pr-3 w-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 border-(--border-color)"
                         />
                     </div>
                 </div>
+
+
             </div>
+
             {!selectedStudent ? (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center text-blue-700">
                     <p className="text-lg font-medium mb-2">Vui lòng chọn học viên</p>
-                    <p>Chọn một học viên để xem và quản lý các trợ cấp</p>
+                    <p>Chọn một học viên để xem và quản lý trang thiết bị</p>
                 </div>
-              ) : loading ? <LoaderTable />
-              : allowanceStudents.length === 0 ?  <NoContent title="Không có trợ cấp nào" description="Vui lòng thêm trợ cấp mới" />
-                : <TableComponent dataCells={allowanceStudents} headCells={headCells} search={search} onRowClick={(id) => {
-                    setShowAllowanceDetail(true);
-                    setAllowanceDetail(allowanceStudents.find((student) => student.id === id));
-                }} modal={modal}
-                    EditComponent={EditAllowanceModal}
-                    setDatas={setAllowanceStudents} />
-            }
-            
-            {showAllowanceDetail && <AllowanceDetail student={selectedStudent} allowanceStudent={allowanceDetail} showModal={showAllowanceDetail} setShowModal={setShowAllowanceDetail} />}
-        </>
+            ) : loading ? (
+                <LoaderTable />
+            ) : equipmentRecords.length === 0 ? (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center text-gray-600">
+                    <p className="text-lg font-medium mb-2">Không có thiết bị nào</p>
+                    <p>Học viên này chưa được cấp phát thiết bị</p>
+                </div>
+            ) : (
+                <TableComponent
+                    index={true}
+                    dataCells={equipmentRecords}
+                    headCells={headCells}
+                    search={search}
+                    onRowClick={handleRowClick}
+                    deleteCell={false}
+                    setDatas={setEquipmentRecords}
+                    EditComponent={EditReceivedEquipment}
+                />
+            )}
+
+            {/* Detail modal will be implemented later */}
+            {showDetailModal && detailEquipment && selectedStudent && (
+                <DetailEquipment
+                    showModal={showDetailModal}
+                    setShowModal={setShowDetailModal}
+                    equipmentRecord={detailEquipment}
+                    student={selectedStudent}
+                />
+            )}
+        </div>
     );
 }
 

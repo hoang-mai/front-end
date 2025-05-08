@@ -116,7 +116,7 @@ function EditViolationModal({ data, showEdit, setDatas, setShowEdit }: EditViola
                         </label>
                         <div className="bg-green-50 rounded-lg p-4 flex items-center gap-4 border border-green-200">
                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                {data.studentImage ? (
+                                {data.studentImage && data.studentImage !== 'default' ? (
                                     <img
                                         src={data.studentImage}
                                         alt={data.studentName}

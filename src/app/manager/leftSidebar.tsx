@@ -9,9 +9,10 @@ import { post } from '@/app/Services/callApi';
 import { logout } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 import PersonIcon from '@mui/icons-material/Person';
+import { useImage } from '../hooks/useImage';
 const LeftSidebar = () => {
     const router = useRouter();
-    const [image, setImage] = useState<string | null>(null);
+
     const pathname = usePathname();
     const handleLogout = () => {
         toast.promise(
@@ -26,14 +27,7 @@ const LeftSidebar = () => {
             router.push("/login");
         })
     }
-    useEffect(() => {
-        const storedImage = localStorage.getItem("image");
-        if (storedImage && storedImage !== "null" && storedImage !== "default") {
-            setImage(storedImage);
-        } else {
-            setImage(null);
-        }
-    }, []);
+    const { image } = useImage();
     return (
         <aside className={` lg:w-64 md:w-48 bg-gray-100 flex flex-col justify-between border-r border-(--border-color) shadow-2xl`}>
             <div>
@@ -97,7 +91,7 @@ const LeftSidebar = () => {
                 <Link href="/manager/profile" >
                     <div className={`m-2 p-2 cursor-pointer flex items-center ${pathname === '/manager/profile' ? "shadow rounded-lg shadow-gray-300" : ""} transition-all duration-300 active:scale-95`}>
                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                            {image ? (
+                            {image && image !=='default' ? (
                                 <img
                                     src={image}
                                     alt=""

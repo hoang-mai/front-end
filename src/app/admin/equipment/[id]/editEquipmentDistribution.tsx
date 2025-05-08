@@ -34,7 +34,7 @@ interface EditEquipmentDistributionModalProps {
     readonly showEdit: boolean;
     readonly setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
     readonly setDatas?: React.Dispatch<React.SetStateAction<EquipmentDistribution[]>>;
-    readonly setData?: React.Dispatch<React.SetStateAction<EquipmentDistribution>>;
+    readonly setData?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 function EditEquipmentDistribution({
@@ -49,7 +49,7 @@ function EditEquipmentDistribution({
     const [dataFetch, setDataFetch] = useState<EquipmentType[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [equipmentTypes, setEquipmentTypes] = useState<EquipmentType[] | undefined>(undefined);
-    const [selectedEquipment, setSelectedEquipment] = useState<EquipmentType |null>({
+    const [selectedEquipment, setSelectedEquipment] = useState<EquipmentType | null>({
         id: data.equipmentTypeId,
         name: data.equipmentTypeName,
         description: data.equipmentTypeDescription,
@@ -57,7 +57,7 @@ function EditEquipmentDistribution({
         updatedAt: data.equipmentTypeUpdatedAt
     } as EquipmentType);
     const debouncedQuery = useDebounce<string>(search, 100, setLoading);
-    
+
     // Form values
     const [year, setYear] = useState<string>(data.year.toString());
     const [errorYear, setErrorYear] = useState<string>('');
@@ -110,7 +110,10 @@ function EditEquipmentDistribution({
 
     const handleOnSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-
+        if (!selectedEquipment) {
+            setError("Vui lòng chọn loại quân tư trang");
+            return;
+        }
         toast.promise(
             put(adminEquipmentDistribution + '/' + data.id, {
                 equipment_type_id: selectedEquipment?.id,
@@ -136,24 +139,27 @@ function EditEquipmentDistribution({
                         equipmentTypeDescription: selectedEquipment?.description ?? item.equipmentTypeDescription,
                         equipmentTypeCreatedAt: selectedEquipment?.createdAt ?? item.equipmentTypeCreatedAt,
                         equipmentTypeUpdatedAt: selectedEquipment?.updatedAt ?? item.equipmentTypeUpdatedAt,
-                      }
+                    }
                     : item
             ));
-            
-            setData?.((prev) => {
+
+            setData?.((prev: any) => {
                 return {
                     ...prev,
-                    year: Number(year),
-                    quantity: Number(quantity),
-                    updatedAt: new Date(),
-                    equipmentTypeId: selectedEquipment?.id ?? prev.equipmentTypeId,
-                    equipmentTypeName: selectedEquipment?.name ?? prev.equipmentTypeName,
-                    equipmentTypeDescription: selectedEquipment?.description ?? prev.equipmentTypeDescription,
-                    equipmentTypeCreatedAt: selectedEquipment?.createdAt ?? prev.equipmentTypeCreatedAt,
-                    equipmentTypeUpdatedAt: selectedEquipment?.updatedAt ?? prev.equipmentTypeUpdatedAt,
+                    distribution: {
+                        ...prev.distribution,
+                        year: Number(year),
+                        quantity: Number(quantity),
+                        updatedAt: new Date(),
+                        equipmentTypeId: selectedEquipment?.id ?? prev.equipmentTypeId,
+                        equipmentTypeName: selectedEquipment?.name ?? prev.equipmentTypeName,
+                        equipmentTypeDescription: selectedEquipment?.description ?? prev.equipmentTypeDescription,
+                        equipmentTypeCreatedAt: selectedEquipment?.createdAt ?? prev.equipmentTypeCreatedAt,
+                        equipmentTypeUpdatedAt: selectedEquipment?.updatedAt ?? prev.equipmentTypeUpdatedAt,
+                    },
                 }
             });
-            
+
             setShowEdit(false);
         }).catch((err) => {
             const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
@@ -244,6 +250,7 @@ function EditEquipmentDistribution({
                                         onClick={() => {
                                             setSearch('');
                                             setEquipmentTypes(undefined);
+                                            setSelectedEquipment(null);
                                         }}
                                     >
                                         <FontAwesomeIcon icon={faXmark} className="text-gray-400 hover:text-gray-600" />

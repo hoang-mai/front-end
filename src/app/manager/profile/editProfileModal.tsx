@@ -25,6 +25,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { useImage } from "@/app/hooks/useImage";
 
 interface Manager {
     id: number;
@@ -142,7 +143,8 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                 }
             }
         ).then((res) => {
-            localStorage.setItem('image', urlImage);
+            useImage.getState().setImage(isUrlImage ? manager.image : urlImage);
+
             setManager((prev) => {
                 return {
                     ...prev,

@@ -156,7 +156,6 @@ const headCells: HeadCell[] = [
 
 function ClassManagerDetail() {
     const router = useRouter();
-    const { id } = useParams<{ id: string }>();
     const [classManager, setClassManager] = useState<ClassDetail>(classManagerDefault);
     const [students, setStudents] = useState<Student[]>([]);
 
@@ -167,6 +166,22 @@ function ClassManagerDetail() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
     const [activeTab, setActiveTab] = useState<'table' | 'cards'>('table');
+
+    const [reload, setReload] = useState<boolean>(false);
+
+    useEffect(() => {
+        get(managerClasses)
+            .then((res) => {
+                setClassManager(convertDataToClassManager(res.data.data));
+                setStudents(res.data.data.students.map((student: any) => convertDataToStudent(student)));
+            })
+            .catch((err) => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+            }).finally(() => {
+                setLoading(false);
+            })
+    }, [reload]);
 
     const handleOnChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
@@ -359,6 +374,7 @@ function ClassManagerDetail() {
                                 }
                                 EditComponent={EditStudentModal}
                                 setDatas={setStudents}
+                                setReload={setReload}
                             />
                         ) : (
                             <div className="mt-4">
@@ -407,8 +423,8 @@ function ClassManagerDetail() {
 
                                                     <div className="mt-2 flex flex-wrap justify-center gap-1">
                                                         <span className={`text-xs px-2 py-0.5 rounded-full ${student.role === 'Lớp trưởng' ? 'bg-green-100 text-green-800' :
-                                                                student.role === 'Lớp phó' ? 'bg-purple-100 text-purple-800' :
-                                                                    'bg-blue-100 text-blue-800'
+                                                            student.role === 'Lớp phó' ? 'bg-purple-100 text-purple-800' :
+                                                                'bg-blue-100 text-blue-800'
                                                             }`}>
                                                             {student.role}
                                                         </span>

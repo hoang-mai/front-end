@@ -28,6 +28,7 @@ interface EditComponentProps {
     showEdit: boolean;
     setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
     setDatas: React.Dispatch<React.SetStateAction<any[]>>;
+    setReload?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface ModalProps {
@@ -95,6 +96,7 @@ interface TableComponentProps<T> {
     deleteCell?: boolean;
     actionCell?: boolean;
     midTermWeight?: string;
+    setReload?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const TableComponent = <T extends { id: number } & Record<string, unknown>>({
     index,
@@ -108,6 +110,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
     actionCell = true,
     deleteCell = true,
     midTermWeight,
+    setReload,
 }: TableComponentProps<T>) => {
 
     const [order, setOrder] = useState<Order | null>(null);
@@ -360,6 +363,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                         setShowEdit={setEdit}
                         setDatas={setDatas}
                         midTermWeight={midTermWeight}
+                        setReload={setReload}
                     />}
 
             </Paper>

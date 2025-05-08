@@ -3,6 +3,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { get } from "./Services/callApi";
 import { authTest } from "./Services/api";
+import { useImage } from "./hooks/useImage";
 
 function CheckRole() {
     const router = useRouter();
@@ -13,21 +14,21 @@ function CheckRole() {
             router.push("/login");
         } else {
             get(authTest).then((res) => {
-                localStorage.setItem("image", res.data.user.image);
+                useImage.getState().setImage(res.data.user.image);
                 switch (res.data.user.role) {
                     case 'manager':
-                        if(path !== "manager") {
+                        if (path !== "manager") {
                             router.push("/manager");
                         }
-                        
+
                         return;
                     case 'admin':
-                        if(path !== "admin") {
+                        if (path !== "admin") {
                             router.push("/admin");
                         }
                         return;
                     default:
-                        if(path === "admin" || path === "manager") {
+                        if (path === "admin" || path === "manager") {
                             router.push("/");
                         }
                         return;

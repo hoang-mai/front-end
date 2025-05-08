@@ -201,7 +201,7 @@ function EditAllowanceModal({
                         </h3>
                         <div className="flex items-center gap-4">
                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                {data.image ? (
+                                {data.image && data.image !== 'default' ? (
                                     <img
                                         src={data.image}
                                         alt={data.name}

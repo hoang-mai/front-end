@@ -316,7 +316,7 @@ function AddAllowance({ showModal, setShowModal, setDatas }: AllowanceProps) {
                                                                 >
                                                                     <div className="flex items-center gap-3">
                                                                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                                                            {student.image ? (
+                                                                            {student.image && student.image !=='default' ? (
                                                                                 <img
                                                                                     src={student.image}
                                                                                     alt={student.name}
@@ -356,7 +356,7 @@ function AddAllowance({ showModal, setShowModal, setDatas }: AllowanceProps) {
                                 </h3>
                                 <div className="flex items-center gap-4">
                                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                        {addStudent.image ? (
+                                        {addStudent.image && addStudent.image !== 'default' ? (
                                             <img
                                                 src={addStudent.image}
                                                 alt={addStudent.name}
@@ -557,7 +557,7 @@ function AddAllowance({ showModal, setShowModal, setDatas }: AllowanceProps) {
                                                                         </div>
                                                                         <div className="flex items-center gap-3">
                                                                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                                                                {student.image ? (
+                                                                                {student.image && student.image !=='default'? (
                                                                                     <img
                                                                                         src={student.image}
                                                                                         alt={student.name}
@@ -603,7 +603,7 @@ function AddAllowance({ showModal, setShowModal, setDatas }: AllowanceProps) {
                                             <div key={student.id} className="flex justify-between items-center py-2 border-b border-blue-100 last:border-0">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                                        {student.image ? (
+                                                        {student.image && student.image !== 'default' ? (
                                                             <img
                                                                 src={student.image}
                                                                 alt={student.name}

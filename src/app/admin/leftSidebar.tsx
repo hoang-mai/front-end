@@ -12,7 +12,7 @@ import { logout } from '@/app/Services/api';
 
 function LeftSidebar() {
     const router = useRouter();
-    const [image, setImage] = useState<string | null>(null);
+
     const pathname = usePathname();
     const handleLogout = () => {
         toast.promise(
@@ -27,12 +27,6 @@ function LeftSidebar() {
             router.push("/login");
         })
     }
-    useEffect(() => {
-        const storedImage = localStorage.getItem("image");
-        if (storedImage && storedImage !== "null") {
-            setImage(storedImage);
-        }
-    }, []);
 
     return (
         <aside className={` lg:w-64 md:w-48 bg-gray-100 flex flex-col justify-between border-r border-(--border-color) shadow-2xl`}>
@@ -181,7 +175,7 @@ function LeftSidebar() {
                     <span className="ml-2">Đăng xuất</span>
                 </button>
 
-                <hr className="mx-4 border border-gray-400" />
+                {/* <hr className="mx-4 border border-gray-400" />
                 <Link href="/admin/profile" >
                     <div className={`m-2 p-2 cursor-pointer flex items-center ${pathname === '/admin/profile' ? "shadow rounded-lg shadow-gray-300" : ""} transition-all duration-300 active:scale-95`}>
                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
@@ -197,7 +191,7 @@ function LeftSidebar() {
                         </div>
                         <span className="ml-2">Cá nhân</span>
                     </div>
-                </Link>
+                </Link> */}
             </div>
         </aside>
     );

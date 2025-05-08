@@ -26,6 +26,7 @@ import { uploadImage } from "@/app/Services/uploadImage";
 import { post, put } from "@/app/Services/callApi";
 import { studentProfileDetail, updateImage } from "@/app/Services/api";
 import { format } from "date-fns/format";
+import { useImage } from "@/app/hooks/useImage";
 
 
 export interface UserWithStudentDetail {
@@ -136,7 +137,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         }
         post(updateImage, { image: urlImage })
         .then((res) => {
-            localStorage.setItem("image", urlImage);
+            useImage.getState().setImage(urlImage);
         })
         .catch((res) => {
             toast.error(res.data.message);

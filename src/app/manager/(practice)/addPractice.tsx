@@ -37,7 +37,6 @@ interface FitnessTest extends Record<string, any> {
     thresholdsPassThreshold: string,
 }
 function convertDataToFitnessTest(data: any): FitnessTest[] {
-    console.log(data);
     return data.data.map((item: any) => ({
         id: item.id,
         name: item.name,
@@ -50,20 +49,7 @@ function convertDataToFitnessTest(data: any): FitnessTest[] {
         thresholdsPassThreshold: item.thresholds.pass_threshold,
     }));
 }
-function convertRatingToString(status: string): string {
-    switch (status) {
-        case 'pass':
-            return 'Đạt';
-        case 'good':
-            return 'Giỏi';
-        case 'fail':
-            return 'Không đạt';
-        case 'excellent':
-            return 'Xuất sắc';
-        default:
-            return 'Không rõ trạng thái';
-    }
-}
+
 interface PracticeProps {
     readonly showModal: boolean;
     readonly setShowModal: React.Dispatch<React.SetStateAction<boolean>>;

@@ -208,7 +208,7 @@ function AddPracticeBulk({
             error: "Thêm đánh giá thất bại"
         }).then((results) => {
             if (setDatas) {
-                const newDataItems = results.data.data.map((res: any, index: number) => {
+                const newDataItems = results.data.data.success.map((res: any, index: number) => {
                     const practiceData = res;
                     return {
                         id: practiceData.id,
@@ -242,8 +242,8 @@ function AddPracticeBulk({
                         },
                         manager: {
                             id: 0, // This will be filled by the backend
-                            name: '',
-                            email: '',
+                            name: practiceData.manager.name,
+                            email: practiceData.manager.email,
                             emailVerifiedAt: null,
                             createdAt: new Date(),
                             updatedAt: new Date(),
@@ -504,7 +504,7 @@ function AddPracticeBulk({
                                                         </div>
                                                         <div className="flex items-center gap-3">
                                                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                                                {student.image ? (
+                                                                {student.image && student.image !== 'default' ? (
                                                                     <img
                                                                         src={student.image}
                                                                         alt={student.name}
@@ -551,7 +551,7 @@ function AddPracticeBulk({
                                 <div className="flex justify-between items-center w-full mb-2">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                            {student.image ? (
+                                            {student.image  && student.image !== 'default' ? (
                                                 <img
                                                     src={student.image}
                                                     alt={student.name}

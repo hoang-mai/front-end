@@ -27,6 +27,7 @@ interface EditStudentModalProps {
     readonly showEdit: boolean;
     readonly setDatas: Dispatch<SetStateAction<Student[]>>;
     readonly setShowEdit: Dispatch<SetStateAction<boolean>>;
+    readonly setReload?  : Dispatch<SetStateAction<boolean>>;
 }
 const optionRole: Option[] = [
     { id: 'student', label: 'Học viên' },
@@ -69,6 +70,7 @@ function EditStudentModal({
     showEdit,
     setDatas,
     setShowEdit,
+    setReload,
 }: EditStudentModalProps) {
     const params = useParams<{ id: string }>();
     const [selectedRole, setSelectedRole] = useState<Option>(convertStringToRole(data.role));
@@ -116,18 +118,7 @@ function EditStudentModal({
 
             toast.success("Chỉnh sửa thông tin học viên thành công");
 
-            setDatas((prev) =>
-                prev.map((student) => {
-                    if (student.id !== data.id) return student;
-                    return {
-                        ...student,
-                        role: selectedRole.label,
-                        status: selectedStatus.label,
-                        reason,
-                        note,
-                    };
-                })
-            );
+            setReload?.((prev) => !prev);
             setShowEdit(false);
         } catch (err: any) {
             const firstValue =

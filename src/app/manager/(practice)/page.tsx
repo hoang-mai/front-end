@@ -149,6 +149,7 @@ const headCells: HeadCell[] = [
     { id: 'performance', label: 'Kết quả' },
     { id: 'rating', label: 'Đánh giá' },
     { id: 'notes', label: 'Ghi chú' },
+    
 ];
 
 function PracticeCurrent() {

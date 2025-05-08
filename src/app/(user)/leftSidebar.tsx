@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { faClipboard, faExclamation, faHandHoldingDollar, faHome, faSignOut, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard, faExclamation, faHandHoldingDollar, faHome, faSignOut, faTools, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -9,6 +9,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { toast } from 'react-toastify';
 import { post } from '@/app/Services/callApi';
 import { logout } from '@/app/Services/api';
+import { useImage } from '../hooks/useImage';
 
 const LeftSidebar = () => {
     const router = useRouter();
@@ -26,15 +27,7 @@ const LeftSidebar = () => {
             router.push("/login");
         })
     }
-    const [image, setImage] = useState<string | null>(null);
-    useEffect(() => {
-        const storedImage = localStorage.getItem("image");
-        if (storedImage && storedImage !== "null" && storedImage !== "default") {
-            setImage(storedImage);
-        }else {
-            setImage(null);
-        }
-    }, []);
+    const { image } = useImage();
     return (
         <aside className={` lg:w-64 md:w-48 bg-gray-100 flex flex-col justify-between border-r border-(--border-color) shadow-2xl`}>
             <div>
@@ -48,7 +41,7 @@ const LeftSidebar = () => {
                             className={`p-2 w-full h-full block ${pathname !== "/" ? "relative z-10" : ""}`}
                         >
                             <FontAwesomeIcon icon={faHome} className='mr-2' />
-                            Trang chủ
+                            Kết quả học tập
                         </Link>
 
                         {pathname !== '/' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
@@ -95,6 +88,20 @@ const LeftSidebar = () => {
                         </Link>
 
                         {pathname !== '/allowance' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/equipment"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/equipment"
+                            className={`p-2 w-full h-full block ${pathname !== "/equipment" ? "relative z-10" : ""}`}
+
+                        ><FontAwesomeIcon icon={faTools} className='mr-2' />
+                            Quân tư trang
+                        </Link>
+
+                        {pathname !== '/equipment"' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/violation"
                         ? "group relative"

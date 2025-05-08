@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from "react";
-import LoaderLine from "@/app/Components/Loader/loaderLine";
 import LoaderTable from "@/app/Components/Loader/loaderTable";
 import TableComponent from "@/app/Components/table";
 import { get } from "@/app/Services/callApi";
@@ -29,7 +28,6 @@ const headCells: HeadCell[] = [
     { id: 'name', label: 'Tên tuần', },
     { id: 'weekStartDate', label: 'Ngày bắt đầu', },
     { id: 'weekEndDate', label: 'Ngày kết thúc', },
-    { id: 'notes', label: 'Ghi chú', },
     { id: 'createdAt', label: 'Ngày tạo', },
     { id: 'updatedAt', label: 'Ngày cập nhật', },
 ];
