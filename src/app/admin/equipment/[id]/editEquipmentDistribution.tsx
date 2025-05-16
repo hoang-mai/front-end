@@ -125,7 +125,7 @@ function EditEquipmentDistribution({
                 success: 'Cập nhật đợt cấp phát thành công',
                 error: 'Cập nhật đợt cấp phát thất bại',
             }
-        ).then((res) => {
+        ).then(() => {
             setDatas?.((prev) => prev.map((item) =>
                 item.id === data.id
                     ? {

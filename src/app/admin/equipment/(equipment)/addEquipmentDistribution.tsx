@@ -1,15 +1,14 @@
 'use client'
 import useDebounce from "@/app/hooks/useDebounce";
-import { adminEquipmentType, adminEquipmentDistribution } from "@/app/Services/api";
+import { adminEquipmentDistribution } from "@/app/Services/api";
 import { post } from "@/app/Services/callApi";
 import { useEffect, useRef, useState } from "react";
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faSearch, faCalendarAlt, faClipboard, faInfoCircle, faSave, faTimes, faBoxes, faListAlt, faHandPointRight } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faSearch, faCalendarAlt,  faInfoCircle, faSave, faBoxes,  faHandPointRight } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
-import { set } from "date-fns";
 import { useRouter } from "next/navigation";
 
 interface EquipmentType extends Record<string, any> {

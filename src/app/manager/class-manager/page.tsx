@@ -1,14 +1,11 @@
 'use client';
 import LoaderLine from "@/app/Components/Loader/loaderLine";
-import { adminClasses, managerClasses } from "@/app/Services/api";
-import { del, get } from "@/app/Services/callApi";
-import { faEnvelope, faGraduationCap, faPlus, faReply, faSearch, faTable, faUser, faUsers, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { managerClasses } from "@/app/Services/api";
+import { get } from "@/app/Services/callApi";
+import { faEnvelope, faGraduationCap, faReply, faSearch, faTable, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import { toast } from "react-toastify";
 
 import LoaderTable from "@/app/Components/Loader/loaderTable";
 import TableComponent from "@/app/Components/table";
@@ -24,11 +21,26 @@ export interface UserBasicInfo {
     image: string | null;
 }
 
-export interface ViceMonitor extends UserBasicInfo { }
+export interface ViceMonitor {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
-export interface Manager extends UserBasicInfo { }
+export interface Manager {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
-export interface Monitor extends UserBasicInfo { }
+export interface Monitor {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
 
 

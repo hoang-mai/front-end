@@ -1,10 +1,10 @@
 'use client';
 import Image from 'next/image';
-import { faHome, faSignOut, faExclamation, faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { faSignOut, faExclamation, faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { post } from '@/app/Services/callApi';
 import { logout } from '@/app/Services/api';
 import { toast } from 'react-toastify';
@@ -22,7 +22,7 @@ const LeftSidebar = () => {
                 success: "Đăng xuất thành công",
                 error: "Đăng xuất thất bại",
             }
-        ).then((res) => {
+        ).then(() => {
             localStorage.removeItem("token");
             router.push("/login");
         })

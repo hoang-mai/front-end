@@ -1,5 +1,5 @@
 'use client';
-import { faXmark, faUser, faStopwatch, faStar, faClipboard, faNoteSticky, faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faStopwatch, faStar, faClipboard, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { Box, Modal } from "@mui/material";

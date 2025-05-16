@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Box, Modal } from "@mui/material";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faUser, faEnvelope, faUserTag, faToggleOn, faClipboard, faNoteSticky, faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faUserTag, faToggleOn, faClipboard, faNoteSticky, faSave } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { put } from "@/app/Services/callApi";
 import { useParams } from "next/navigation";
@@ -68,7 +68,6 @@ function convertStringToStatus(status: string): Option {
 function EditStudentModal({
     data,
     showEdit,
-    setDatas,
     setShowEdit,
     setReload,
 }: EditStudentModalProps) {

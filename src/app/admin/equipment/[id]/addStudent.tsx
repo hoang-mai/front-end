@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import useDebounce from '@/app/hooks/useDebounce';
 import { post } from '@/app/Services/callApi';
-import { adminClasses, adminEquipmentReceipts, searchStudent } from '@/app/Services/api';
+import { adminEquipmentReceipts, searchStudent } from '@/app/Services/api';
 import LoaderSpinner from '@/app/Components/Loader/loaderSpinner';
 import { toast } from 'react-toastify';
 import PersonIcon from '@mui/icons-material/Person';
@@ -65,7 +65,7 @@ function AddStudent({
                 },
                 error: 'Thêm học viên thất bại'
             }
-        ).then((res) => {
+        ).then(() => {
             setReload(prev => !prev);
             setShowAddStudent(false);
             

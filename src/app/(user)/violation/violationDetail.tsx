@@ -2,7 +2,6 @@ import { faXmark, faUser, faCalendar, faCheckCircle, faClock, faUserTag, faInfoC
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { useState } from "react";
 
 interface Violation extends Record<string, unknown> {
     id: number;

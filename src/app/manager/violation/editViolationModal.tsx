@@ -2,8 +2,8 @@
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faSave, faStickyNote, faCalendar, faUser, faUserTie } from "@fortawesome/free-solid-svg-icons";
-import { Dispatch, SetStateAction, useState, useEffect } from "react";
+import { faXmark, faSave, faStickyNote, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { Dispatch, SetStateAction, useState } from "react";
 import DatePickerComponent from "@/app/Components/datePicker";
 import { toast } from "react-toastify";
 import { put } from "@/app/Services/callApi";

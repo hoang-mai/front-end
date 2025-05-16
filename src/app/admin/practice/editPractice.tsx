@@ -149,7 +149,7 @@ function EditPractice({
                 success: "Cập nhật bài kiểm tra thể lực thành công",
                 error: "Cập nhật bài kiểm tra thể lực thất bại",
             }
-        ).then((res) => {
+        ).then(() => {
             setDatas?.((prev) => prev.map((item) => 
                 item.id === data.id 
                     ? { 

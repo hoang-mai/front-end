@@ -16,11 +16,26 @@ export interface UserBasicInfo {
     image: string | null;
 }
 
-export interface ViceMonitor extends UserBasicInfo { }
+export interface ViceMonitor {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
-export interface Manager extends UserBasicInfo { }
+export interface Manager {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
-export interface Monitor extends UserBasicInfo { }
+export interface Monitor {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
 
 
@@ -85,7 +100,7 @@ function EditClassManagerModal({
                 success: 'Cập nhật lớp quản lý thành công',
                 error: 'Cập nhật lớp quản lý thất bại',
             }
-        ).then((res) => {
+        ).then(() => {
             setDatas?.((prev) => prev.map((classManager) =>
                 classManager.id === data.id
                     ? {

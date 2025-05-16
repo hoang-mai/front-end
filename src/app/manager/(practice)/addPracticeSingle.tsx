@@ -1,10 +1,10 @@
 import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
 import useDebounce from "@/app/hooks/useDebounce";
-import { managerAssessments, managerFitnessTests, managerSearchStudent } from "@/app/Services/api";
-import { get, post } from "@/app/Services/callApi";
+import { managerAssessments, managerSearchStudent } from "@/app/Services/api";
+import {  post } from "@/app/Services/callApi";
 import { faCheckCircle, faDumbbell, faInfoCircle, faSave, faSearch, faStickyNote, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Dispatch, RefObject, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import PersonIcon from '@mui/icons-material/Person';
 interface Student {

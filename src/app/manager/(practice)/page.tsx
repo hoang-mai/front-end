@@ -1,12 +1,11 @@
 'use client';
-import { managerAssessmentsPractice, managerCurrentPractice, managerFitnessTests } from "@/app/Services/api";
+import { managerAssessmentsPractice, managerCurrentPractice } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faDumbbell, faSearch, faClipboardList, faUser } from "@fortawesome/free-solid-svg-icons";
 import LoaderLine from "@/app/Components/Loader/loaderLine";
-import LoaderTable from "@/app/Components/Loader/loaderTable";
 import TableComponent from "@/app/Components/table";
 import PracticeDetail from "./practiceDetail";
 import AddPractice from "./addPractice";

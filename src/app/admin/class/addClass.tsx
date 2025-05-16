@@ -52,7 +52,7 @@ function AddClass({
         setSubjectName(e.target.value);
     }
     const handelOnChangeEnrollLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.trim();
+        const value = e.target.value.trim();
 
 
         if (value === '') {
@@ -73,7 +73,7 @@ function AddClass({
     };
 
     const handelOnChangeMidtermWeight = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.trim();
+        const value = e.target.value.trim();
 
 
         if (value === '') {

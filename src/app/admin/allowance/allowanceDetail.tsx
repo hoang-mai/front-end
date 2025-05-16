@@ -1,8 +1,7 @@
-import { faXmark, faUser, faEnvelope, faMoneyBill, faCalendar, faClipboard, faClock, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faEnvelope, faMoneyBill, faCalendar, faClipboard, faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
-import { useEffect, useState } from "react";
 import PersonIcon from '@mui/icons-material/Person';
 interface AllowanceStudent extends Record<string, unknown> {
     id: number;
@@ -25,18 +24,6 @@ interface AllowanceDetailProps {
 }
 
 function AllowanceDetail({ allowanceStudent, showModal, setShowModal }: AllowanceDetailProps) {
-
-
-
-    const formatDate = (date: Date | null | undefined) => {
-        console.log(date)
-        if (!date) return 'N/A';
-        return new Date(date).toLocaleDateString("vi-VN", {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
-    };
 
     return (
         <Modal

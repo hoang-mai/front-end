@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 import AddAllowance from "./addAllowance";
 import AllowanceDetail from "./allowanceDetail";
 import EditAllowanceModal from "./editAllowanceModal";
-import { useRouter } from "next/navigation";
 import NoContent from "@/app/Components/noContent";
 
 interface AllowanceStudent extends Record<string, unknown> {
@@ -72,7 +71,6 @@ const modal = {
     url: adminAllowances,
 }
 function Allowance() {
-    const router = useRouter();
     const [allowanceStudents, setAllowanceStudents] = useState<AllowanceStudent[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [search, setSearch] = useState<string>('');

@@ -8,7 +8,7 @@ import { course } from "@/app/Services/api";
 import PersonIcon from '@mui/icons-material/Person';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faUser, faEnvelope, faGraduationCap, faPenToSquare, faClipboard, faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faGraduationCap, faPenToSquare, faClipboard, faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 interface Student extends Record<string, unknown> {
     id: number;
@@ -44,7 +44,7 @@ function EditStudentModal({
     const [error, setError] = useState<string>('');
 
     const handelOnChangeMidtermGrade = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.trim();
+        const value = e.target.value.trim();
         if (value === '') {
             setErrorMidtermGrade('');
             setMidtermGrade('');
@@ -61,7 +61,7 @@ function EditStudentModal({
     }
 
     const handelOnChangeFinalGrade = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.trim();
+        const value = e.target.value.trim();
         if (value === '') {
             setErrorFinalGrade('');
             setFinalGrade('');

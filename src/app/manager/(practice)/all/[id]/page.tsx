@@ -8,9 +8,6 @@ import {
     faCalendarAlt,
     faSearch,
     faClipboardList,
-    faUser,
-    faChartLine,
-    faTimes,
     faFilter,
     faTrophy,
     faCheckCircle,
@@ -18,7 +15,6 @@ import {
     faExclamationTriangle,
     faArrowUp,
     faArrowDown,
-    faFlagCheckered
 } from "@fortawesome/free-solid-svg-icons";
 import LoaderLine from "@/app/Components/Loader/loaderLine";
 import LoaderTable from "@/app/Components/Loader/loaderTable";
@@ -295,7 +291,7 @@ const PracticeCurrent = () => {
                 setPerformanceRecords(records);
                 setFilteredRecords(records);
             })
-            .catch((err) => {
+            .catch(() => {
                 toast.error('Không có dữ liệu');
                 setError('Không có dữ liệu');
             })

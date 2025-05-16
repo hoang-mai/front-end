@@ -1,11 +1,7 @@
 'use client';
-import LoaderLine from "@/app/Components/Loader/loaderLine";
-import { course } from "@/app/Services/api";
-import { get } from "@/app/Services/callApi";
-import { faXmark, faUser, faEnvelope, faGraduationCap, faStar, faCircleCheck, faTimesCircle, faNoteSticky, faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faEnvelope, faGraduationCap, faStar, faCircleCheck, faTimesCircle, faNoteSticky } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { Box, Modal } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 
@@ -21,32 +17,6 @@ interface StudentDetail extends Record<string, unknown> {
     image: string | null;
 }
 
-function convertDataToStudentDetail(data: any): StudentDetail {
-    return {
-        id: data.id,
-        name: data.name,
-        email: data.email,
-        midtermGrade: data.midterm_grade || 'Chưa có',
-        finalGrade: data.final_grade || 'Chưa có',
-        totalGrade: data.total_grade || 'Chưa có',
-        status: convertStatus(data.status),
-        notes: data.notes || '',
-        image: data.image || ''
-    }
-}
-
-function convertStatus(status: string): string {
-    switch (status) {
-        case 'enrolled':
-            return 'Chưa có điểm';
-        case 'failed':
-            return 'Trượt';
-        case 'completed':
-            return 'Hoàn thành';
-        default:
-            return status;
-    }
-}
 
 interface StudentDetailProps {
     readonly showDetail: boolean;

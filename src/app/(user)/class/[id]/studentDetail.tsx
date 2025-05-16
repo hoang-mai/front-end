@@ -2,8 +2,6 @@ import React from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
-import { faUser, faEnvelope, faGraduationCap, faClipboard, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PersonIcon from '@mui/icons-material/Person';
 interface Student extends Record<string, unknown> {
     id: number;

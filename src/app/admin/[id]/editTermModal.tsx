@@ -169,7 +169,7 @@ const EditTermModal = ({
                 success: "Cập nhật học kỳ thành công",
                 error: "Cập nhật học kỳ thất bại",
             }
-        ).then((res) => {
+        ).then(() => {
             setDatas?.((prev) => prev.map((term) =>
                 term.id === data.id && startDate && endDate && rosterDeadline && gradeEntryDate
                     ? { ...term, nameTerm, startDate, endDate, rosterDeadline, gradeEntryDate }

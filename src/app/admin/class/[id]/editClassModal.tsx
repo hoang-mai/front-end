@@ -36,7 +36,7 @@ function EditClassModal({
         setSubjectName(e.target.value);
     }
     const handelOnChangeEnrollLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.trim();
+        const value = e.target.value.trim();
 
         if (value === '') {
             setErrorEnrollLimit('Trường này không được để trống');
@@ -54,7 +54,7 @@ function EditClassModal({
         setEnrollLimit(value);
     };
     const handelOnChangeMidtermWeight = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.trim();
+        const value = e.target.value.trim();
         if (value === '') {
             setErrorMidtermWeight('Trường này không được để trống');
             setMidtermWeight('');

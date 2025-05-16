@@ -1,10 +1,10 @@
 'use client';
 import { useState, useEffect, useRef } from "react";
-import { adminEquipmentStudents, managerSearchStudent, searchStudent } from "@/app/Services/api";
+import { adminEquipmentStudents, searchStudent } from "@/app/Services/api";
 import { get, post } from "@/app/Services/callApi";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPlus, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import TableComponent from "@/app/Components/table";
 import LoaderTable from "@/app/Components/Loader/loaderTable";
 import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";

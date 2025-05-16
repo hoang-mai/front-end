@@ -142,7 +142,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
 
                 }
             }
-        ).then((res) => {
+        ).then(() => {
             setManager((prev) => {
                 return {
                     ...prev,

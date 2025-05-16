@@ -35,7 +35,7 @@ const headCells: HeadCell[] = [
     { id: 'finalGrade', label: 'Điểm cuối kỳ', },
     { id: 'totalGrade', label: 'Điểm tổng kết', },
 ];
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(({  }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: 'rgba(0, 0, 0, 0.04)',
     },

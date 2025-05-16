@@ -1,6 +1,6 @@
 'use client';
 import { adminEquipmentDistribution } from "@/app/Services/api";
-import { del, get, put } from "@/app/Services/callApi";
+import { del, get } from "@/app/Services/callApi";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";

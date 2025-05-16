@@ -2,12 +2,11 @@
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle, faXmark, faSearch, faStickyNote, faSave, faCalendar } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useRef, useState } from 'react';
-import useDebounce from '@/app/hooks/useDebounce';
-import { managerSearchStudent, managerViolations } from '@/app/Services/api';
+import { faXmark, faStickyNote, faSave } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
+
+import { managerViolations } from '@/app/Services/api';
 import { post } from '@/app/Services/callApi';
-import LoaderSpinner from '@/app/Components/Loader/loaderSpinner';
 import DatePickerComponent from '@/app/Components/datePicker';
 import { toast } from 'react-toastify';
 import PersonIcon from '@mui/icons-material/Person';
@@ -70,12 +69,12 @@ function AddViolation({ showModal, setShowModal, setDatas, preSelectedStudent }:
         }
         ).then((res) => {
             setDatas((prev: any) => {
-                return [ {
+                return [{
                     student_id: preSelectedStudent.id,
                     studentName: preSelectedStudent.name,
                     studentEmail: preSelectedStudent.email,
                     studentImage: preSelectedStudent.image,
-                    id : res.data.data.id,
+                    id: res.data.data.id,
                     violationName: violationName,
                     violationDate: violationDate,
                     managerName: res.data.data.manager_name,
@@ -164,13 +163,13 @@ function AddViolation({ showModal, setShowModal, setDatas, preSelectedStudent }:
                         <label htmlFor="violationDate" className="block text-sm font-medium text-gray-700">
                             Ngày vi phạm <span className="text-red-500">*</span>
                         </label>
-                        
-                            <DatePickerComponent
-                                value={violationDate}
-                                onChange={handleDateChange}
-                                
-                            />
-                        
+
+                        <DatePickerComponent
+                            value={violationDate}
+                            onChange={handleDateChange}
+
+                        />
+
                         <p className="h-5 mt-1 text-red-500 text-sm">{error || errorDate}</p>
                     </div>
 

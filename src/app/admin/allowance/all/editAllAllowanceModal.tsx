@@ -1,7 +1,7 @@
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faCoins, faCalendarAlt, faSave, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faCoins, faCalendarAlt, faSave, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { put } from '@/app/Services/callApi';
@@ -143,7 +143,7 @@ function EditAllowanceModal({
                 success: 'Cập nhật trợ cấp thành công',
                 error: 'Cập nhật trợ cấp thất bại',
             }
-        ).then((res) => {
+        ).then(() => {
             const displayAmount = formatAmountForDisplay(apiAmount);
 
             setDatas?.((prev) => prev.map((allowance) =>

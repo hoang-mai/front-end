@@ -1,14 +1,10 @@
 import CloseIcon from '@mui/icons-material/Close';
-import PersonIcon from '@mui/icons-material/Person';
 import StraightenIcon from '@mui/icons-material/Straighten';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import InfoIcon from '@mui/icons-material/Info';
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
-import { useEffect, useState } from "react";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 interface FitnessTest extends Record<string, any> {

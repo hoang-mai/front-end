@@ -37,7 +37,7 @@ interface ModalProps {
     errorMessage: string;
     url: string;
 }
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(({  }) => ({
     '&:nth-of-type(odd)': {
         backgroundColor: 'rgba(0, 0, 0, 0.04)',
     },
@@ -268,7 +268,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                     {actionCell && <TableCell onClick={(e) => e.stopPropagation()} align='center'>
                                         <div className='flex gap-2'>
                                             <button className=' flex-1 rounded-lg'
-                                                onClick={(e) => {
+                                                onClick={() => {
 
                                                     setEdit(true);
                                                     setEditId(dataCell.id);
@@ -277,7 +277,7 @@ const TableComponent = <T extends { id: number } & Record<string, unknown>>({
                                                 <FontAwesomeIcon icon={faPencil} className='text-green-600'/>
                                             </button>
                                             {deleteCell && <button className=' flex-1 rounded-lg'
-                                                onClick={(e) => {
+                                                onClick={() => {
 
                                                     setConfirmDelete(true);
                                                     setConfirmDeleteId(dataCell.id);

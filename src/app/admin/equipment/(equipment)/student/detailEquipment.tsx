@@ -2,9 +2,8 @@
 import { faXmark, faUser, faEnvelope, faBox, faCalendar, faClipboard, faCheckCircle, faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Modal } from "@mui/material";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import PersonIcon from '@mui/icons-material/Person';
-import InventoryIcon from '@mui/icons-material/Inventory';
 
 export interface EquipmentType {
     id: number;

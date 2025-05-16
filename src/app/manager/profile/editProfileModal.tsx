@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import SelectComponent from "@/app/Components/select";
 import { toast } from "react-toastify";
 import { put } from "@/app/Services/callApi";
-import { adminAdminManager, managerProfile } from "@/app/Services/api";
+import { managerProfile } from "@/app/Services/api";
 import Image from "next/image";
 import { uploadImage } from "@/app/Services/uploadImage";
 
@@ -142,7 +142,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
 
                 }
             }
-        ).then((res) => {
+        ).then(() => {
             useImage.getState().setImage(isUrlImage ? manager.image : urlImage);
 
             setManager((prev) => {
@@ -169,7 +169,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                 }
             })
             setShowEdit(false);
-        }).catch((res: any) => {
+        }).catch((res) => {
             toast.error(res.data.message);
         })
 

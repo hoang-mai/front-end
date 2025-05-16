@@ -1,7 +1,7 @@
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faUser, faEnvelope, faMoneyBill, faCalendar, faClipboard, faClock, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faUser, faMoneyBill, faCalendar, faClipboard, faClock, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 
 interface AllowanceDetail extends Record<string, unknown> {

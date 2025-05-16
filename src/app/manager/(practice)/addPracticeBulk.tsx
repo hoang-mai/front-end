@@ -1,6 +1,6 @@
 import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
 import useDebounce from "@/app/hooks/useDebounce";
-import { managerSearchStudent, managerAssessments, managerAssessmentsBatch } from "@/app/Services/api";
+import { managerSearchStudent, managerAssessmentsBatch } from "@/app/Services/api";
 import { post } from "@/app/Services/callApi";
 import { faCheckCircle, faDumbbell, faInfoCircle, faSearch, faStickyNote, faUser, faUsers, faXmark, faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

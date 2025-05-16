@@ -3,14 +3,13 @@ import LoaderTable from "@/app/Components/Loader/loaderTable";
 import TableComponent from "@/app/Components/table";
 import { adminAllowances } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
-import { faPlus, faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {  faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AddAllowance from "../addAllowance";
 import AllowanceDetail from "./allAllowanceDetail";
 import EditAllowanceModal from "./editAllAllowanceModal";
-import { useRouter } from "next/navigation";
 import NoContent from "@/app/Components/noContent";
 
 interface AllowanceStudent extends Record<string, unknown> {

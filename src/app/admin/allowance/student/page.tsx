@@ -3,7 +3,7 @@ import LoaderTable from "@/app/Components/Loader/loaderTable";
 import TableComponent from "@/app/Components/table";
 import { adminAllowances, adminAllowancesStudent, searchStudent } from "@/app/Services/api";
 import { get, post } from "@/app/Services/callApi";
-import { faPlus, faReply, faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -194,7 +194,7 @@ function convertAmountToString(amountStr: string): string {
 }
 
 
-export const convertDataToAllowance = (data: any): Allowance => ({
+const convertDataToAllowance = (data: any): Allowance => ({
     id: data.id,
     userId: data.user_id,
     month: `${data.month}/${data.year}`,

@@ -1,5 +1,5 @@
 'use client';
-import { faXmark, faUser, faEnvelope, faCode, faCalendar, faClipboard, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faEnvelope, faCalendar, faClipboard, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Modal } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";

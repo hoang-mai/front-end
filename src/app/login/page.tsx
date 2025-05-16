@@ -1,12 +1,11 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faEye, faEyeSlash, faEnvelope, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faEye, faEyeSlash, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { post } from '@/app/Services/callApi';
 import { login } from '@/app/Services/api';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { useImage } from '../hooks/useImage';
 
 type ErrorResponse = {
@@ -21,8 +20,6 @@ const LoginPage: React.FC = () => {
     const [errorEmail, setErrorEmail] = useState<string>('');
     const [errorPassword, setErrorPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
 
     useEffect(() => {
         if (password.length < 6 && password.length > 0) {
@@ -41,17 +38,8 @@ const LoginPage: React.FC = () => {
         }
     }, [email]);
 
-    useEffect(() => {
-        if (password.length >= 6 && email.includes('@')) {
-            setIsSubmitDisabled(false);
-        } else {
-            setIsSubmitDisabled(true);
-        }
-    }, [password, email]);
-
     const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setIsLoading(true);
         toast.promise(
             post(login, { email, password }).then((res) => {
                 localStorage.setItem('token', res.data.data.token);
@@ -77,9 +65,6 @@ const LoginPage: React.FC = () => {
             .catch((err) => {
                 const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? 'Có lỗi xảy ra!';
                 setError(firstValue);
-            })
-            .finally(() => {
-                setIsLoading(false);
             });
     };
 

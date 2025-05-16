@@ -12,14 +12,13 @@ interface StudentReceipt extends Record<string, any> {
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faBoxes, faSave, faInfoCircle, faClipboardCheck, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faSave, faInfoCircle, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { put } from '@/app/Services/callApi';
 import { adminEquipmentReceipts } from '@/app/Services/api';
 import SelectComponent from '@/app/Components/select';
-import DatePicker from '@/app/Components/datePicker';
-import { format } from 'date-fns';
+
 
 
 interface EditReceivedEquipmentProps {
@@ -38,7 +37,6 @@ function EditReceivedEquipment({
     data,
     showEdit,
     setShowEdit,
-    setDatas,
     setReload,
 
 }: EditReceivedEquipmentProps) {
@@ -86,7 +84,7 @@ function EditReceivedEquipment({
                 success: 'Cập nhật thông tin nhận quân tư trang thành công',
                 error: 'Cập nhật thông tin nhận quân tư trang thất bại',
             }
-        ).then((res) => {
+        ).then(() => {
             if (setReload) setReload(prev => !prev);
             setShowEdit(false);
         }).catch((err) => {

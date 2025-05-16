@@ -1,4 +1,4 @@
-import { faXmark, faUser, faEnvelope, faUserTag, faClipboard, faCalendar, faCircleInfo, faCheckCircle, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faEnvelope, faUserTag, faCheckCircle, faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";

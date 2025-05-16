@@ -1,5 +1,5 @@
 'use client'
-import { course, studentCourses } from "@/app/Services/api";
+import { studentCourses } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
 import { faReply, faSearch, faGraduationCap, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

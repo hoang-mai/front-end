@@ -5,7 +5,6 @@ import { studentAllowances } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { set } from "date-fns";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AllowanceStudentDetail from "./allowanceDetail";
@@ -74,7 +73,6 @@ function AllowanceStudent() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [search, setSearch] = useState<string>('');
-    const [showModal, setShowModal] = useState<boolean>(false);
     const [allowanceDetail, setAllowanceDetail] = useState<AllowanceStudent>();
     const [showDetail, setShowDetail] = useState<boolean>(false);
 

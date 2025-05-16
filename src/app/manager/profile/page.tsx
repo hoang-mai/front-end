@@ -20,7 +20,6 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
-import WorkIcon from '@mui/icons-material/Work';
 
 // Import for edit modal
 

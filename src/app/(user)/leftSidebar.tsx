@@ -1,10 +1,10 @@
 'use client';
 import Image from 'next/image';
-import { faClipboard, faExclamation, faHandHoldingDollar, faHome, faSignOut, faTools, faUserPlus, faUserTie } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard, faExclamation, faHandHoldingDollar, faHome, faSignOut, faTools } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import { toast } from 'react-toastify';
 import { post } from '@/app/Services/callApi';
@@ -22,7 +22,7 @@ const LeftSidebar = () => {
                 success: "Đăng xuất thành công",
                 error: "Đăng xuất thất bại",
             }
-        ).then((res) => {
+        ).then(() => {
             localStorage.removeItem("token");
             router.push("/login");
         })
@@ -101,7 +101,7 @@ const LeftSidebar = () => {
                             Quân tư trang
                         </Link>
 
-                        {pathname !== '/equipment"' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                        {pathname !== "/equipment" && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                     <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/violation"
                         ? "group relative"

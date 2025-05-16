@@ -136,7 +136,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             }
         }
         post(updateImage, { image: urlImage })
-        .then((res) => {
+        .then(() => {
             useImage.getState().setImage(urlImage);
         })
         .catch((res) => {
@@ -180,7 +180,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
                 }
             }
-        ).then((res) => {
+        ).then(() => {
             setUserWithStudentDetail((prev) => {
                 return {
                     ...prev,

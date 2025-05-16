@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 import AddEquipmentDistribution from "./addEquipmentDistribution";
 import EditEquipmentDistribution from "../[id]/editEquipmentDistribution";
 import { useRouter } from "next/navigation";
-import NotReceived from "./not-received/page";
 import NoContent from "@/app/Components/noContent";
 
 interface EquipmentDistribution extends Record<string, any> {

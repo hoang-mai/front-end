@@ -37,7 +37,7 @@ interface FitnessTestAssessment extends Record<string, unknown> {
     updatedAt: Date;
 }
 
-export const convertFitnessTestAssessment = (data: any): FitnessTestAssessment => {
+const convertFitnessTestAssessment = (data: any): FitnessTestAssessment => {
     return {
         id: data.id,
         fitnessTestId: data.fitness_test_id,

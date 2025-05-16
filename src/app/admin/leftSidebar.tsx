@@ -4,8 +4,7 @@ import { faClipboard, faHandHoldingDollar, faHome, faSignOut, faTools, faUserPlu
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import PersonIcon from '@mui/icons-material/Person';
+import React from 'react';
 import { toast } from 'react-toastify';
 import { post } from '@/app/Services/callApi';
 import { logout } from '@/app/Services/api';
@@ -22,7 +21,7 @@ function LeftSidebar() {
                 success: "Đăng xuất thành công",
                 error: "Đăng xuất thất bại",
             }
-        ).then((res) => {
+        ).then(() => {
             localStorage.removeItem("token");
             router.push("/login");
         })

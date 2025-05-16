@@ -234,8 +234,6 @@ function HomePage() {
     });
   }, []);
 
-  // Custom colors for the charts
-  const chartColors = ['#1976d2', '#4caf50', '#ff9800'];
 
   // Calculate overall GPA
   const calculateOverallGPA = () => {
@@ -254,7 +252,6 @@ function HomePage() {
   // Sort grades in descending order for the bar chart
   const sortedGrades = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F', 'W'];
   const sortedGradeValues = sortedGrades.map(grade => gradeDistribution[grade as keyof GradeDistribution]);
-  const sortedGradeColors = sortedGrades.map(grade => gradeColors[grade as keyof typeof gradeColors]);
 
   // Create pie chart data
   const pieChartData = sortedGrades

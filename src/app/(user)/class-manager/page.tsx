@@ -2,10 +2,9 @@
 
 import LoaderLine from "@/app/Components/Loader/loaderLine";
 import LoaderTable from "@/app/Components/Loader/loaderTable";
-import TableComponent from "@/app/Components/table";
 import { studentClass, studentClassmates } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
-import { faSearch, faUsers, faGraduationCap, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faGraduationCap, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";

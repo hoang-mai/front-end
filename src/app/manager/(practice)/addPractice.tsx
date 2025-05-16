@@ -1,29 +1,19 @@
 'use client'
-import useDebounce from "@/app/hooks/useDebounce";
-import { managerSearchStudent, managerAssessmentsPractice, managerFitnessTests, managerAssessments, managerAssessmentsBatch } from "@/app/Services/api";
-import { get, post } from "@/app/Services/callApi";
-import { useEffect, useRef, useState } from "react";
+
+import { managerFitnessTests } from "@/app/Services/api";
+import { get } from "@/app/Services/callApi";
+import { useEffect, useState } from "react";
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
-import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faSearch, faCalendarAlt, faStickyNote, faUserCheck, faInfoCircle, faSave, faDumbbell, faCheckCircle, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import PersonIcon from '@mui/icons-material/Person';
-import DatePicker from "@/app/Components/datePicker";
-import { set } from "date-fns";
+import { faXmark, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
 import AddPracticeSingle from "./addPracticeSingle";
 import AddPracticeBulk from "./addPracticeBulk";
 
 // Tab types
 type TabType = 'single' | 'bulk';
 
-interface Student {
-    id: number;
-    name: string;
-    email: string;
-    image: string | null;
-}
 
 interface FitnessTest extends Record<string, any> {
     id: number,

@@ -2,7 +2,7 @@
 import LoaderLine from "@/app/Components/Loader/loaderLine";
 import { adminClasses } from "@/app/Services/api";
 import { del, get } from "@/app/Services/callApi";
-import { faEnvelope, faGraduationCap, faPlus, faReply, faSearch, faTable, faUser, faUsers, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faGraduationCap, faPlus, faReply, faSearch, faTable, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,11 +24,26 @@ export interface UserBasicInfo {
     image: string | null;
 }
 
-export interface ViceMonitor extends UserBasicInfo { }
+export interface ViceMonitor {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
-export interface Manager extends UserBasicInfo { }
+export interface Manager {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
-export interface Monitor extends UserBasicInfo { }
+export interface Monitor {
+    id: number;
+    name: string;
+    email: string;
+    image: string | null;
+}
 
 
 
@@ -193,8 +208,6 @@ function ClassManagerDetail() {
         ).then(() => {
             setShowModal(false);
             router.push('/admin/class-manager');
-        }).catch((err) => {
-
         })
     }
     useEffect(() => {
@@ -212,16 +225,16 @@ function ClassManagerDetail() {
     }, []);
 
     useEffect(() => {
-        
-            get(adminClasses + '/' + id)
-                .then((res) => {
-                    setClassManager(convertDataToClassManager(res.data.data));
-                    setStudents(res.data.data.students.map((student: any) => convertDataToStudent(student)));
-                })
-                .catch((err) => {
-                    const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-                    setError(firstValue);
-                })
+
+        get(adminClasses + '/' + id)
+            .then((res) => {
+                setClassManager(convertDataToClassManager(res.data.data));
+                setStudents(res.data.data.students.map((student: any) => convertDataToStudent(student)));
+            })
+            .catch((err) => {
+                const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
+                setError(firstValue);
+            })
     }, [reload])
     if (error) {
         return <div className='text-red-500'>{error}</div>
@@ -512,8 +525,8 @@ function ClassManagerDetail() {
 
                                                     <div className="mt-2 flex flex-wrap justify-center gap-1">
                                                         <span className={`text-xs px-2 py-0.5 rounded-full ${student.role === 'Lớp trưởng' ? 'bg-green-100 text-green-800' :
-                                                                student.role === 'Lớp phó' ? 'bg-purple-100 text-purple-800' :
-                                                                    'bg-blue-100 text-blue-800'
+                                                            student.role === 'Lớp phó' ? 'bg-purple-100 text-purple-800' :
+                                                                'bg-blue-100 text-blue-800'
                                                             }`}>
                                                             {student.role}
                                                         </span>

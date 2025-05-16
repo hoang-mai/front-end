@@ -60,18 +60,6 @@ function GradeDetail({
         return faGraduationCap;
     };
 
-    const getLetterGrade = (score: number | null): string => {
-        if (score === null) return 'W';
-        if (score >= 9.5) return 'A+';
-        if (score >= 8.6) return 'A';
-        if (score >= 8.0) return 'B+';
-        if (score >= 7.0) return 'B';
-        if (score >= 6.5) return 'C+';
-        if (score >= 5.5) return 'C';
-        if (score >= 5.0) return 'D+';
-        if (score >= 4.0) return 'D';
-        return 'F';
-    };
 
     return (
         <Modal

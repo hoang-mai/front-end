@@ -11,7 +11,6 @@ import LoaderLine from "@/app/Components/Loader/loaderLine";
 import EditManagerModal from "./editManagerModal";
 
 // Material UI Icons
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PersonIcon from '@mui/icons-material/Person';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
 import CakeIcon from '@mui/icons-material/Cake';
@@ -23,10 +22,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import BadgeIcon from '@mui/icons-material/Badge';
 import EditIcon from '@mui/icons-material/Edit';
 import PeopleIcon from '@mui/icons-material/People';
-import MaleIcon from '@mui/icons-material/Male';
-import FemaleIcon from '@mui/icons-material/Female';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretSquareDown, faReply } from "@fortawesome/free-solid-svg-icons";
+import { faReply } from "@fortawesome/free-solid-svg-icons";
 
 interface Manager {
     id: number;
@@ -126,7 +123,7 @@ function ManagerDetail() {
             }).finally(() => {
                 setLoading(false);
             });
-    }, []);
+    }, [ params.id ]);
 
     if (error) {
         return <div className='text-red-500'>{error}</div>;

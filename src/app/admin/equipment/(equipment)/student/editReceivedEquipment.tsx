@@ -28,25 +28,15 @@ export interface EquipmentRecord extends Record<string, unknown> {
     distribution: Distribution;
 }
 
-interface Student {
-    id: number;
-    name: string;
-    email: string;
-    image: string | null;
-}
-
 import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faBoxes, faCalendarAlt, faSave, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faBoxes, faSave } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { put } from '@/app/Services/callApi';
-import { adminEquipmentDistribution, adminEquipmentReceipts } from '@/app/Services/api';
+import { adminEquipmentReceipts } from '@/app/Services/api';
 import SelectComponent from '@/app/Components/select';
-import PersonIcon from '@mui/icons-material/Person';
-import DatePicker from '@/app/Components/datePicker';
-import { format } from 'date-fns';
 
 
 interface EditReceivedEquipmentProps {
@@ -95,7 +85,7 @@ function EditReceivedEquipment({
                 success: 'Cập nhật thông tin nhận quân tư trang thành công',
                 error: 'Cập nhật thông tin nhận quân tư trang thất bại',
             }
-        ).then((res) => {
+        ).then(() => {
             setDatas?.((prev) =>
                 prev.map((record) =>
                     record.id === data.id

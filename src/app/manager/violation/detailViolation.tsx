@@ -1,10 +1,8 @@
 'use client';
-import { faXmark, faUser, faCalendarDay, faUserTie, faCalendarCheck, faInfoCircle, faCheck, faClock, faStickyNote, faEdit, faLock, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faUser, faCalendarDay, faUserTie, faCalendarCheck, faInfoCircle, faCheck, faEdit, faLock, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Modal, Box } from '@mui/material';
-import { useEffect, useState } from "react";
 import PersonIcon from '@mui/icons-material/Person';
-import LoaderLine from "@/app/Components/Loader/loaderLine";
 
 interface Violation {
     id: number;
@@ -35,7 +33,6 @@ interface DetailViolationProps {
 }
 
 function DetailViolation({ showModal, setShowModal, violation, student, onEdit }: DetailViolationProps) {
-    const [loading, setLoading] = useState<boolean>(false);
 
     const formatDate = (date: string | null | undefined) => {
         if (!date) return 'N/A';
@@ -72,23 +69,7 @@ function DetailViolation({ showModal, setShowModal, violation, student, onEdit }
                 </div>
 
                 <div className="p-6 overflow-y-auto max-h-[calc(100vh-200px)]">
-                    {loading ? (
-                        <>
-                            <div className='w-full flex justify-center items-center mb-10'>
-                                <LoaderLine height='h-7' width='w-50' />
-                            </div>
-                            <div className='w-full flex flex-row gap-20'>
-                                <LoaderLine width='w-1/2' height='h-5' />
-                                <LoaderLine width='w-1/2' height='h-5' />
-                            </div>
-                            <div className='w-full flex flex-row gap-20 mb-10'>
-                                <LoaderLine width='w-1/2' height='h-5' />
-                                <LoaderLine width='w-1/2' height='h-5' />
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            {/* Student image and name at the top */}
+
                             <div className='w-full flex flex-col items-center justify-center mb-6'>
                                 <div className="w-25 h-25 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg mb-4">
                                     {student?.image && student.image !== 'default' ? (
@@ -187,12 +168,6 @@ function DetailViolation({ showModal, setShowModal, violation, student, onEdit }
 
                                
                             </div>
-
-                            
-
-                           
-                        </>
-                    )}
                 </div>
             </Box>
         </Modal>

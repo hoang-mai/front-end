@@ -15,7 +15,6 @@ import * as React from 'react';
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import EditIcon from '@mui/icons-material/Edit';
 
 interface PendingEquipment {
   receiptId: number;
@@ -62,8 +61,6 @@ function NotReceived() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
-  const [showEdit, setShowEdit] = useState<boolean>(false);
-  const [selectedEquipment, setSelectedEquipment] = useState<PendingEquipment | null>(null);
 
 
   const fetchData = (selectedYear: number) => {

@@ -5,7 +5,7 @@ import { adminEquipmentType } from "@/app/Services/api";
 import { get } from "@/app/Services/callApi";
 import { faPlus, faReply, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import EditEquipment from "./editEquipment";
 import AddEquipment from "./addEquipment";
@@ -93,7 +93,7 @@ function Type() {
                 </button>
             </div>
             {loading ? <LoaderTable />
-                : <TableComponent dataCells={equipmentTypes} headCells={headCells} search={search} onRowClick={(id) => { }} modal={modal} EditComponent={EditEquipment} setDatas={setEquipmentTypes} />
+                : <TableComponent dataCells={equipmentTypes} headCells={headCells} search={search} onRowClick={()=>{}} modal={modal} EditComponent={EditEquipment} setDatas={setEquipmentTypes} />
             }
             {showModal && <AddEquipment setShowModal={setShowModal} showModal={showModal} setDatas={setEquipmentTypes} />}
         </div>

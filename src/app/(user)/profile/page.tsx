@@ -72,7 +72,7 @@ function convertPoliticalStatusToString(status: string | null): string {
     }
 }
 
-export function convertUserWithStudentDetail(data: any): UserWithStudentDetail {
+function convertUserWithStudentDetail(data: any): UserWithStudentDetail {
     return {
         id: data.id,
         name: data.name,

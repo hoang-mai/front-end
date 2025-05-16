@@ -7,7 +7,7 @@ import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faSearch, faMoneyBill, faCalendarAlt, faStickyNote, faUser, faInfoCircle, faSave, faTimes, faCoins, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faSearch, faCalendarAlt, faStickyNote, faUser, faInfoCircle, faSave, faCoins, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import PersonIcon from '@mui/icons-material/Person';
 interface Student {

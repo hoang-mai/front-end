@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import SelectComponent from '@/app/Components/select';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import LoaderTable from "@/app/Components/Loader/loaderTable";
@@ -36,9 +35,6 @@ function convertDataToViolation(data: any): Violation {
   }
 }
 
-const formatDate = (date: Date): string => {
-  return date.toLocaleDateString('vi-VN');
-};
 
 interface HeadCell {
   id: keyof Violation;

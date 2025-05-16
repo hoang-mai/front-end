@@ -3,12 +3,11 @@ import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
 import useDebounce from "@/app/hooks/useDebounce";
 import { adminStudentProfile, searchStudent } from "@/app/Services/api";
 import { get, post } from "@/app/Services/callApi";
-import { faSearch, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import PersonIcon from '@mui/icons-material/Person';
-import LoaderTable from "@/app/Components/Loader/loaderTable";
 import LoaderAvatar from "@/app/Components/Loader/loaderAvatar";
 import Image from "next/image";
 import LoaderLine from "@/app/Components/Loader/loaderLine";
@@ -26,7 +25,6 @@ import EditProfileModal from "./editProfileModal";
 
 import WorkIcon from '@mui/icons-material/Work';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { set } from "date-fns";
 interface Student {
     id: number;
     name: string;
@@ -69,7 +67,7 @@ export interface StudentDetail {
     updatedAt: Date;
 }
 
-export function convertStudentDetail(data: any): StudentDetail {
+function convertStudentDetail(data: any): StudentDetail {
     return {
         id: data.id,
         userId: data.user_id,
@@ -100,8 +98,7 @@ export function convertStudentDetail(data: any): StudentDetail {
     };
 }
 
-
-export const defaultParentInfo: ParentInfo = {
+const defaultParentInfo: ParentInfo = {
     name: null,
     birthYear: null,
     phoneNumber: null,
@@ -109,7 +106,7 @@ export const defaultParentInfo: ParentInfo = {
     occupation: null,
 };
 
-export const defaultStudentDetail: StudentDetail = {
+const defaultStudentDetail: StudentDetail = {
     id: 0,
     userId: 0,
     dateOfBirth: null,
@@ -304,7 +301,7 @@ function AdminStudent() {
             .finally(() => {
                 setLoading(false);
             });
-    }, [selectedStudent]);
+    }, [selectedStudent, prevStudent]);
 
     if (error) {
         return (

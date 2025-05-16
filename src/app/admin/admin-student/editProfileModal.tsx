@@ -172,7 +172,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
                 }
             }
-        ).then((res) => {
+        ).then(() => {
             setSelectedStudent((prev) => {
                 if (!prev) return prev;
                 return {
