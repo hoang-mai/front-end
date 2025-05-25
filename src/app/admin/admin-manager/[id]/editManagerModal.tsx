@@ -25,6 +25,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import BadgeIcon from '@mui/icons-material/Badge';
 
 interface Manager {
     id: number;
@@ -52,6 +53,7 @@ interface Detail {
     permanentAddress: string;
     createdAt: Date;
     updatedAt: Date;
+    role_political: string | null;
 }
 
 interface EditManagerModalProps {
@@ -70,6 +72,18 @@ function convertPartyMember(isPartyMember: boolean): Option {
             return { label: 'Không', id: 'Không' };
     }
 }
+function convertPosition(position: string | null): Option {
+    switch (position) {
+        case 'COMMANDER':
+            return { label: 'Hệ trưởng', id: 'COMMANDER' };
+        case 'DEPUTY_COMMANDER':
+            return { label: 'Phó hệ trưởng', id: 'DEPUTY_COMMANDER' };
+        case 'POLITICAL_OFFICER':
+            return { label: 'Chính trị viên', id: 'POLITICAL_OFFICER' };
+        default:
+            return { label: 'Không', id: 'Không' };
+    }
+}  
 const EditManagerModal: React.FC<EditManagerModalProps> = ({
     showEdit,
     setShowEdit,
@@ -80,6 +94,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isUrlImage, setIsUrlImage] = React.useState<boolean>(!!manager.image);
     const [selected, setSelected] = React.useState<Option>(convertPartyMember(manager.detail.isPartyMember));
+    const [selectedPosition, setSelectedPosition] = React.useState<Option>(convertPosition(manager.detail.role_political));
     const [fullName, setFullName] = React.useState<string>(manager.detail.fullName);
     const [rank, setRank] = React.useState<string>(manager.detail.rank);
     const [birthYear, setBirthYear] = React.useState<number | null>(manager.detail.birthYear);
@@ -126,6 +141,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                 mother_name: motherFullName,
                 mother_birth_year: motherBirthYear,
                 mother_hometown: motherHometown,
+                role_political: selectedPosition.id === 'Không' ? null : selectedPosition.id,
             }),
             {
                 pending: "Đang cập nhật thông tin",
@@ -164,6 +180,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                         motherName: motherFullName,
                         motherBirthYear,
                         motherHometown,
+                        role_political: selectedPosition.id === 'Không' ? null : String(selectedPosition.id),
                     }
                 }
             })
@@ -175,7 +192,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
     }
     const imageSrc = useMemo(() => {
         if (file) return URL.createObjectURL(file);
-        if (isUrlImage && manager.image) return manager.image;
+        if (isUrlImage && manager.image !=='default') return manager.image;
         return "/avatarDefault.svg";
     }, [file, manager?.image, isUrlImage]);
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -222,7 +239,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                     <div className="flex flex-col md:flex-row items-center gap-6 bg-gray-50 p-4 rounded-lg">
                         <div className="relative">
                             <Image
-                                src={imageSrc}
+                                src={imageSrc || "/avatarDefault.svg"}
                                 alt="Ảnh đại diện"
                                 className="w-32 h-32 object-cover rounded-full border-2 border-(--color-text)"
                                 width={128}
@@ -391,6 +408,24 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                                 placeholder="Địa chỉ thường trú"
                                 type='text'
                                 className='h-10 border rounded-lg border-(--border-color) px-3 outline-none hover:border-(--border-color-hover) focus:border-(--border-color-focus) transition-colors'
+                            />
+                        </div>
+                        <div className='flex flex-col gap-2'>
+                            <label htmlFor="party" className="text-gray-700 font-medium flex items-center">
+                                <BadgeIcon sx={{ color: 'var(--color-text)', mr: 1, fontSize: 20 }} />
+                                Chức vụ
+                            </label>
+                            <SelectComponent
+                                width="w-full"
+                                options={[
+                                    { label: 'Hệ trưởng', id: 'COMMANDER' },
+                                    { label: 'Phó hệ trưởng', id: 'DEPUTY_COMMANDER' },
+                                    { label: 'Chính trị viên', id: 'POLITICAL_OFFICER' },
+                                    
+                                ]}
+                                defaultOption={{ label: 'Không', id: 'Không' }}
+                                selected={selectedPosition}
+                                setSelected={setSelectedPosition}
                             />
                         </div>
                     </div>

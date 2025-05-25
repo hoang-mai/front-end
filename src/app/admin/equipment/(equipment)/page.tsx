@@ -149,10 +149,12 @@ function Equipment() {
                 setDatas={setEquipmentDistribution}
               />
 
-              {showModal && <AddEquipmentDistribution equipmentType={equipmentType} setShowModal={setShowModal} showModal={showModal} setDatas={setEquipmentDistribution} />}
+              
 
             </>
+            
           }
+          {showModal && <AddEquipmentDistribution equipmentType={equipmentType} setShowModal={setShowModal} showModal={showModal} setDatas={setEquipmentDistribution} />}
         </>
       )}
     </>

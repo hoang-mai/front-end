@@ -32,28 +32,40 @@ interface Manager {
     image: string | null;
     detail: ManagerDetail;
 }
-
+function convertPositionToString(position: string | null): string {
+    switch (position) {
+        case 'COMMANDER':
+            return 'Hệ trưởng';
+        case 'DEPUTY_COMMANDER':
+            return 'Phó hệ trưởng';
+        case 'POLITICAL_OFFICER':
+            return 'Chính trị viên';
+        default:
+            return 'Chưa cập nhật';
+    }
+}
 interface ManagerDetail {
     userId: number;
-    fullName: string ;
-    rank: string ;
-    birthYear: number | null ;
-    hometown: string ;
-    phoneNumber: string ;
+    fullName: string;
+    rank: string;
+    birthYear: number | null;
+    hometown: string;
+    phoneNumber: string;
     isPartyMember: boolean;
     managementUnit: string;
-    fatherName: string ;
+    fatherName: string;
     fatherBirthYear: number | null;
-    motherName: string ;
+    motherName: string;
     motherBirthYear: number | null;
-    fatherHometown: string ;
-    motherHometown: string ;
-    fatherJob?: string ;
-    motherJob?: string ;
-    workYear?: number ;
-    permanentAddress: string ;
+    fatherHometown: string;
+    motherHometown: string;
+    fatherJob?: string;
+    motherJob?: string;
+    workYear?: number;
+    permanentAddress: string;
     createdAt: Date;
     updatedAt: Date;
+    role_political: string | null;
 }
 
 function convertManager(data: any): Manager {
@@ -83,6 +95,7 @@ function convertManager(data: any): Manager {
             permanentAddress: data.detail.permanent_address,
             createdAt: data.detail.created_at,
             updatedAt: data.detail.updated_at,
+            role_political: data.detail.role_political || null, // Ensure role_political is handled
         }
     };
 }
@@ -112,6 +125,7 @@ const defaultProfileData: Manager = {
         permanentAddress: '',
         createdAt: new Date(),
         updatedAt: new Date(),
+        role_political: null, // Ensure role_political is initialized
     }
 };
 
@@ -294,8 +308,16 @@ const ProfilePage: React.FC = () => {
                                             <p className="font-medium">{profileData.detail.hometown || "Chưa cập nhật"}</p>
                                         </div>
                                     </div>
-                                    
-                                    
+                                    <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                            <BadgeIcon />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Chức vụ</p>
+                                            <p className="font-medium">{convertPositionToString(profileData.detail.role_political) || "Chưa cập nhật"}</p>
+                                        </div>
+                                    </div>
+
                                 </div>
                             )}
                         </div>
@@ -351,7 +373,7 @@ const ProfilePage: React.FC = () => {
                                                     <p className="font-medium">{profileData.detail.fatherHometown || "Chưa cập nhật"}</p>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
 
@@ -389,7 +411,7 @@ const ProfilePage: React.FC = () => {
                                                     <p className="font-medium">{profileData.detail.motherHometown || "Chưa cập nhật"}</p>
                                                 </div>
                                             </div>
-                                           
+
                                         </div>
                                     </div>
                                 </div>

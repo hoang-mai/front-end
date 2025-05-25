@@ -48,3 +48,6 @@ export const studentCoursesGrades='/api/student/courses/grades'
 export const studentEquipment='/api/student/equipment'
 export const studentViolations='/api/student/violations'
 export const studentFitnessAssessments='/api/student/fitness-assessments'
+
+//update image
+export const updateImageUrl = '/api/auth/update-image';

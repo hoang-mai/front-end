@@ -38,6 +38,7 @@ export interface UserWithStudentDetail {
     createdAt: string;
     updatedAt: string;
     studentDetail: StudentDetail;
+        class_role: string | null;
 }
 
 export interface StudentDetail {
@@ -121,6 +122,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
 
     const handleOnSubmit = async () => {
+        if(isNaN(Number(yearOfStudy)) || (yearOfStudy && parseInt(yearOfStudy) < 0)) {
+            toast.error('Năm công tác không hợp lệ');
+            return;
+        }
         let urlImage: string = isUrlImage && userWithStudentDetail.image ? userWithStudentDetail.image : 'default';
         if (!isUrlImage && file) {
             if (file.size > 10 * 1024 * 1024) {
@@ -150,7 +155,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     rank: rank,
                     place_of_origin: hometown,
                     working_unit: workingUnit,
-                    year_of_study: yearOfStudy,
+                    year_of_study: Number(yearOfStudy),
                     political_status: convertStringToPoliticalStatus(selected.label),
                     phone_number: phoneNumber,
                     permanent_residence: permanentAddress,

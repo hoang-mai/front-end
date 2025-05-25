@@ -5,8 +5,8 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import SelectComponent from "@/app/Components/select";
 import { toast } from "react-toastify";
-import { put } from "@/app/Services/callApi";
-import { managerProfile } from "@/app/Services/api";
+import { post, put } from "@/app/Services/callApi";
+import { managerProfile, updateImageUrl } from "@/app/Services/api";
 import Image from "next/image";
 import { uploadImage } from "@/app/Services/uploadImage";
 
@@ -52,6 +52,7 @@ interface Detail {
     permanentAddress: string;
     createdAt: Date;
     updatedAt: Date;
+        role_political: string | null;
 }
 
 interface EditManagerModalProps {
@@ -109,6 +110,9 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                 return;
             }
         }
+        post(updateImageUrl,{
+            image: isUrlImage ? manager.image : urlImage,
+        })
         toast.promise(
             put(managerProfile, {
                 image: isUrlImage ? manager.image : urlImage,
@@ -176,7 +180,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
     }
     const imageSrc = useMemo(() => {
         if (file) return URL.createObjectURL(file);
-        if (isUrlImage && manager.image) return manager.image;
+        if (isUrlImage && manager.image !== 'default') return manager.image;
         return "/avatarDefault.svg";
     }, [file, manager?.image, isUrlImage]);
 
@@ -226,7 +230,7 @@ const EditManagerModal: React.FC<EditManagerModalProps> = ({
                     <div className="flex flex-col md:flex-row items-center gap-6 bg-gray-50 p-4 rounded-lg">
                         <div className="relative">
                             <Image
-                                src={imageSrc}
+                                src={imageSrc || "/avatarDefault.svg"}
                                 alt="Ảnh đại diện"
                                 className="w-32 h-32 object-cover rounded-full border-2 border-(--color-text)"
                                 width={128}

@@ -43,7 +43,7 @@ function convertPoliticalStatusToString(status: string | null): string {
         return 'Đảng viên';
     } else if (status === 'youth_union_member') {
         return 'Đoàn viên';
-    }else if (status === 'none') {
+    } else if (status === 'none') {
         return 'Không';
     } else {
         return 'Chưa cập nhật';
@@ -65,6 +65,7 @@ export interface StudentDetail {
     mother: ParentInfo;
     createdAt: Date;
     updatedAt: Date;
+    class_role: string | null; // Assuming class_role is a string, adjust if it's different
 }
 
 function convertStudentDetail(data: any): StudentDetail {
@@ -72,6 +73,7 @@ function convertStudentDetail(data: any): StudentDetail {
         id: data.id,
         userId: data.user_id,
         dateOfBirth: new Date(data.date_of_birth),
+        class_role: data.class_role || null,
         rank: data.rank,
         placeOfOrigin: data.place_of_origin,
         workingUnit: data.working_unit,
@@ -111,6 +113,7 @@ const defaultStudentDetail: StudentDetail = {
     userId: 0,
     dateOfBirth: null,
     rank: null,
+    class_role: null,
     placeOfOrigin: null,
     workingUnit: null,
     yearOfStudy: null,
@@ -237,7 +240,7 @@ function StudentSelector({
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                            {student.image && student.image !=='default' ? (
+                                            {student.image && student.image !== 'default' ? (
                                                 <img
                                                     src={student.image}
                                                     alt={student.name}
@@ -280,7 +283,7 @@ function AdminStudent() {
     const [prevStudent, setPrevStudent] = useState<Student>();
 
     useEffect(() => {
-        if(prevStudent && selectedStudent && prevStudent.id === selectedStudent.id){
+        if (prevStudent && selectedStudent && prevStudent.id === selectedStudent.id) {
             return;
         }
         setPrevStudent(selectedStudent);
@@ -398,6 +401,7 @@ function AdminStudent() {
                                                 <span>{userProfile?.permanentResidence || "Chưa cập nhật"}</span>
                                             </div>
                                         </div>
+
                                     </div>
 
                                     <div>
@@ -477,7 +481,15 @@ function AdminStudent() {
                                                     <p className="font-medium">{userProfile?.placeOfOrigin || "Chưa cập nhật"}</p>
                                                 </div>
                                             </div>
-
+                                            <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg">
+                                                <div className="w-10 h-10 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                                    <BadgeIcon />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Chức vụ</p>
+                                                    <p className="font-medium">{userProfile?.class_role || "Chưa cập nhật"}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
                                 </div>

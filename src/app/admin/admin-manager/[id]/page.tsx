@@ -50,6 +50,7 @@ interface Detail {
     permanentAddress: string;
     createdAt: Date;
     updatedAt: Date;
+    role_political: string | null; // Assuming this is a string, adjust if needed
 }
 const managerDefault: Manager = {
     id: 0,
@@ -74,8 +75,21 @@ const managerDefault: Manager = {
         permanentAddress: '',
         createdAt: new Date(),
         updatedAt: new Date(),
+        role_political: null, // Assuming this is a string, adjust if needed
     }
 }
+function convertPositionToString(position: string | null): string {
+    switch (position) {
+        case 'COMMANDER':
+            return 'Hệ trưởng';
+        case 'DEPUTY_COMMANDER':
+            return 'Phó hệ trưởng';
+        case 'POLITICAL_OFFICER':
+            return 'Chính trị viên';
+        default:
+            return 'Chưa cập nhật';
+    }
+}   
 function convertDataToManager(data: any): Manager {
     return {
         id: data.id,
@@ -100,6 +114,7 @@ function convertDataToManager(data: any): Manager {
             permanentAddress: data.detail.permanent_address,
             createdAt: new Date(data.detail.created_at),
             updatedAt: new Date(data.detail.updated_at),
+            role_political: data.detail.role_political || null, // Assuming this is a string, adjust if needed
         }
     }
 }
@@ -152,13 +167,24 @@ function ManagerDetail() {
                         ) : (
                             <div className="relative mb-4">
                                 <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto">
-                                    <Image
-                                        src={manager.image || "/avatarDefault.svg"}
-                                        alt="Ảnh đại diện"
-                                        width={112}
-                                        height={112}
-                                        className="object-cover w-full h-full"
-                                    />
+                                    {manager.image !=='default' && manager.image !== null && manager.image !== '' ? (
+                                        <Image
+                                            src={manager.image}
+                                            alt="Ảnh đại diện"
+                                            width={112}
+                                            height={112}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    ) : (
+                                        <Image
+                                            src="/avatarDefault.svg"
+                                            alt="Ảnh đại diện"
+                                            width={112}
+                                            height={112}
+                                            className="object-cover w-full h-full"
+                                        />
+                                    )}
+                                    
                                 </div>
                             </div>
                         )}
@@ -287,6 +313,15 @@ function ManagerDetail() {
                                         <div>
                                             <p className="text-sm text-gray-500">Quê quán</p>
                                             <p className="font-medium">{manager.detail.hometown || "Chưa cập nhật"}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                            <BadgeIcon />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Chức vụ</p>
+                                            <p className="font-medium">{convertPositionToString(manager.detail.role_political) || "Chưa cập nhật"}</p>
                                         </div>
                                     </div>
                                 </div>

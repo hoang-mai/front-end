@@ -33,6 +33,7 @@ export interface UserWithStudentDetail {
     createdAt: string;
     updatedAt: string;
     studentDetail: StudentDetail;
+    class_role: string | null;
 }
 
 export interface StudentDetail {
@@ -81,6 +82,8 @@ function convertUserWithStudentDetail(data: any): UserWithStudentDetail {
         image: data.image,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
+        class_role: data.class_role || null,
+         // Convert student detail
         studentDetail: {
             id: data.student_detail.id,
             userId: data.student_detail.user_id,
@@ -119,6 +122,7 @@ const profileDefault: UserWithStudentDetail = {
     image: null,
     createdAt: '',
     updatedAt: '',
+    class_role: null,
     studentDetail: {
         id: 0,
         userId: 0,
@@ -146,6 +150,7 @@ const profileDefault: UserWithStudentDetail = {
         },
         createdAt: '',
         updatedAt: '',
+
     },
 };
 
@@ -324,6 +329,15 @@ function ProfilePage() {
                                         <div>
                                             <p className="text-sm text-gray-500">Quê quán</p>
                                             <p className="font-medium">{userProfile?.studentDetail?.placeOfOrigin || "Chưa cập nhật"}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg">
+                                        <div className="w-10 h-10 rounded-full bg-gray-200 bg-opacity-10 flex items-center justify-center text-(--color-text) flex-shrink-0">
+                                            <BadgeIcon />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-500">Chức vụ</p>
+                                            <p className="font-medium">{userProfile?.class_role || "Chưa cập nhật"}</p>
                                         </div>
                                     </div>
 

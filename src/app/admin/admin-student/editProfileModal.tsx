@@ -59,6 +59,7 @@ export interface StudentDetail {
     mother: ParentInfo;
     createdAt: Date;
     updatedAt: Date;
+    class_role: string | null; // Assuming class_role is a string, adjust if it's different
 }
 
 interface EditProfileModalProps {

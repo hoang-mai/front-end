@@ -166,8 +166,8 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                 grades:
                     dataCells.map((s, index) => ({
                         user_id: s.id,
-                        midterm_grade: midtermGrades[index],
-                        final_grade: finalGrades[index],
+                        midterm_grade: midtermGrades[index] === '' ? 0 : midtermGrades[index],
+                        final_grade: finalGrades[index] === '' ? 0 : finalGrades[index],
 
                     }))
             }),
@@ -187,7 +187,7 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                 midtermGrade: midtermGrades[index],
                 finalGrade: finalGrades[index],
                 totalGrade: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))).toFixed(2),
-                status: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))) >= 4 ? 'Hoàn thành' : 'Trượt',
+                status: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))) >= 4 ? 'Qua môn' : 'Trượt môn',
             })));
         }).catch((err) => {
 
