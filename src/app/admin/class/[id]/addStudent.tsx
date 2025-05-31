@@ -3,7 +3,7 @@ import Modal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faSearch, faUser, faUsers } from '@fortawesome/free-solid-svg-icons';
 import useDebounce from '@/app/hooks/useDebounce';
 import { post } from '@/app/Services/callApi';
 import { course, searchStudent } from '@/app/Services/api';
@@ -115,101 +115,139 @@ function AddStudent({
                 setLoading(false);
                 setStudents(undefined);
             }
-        }
+        };
         document.addEventListener('mousedown', handleOnClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleOnClickOutside);
         }
-    }, [searchRef])
+    }, [searchRef]);
+
     return (
         <Modal
             open={showAddStudent}
             onClose={() => setShowAddStudent(false)}
-            className="flex items-center justify-center "
+            className="flex items-center justify-center"
         >
-            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] h-[80%] w-[99%] flex flex-col bg-gray-100 p-4 md:p-7 rounded-lg shadow-lg overflow-y-auto'>
-                <div className='relative w-full'>
-                    <h2 className='text-2xl font-semibold text-(--color-text) text-center'>Thêm học viên</h2>
-                    <button className='w-7 h-7 rounded-full absolute md:top-1/2 md:right-0 md:transform md:-translate-y-3/4 -top-5 -right-5 text-xl active:scale-90 transition-transform duration-200'
-                        onClick={() => {
-                            setShowAddStudent(false);
-                        }}>
-                        <FontAwesomeIcon icon={faXmark} className="text-(--color-text)" />
-                    </button>
-                    <hr className='my-2' />
-                </div>
-                <div className='relative w-full h-10 max-h-10'>
-                    <div className={`absolute w-full z-10001 flex flex-col rounded-lg h-fit  ${(loading || students) && 'bg-white shadow-md '}`}
-                        ref={searchRef}
+            <Box className='xl:w-[50%] lg:w-[60%] md:w-[80%] w-[95%] h-[95%] max-h-[95%] bg-white rounded-2xl shadow-2xl overflow-hidden'>
+                <div className='bg-[color:var(--background-button)] p-4 relative'>
+                    <button
+                        className='absolute right-5 top-5 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-all duration-200'
+                        onClick={() => setShowAddStudent(false)}
                     >
-                        <input
-                            placeholder="Tìm kiếm học viên"
-                            type="text"
-                            className="appearance-none border rounded-lg w-full py-2 px-2 text-gray-700 focus:outline-none border-(--border-color) hover:border-(--border-color-hover)"
-                            value={search}
-                            onChange={handleOnChangeSearch}
-                        />
-                        {(() => {
-                            let content;
-                            if (loading) {
-                                content = <LoaderSpinner />;
-                            } else if (students) {
-                                content = students.length > 0 ? (
-                                    <ul className='max-h-60 overflow-y-auto'>
-                                        {
-                                            students.map(student => (
-                                                <li key={student.id} className='w-full'>
-                                                    <button className="w-full flex items-center justify-between bg-white p-2 rounded-lg hover:bg-gray-100 "
-                                                        onClick={() => {
-                                                            if (addStudents.find(s => s.id === student.id)) {
-                                                                return;
-                                                            }
-                                                            setAddStudents([...addStudents, student]);
-                                                            setSearch('');
-                                                            setStudents(undefined);
-                                                        }}
-                                                    >
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                                                {student.image ? (
-                                                                    <img
-                                                                        src={student.image}
-                                                                        alt={student.name}
-                                                                        className="w-full h-full object-cover"
-                                                                    />
-                                                                ) : (
-                                                                    <PersonIcon className="text-gray-500" />
-                                                                )}
+                        <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                    <h2 className='text-center text-2xl font-bold text-white'>Thêm học viên</h2>                </div>
+
+                <div className="p-4 m-2 overflow-y-auto max-h-[80vh]">
+                    {/* Search Student Section */}
+                    <div className='mb-6 relative'>
+                        <label htmlFor="studentSearch" className="block text-sm font-medium text-gray-700 mb-1">
+                            Tìm kiếm học viên <span className="text-red-500">*</span>
+                        </label>
+                        <div
+                            className="relative"
+                            ref={searchRef}
+                        >
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FontAwesomeIcon icon={faSearch} className="text-gray-400" />
+                                </div>
+                                <input
+                                    id="studentSearch"
+                                    placeholder="Nhập tên hoặc email học viên..."
+                                    type="text"
+                                    className="appearance-none block w-full pl-10 py-3 border border-[color:var(--border-color)] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--border-color-focus)] focus:border-transparent transition-all duration-200 hover:border-[color:var(--border-color-hover)]"
+                                    value={search}
+                                    onChange={handleOnChangeSearch}
+                                />
+                            </div>
+
+                            {/* Search Results */}
+                            {(() => {
+                                if (loading) {
+                                    return (
+                                        <div className="absolute z-10 w-full bg-white mt-1 rounded-lg border border-gray-200 shadow-lg">
+                                            <div className="p-4 flex justify-center">
+                                                <LoaderSpinner />
+                                            </div>
+                                        </div>
+                                    );
+                                } else if (students) {
+                                    return students.length > 0 ? (
+                                        <div className="absolute z-10 w-full bg-white mt-1 rounded-lg border border-gray-200 shadow-lg">
+                                            <ul className='max-h-60 overflow-y-auto divide-y divide-gray-100'>
+                                                {students.map(student => (
+                                                    <li key={student.id} className='w-full'>
+                                                        <button
+                                                            className={`w-full flex items-center p-3 hover:bg-gray-50 transition-colors ${addStudents.some(s => s.id === student.id) ? 'bg-blue-50' : ''
+                                                                }`}
+                                                            onClick={() => {
+                                                                // Toggle student selection
+                                                                const isSelected = addStudents.some(s => s.id === student.id);
+                                                                if (isSelected) {
+                                                                    setAddStudents(addStudents.filter(s => s.id !== student.id));
+                                                                } else {
+                                                                    setAddStudents([...addStudents, student]);
+                                                                }
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center w-full">
+                                                                <div className={`w-6 h-6 flex items-center justify-center rounded mr-3 ${addStudents.some(s => s.id === student.id)
+                                                                    ? 'bg-green-600 text-white'
+                                                                    : 'border border-gray-300'
+                                                                    }`}>
+                                                                    {addStudents.some(s => s.id === student.id) && (
+                                                                        <FontAwesomeIcon icon={faUser} className="text-xs" />
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+                                                                        {student.image && student.image !== 'default' ? (
+                                                                            <img
+                                                                                src={student.image}
+                                                                                alt={student.name}
+                                                                                className="w-full h-full object-cover"
+                                                                            />
+                                                                        ) : (
+                                                                            <PersonIcon className="text-gray-500" />
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="text-left">
+                                                                        <h3>{student.name}</h3>
+                                                                        <p className="text-gray-500 text-sm">{student.email}</p>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <div className="text-left">
-                                                                <h3>{student.name}</h3>
-                                                                <p className="text-gray-500 text-sm">{student.email}</p>
-                                                            </div>
-                                                        </div>
-                                                    </button>
-                                                </li>
-                                            ))}
-                                    </ul>
-                                ) : (
-                                    <p className="text-center my-2">Không tìm thấy học viên</p>
-                                );
-                            } else {
-                                content = null;
-                            }
-                            return content;
-                        })()}
-                    </div>
-                </div>
-                <div className="flex flex-col mt-4 flex-1 overflow-y-auto">
-                    <h1 className='text-lg font-semibold text-(--color-text) '>Danh sách học viên đã chọn</h1>
-                    {addStudents.length > 0 ? (
-                        <ul className='rounded-lg p-2 bg-white'>
-                            {addStudents.map(student => (
-                                <li key={student.id} className='w-full'>
-                                    <div className="flex items-center justify-between p-2 cursor-pointer">
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ) : (
+                                        <div className="absolute z-10 w-full bg-white mt-1 rounded-lg border border-gray-200 shadow-lg p-4 text-center text-gray-500">
+                                            Không tìm thấy học viên
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            })()}
+                        </div>                </div>
+
+                    {/* Selected Students Display */}
+                    {addStudents.length > 0 && (
+                        <div className="bg-blue-50 rounded-xl p-4 mb-6">
+                            <div className="flex justify-between items-center mb-3">
+                                <h3 className='text-lg font-semibold text-[color:var(--color-text)] flex items-center'>
+                                    <FontAwesomeIcon icon={faUsers} className="mr-2 text-[color:var(--color-text)]" />
+                                    Học viên đã chọn ({addStudents.length})
+                                </h3>
+                            </div>
+                            <div className="max-h-40 overflow-y-auto">
+                                {addStudents.map(student => (
+                                    <div key={student.id} className="flex justify-between items-center py-2 border-b border-blue-100 last:border-0">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                                                {student.image ? (
+                                                {student.image && student.image !== 'default' ? (
                                                     <img
                                                         src={student.image}
                                                         alt={student.name}
@@ -224,38 +262,48 @@ function AddStudent({
                                                 <p className="text-gray-500 text-sm">{student.email}</p>
                                             </div>
                                         </div>
-                                        <button className="p-2"
-                                            onClick={() => {
-                                                setAddStudents(addStudents.filter(s => s.id !== student.id));
-                                            }}
+                                        <button
+                                            type="button"
+                                            onClick={() => setAddStudents(addStudents.filter(s => s.id !== student.id))}
+                                            className="text-red-600 hover:text-red-700 p-1"
+                                            title="Xóa khỏi danh sách"
                                         >
-                                            <FontAwesomeIcon icon={faXmark} className="text-gray-500 " />
+                                            <FontAwesomeIcon icon={faXmark} />
                                         </button>
                                     </div>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center bg-white rounded-lg p-8 mt-2 text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mb-2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                            <p>Chưa có học viên nào được chọn</p>
-                            <p className="text-sm mt-1">Tìm kiếm và chọn học viên để thêm vào lớp</p>
+                                ))}
+                            </div>
                         </div>
                     )}
-                </div>
-                {error &&
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-2" role="alert">
-                        <span className="block sm:inline">{error}</span>
+
+                    {/* Error message */}
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
+                            <span className="block sm:inline">{error}</span>
+                        </div>
+                    )}
+
+                    {/* Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200 mt-6 items-center justify-center">
+                        <button
+                            type="button"
+                            disabled={addStudents.length === 0}
+                            className="btn-text inline-flex justify-center items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white transition-all duration-200"
+                            onClick={handleOnClickAddStudent}
+                        >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Thêm học viên
+                        </button>
+                        <button
+                            onClick={() => setShowAddStudent(false)}
+                            className="bg-red-700 text-white py-2.5 px-8 rounded-lg hover:bg-red-800 active:bg-red-900 focus:outline-none focus:shadow-outline font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+                        >
+                            <FontAwesomeIcon icon={faXmark} className="mr-2" />
+                            Hủy
+                        </button>
                     </div>
-                }
-                <div className='flex justify-center gap-4 w-full mt-4'>
-                    <button className='btn-text text-white p-2 rounded-lg w-40'
-                        onClick={handleOnClickAddStudent}
-                    >
-                        Thêm học viên
-                    </button>
                 </div>
             </Box>
         </Modal>
