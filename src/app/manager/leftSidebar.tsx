@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import { faSignOut, faExclamation, faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { faSignOut, faExclamation, faClipboard, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -77,6 +77,20 @@ const LeftSidebar = () => {
                             Quản lý vi phạm
                         </Link>
                         {pathname !== '/manager/violation' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
+                    </li>
+                    <li className={`rounded-md cursor-pointer m-2 transition-all duration-300 active:scale-95  ${pathname !== "/manager/manager-student"
+                        ? "group relative"
+                        : "bg-gradient-to-r from-green-300 to-gray-300"
+                        }`}>
+                        <Link
+                            href="/manager/manager-student"
+                            className={`p-2 w-full h-full block ${pathname !== "/manager/manager-student" ? "relative z-10" : ""}`}
+                        >
+                            <FontAwesomeIcon icon={faUserTie} className='mr-2' />
+                            Quản lý học viên
+                        </Link>
+
+                        {pathname !== '/manager/manager-student' && <span className="rounded-md absolute inset-0 w-0 bg-gradient-to-r from-green-300 to-gray-300 transition-all duration-300 group-hover:w-full"></span>}
                     </li>
                 </ul>
             </div>

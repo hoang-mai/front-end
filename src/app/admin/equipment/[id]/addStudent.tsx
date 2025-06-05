@@ -70,8 +70,8 @@ function AddStudent({
             setShowAddStudent(false);
 
         }).catch((err) => {
-            const firstValue = Object.values(err.errors as ErrorResponse)[0][0] ?? "Có lỗi xảy ra!";
-            setError(firstValue);
+           
+            setError(err.message || 'Có lỗi xảy ra!');
         });
     }
 

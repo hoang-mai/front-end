@@ -15,6 +15,7 @@ import EditEquipmentDistribution from "./editEquipmentDistribution";
 import EditReceivedEquipment from "./editStudentDistributon";
 import AddStudent from "./addStudent";
 import DetailStudentDistribution from "./detailStudentDistribution";
+import NoContent from "@/app/Components/noContent";
 
 interface DistributionResponse {
     distribution: Distribution;
@@ -355,13 +356,16 @@ function EquipmentDistributionDetail() {
                         />
                     }
                     {/* Students table */}
-                    {tableData && <TableComponent dataCells={tableData} headCells={headCells} search={search} onRowClick={(id) => {
-                        const selectedStudent = tableData.find((student) => student.id === id);
-                        if (selectedStudent) {
-                            setDetailEquipment(selectedStudent);
-                            setShowDetailModal(true);
-                        }
-                    }} deleteCell={false} setReload={setReload} EditComponent={EditReceivedEquipment} setDatas={setTableData} />}
+                    {tableData && tableData.length === 0 ?
+                        <NoContent title="Không có học viên nào" description="Vui lòng thêm học viên mới" /> :
+                        <> <TableComponent dataCells={tableData} headCells={headCells} search={search} onRowClick={(id) => {
+                            const selectedStudent = tableData.find((student) => student.id === id);
+                            if (selectedStudent) {
+                                setDetailEquipment(selectedStudent);
+                                setShowDetailModal(true);
+                            }
+                        }} deleteCell={false} setReload={setReload} EditComponent={EditReceivedEquipment} setDatas={setTableData} />
+                        </>}
                     {showDetailModal && detailEquipment &&
                         <DetailStudentDistribution
                             studentReceipt={detailEquipment}
