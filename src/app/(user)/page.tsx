@@ -128,9 +128,9 @@ function convertStatus(status: string): string {
     case 'enrolled':
       return 'Chưa có điểm';
     case 'failed':
-      return 'Trượt môn';
+      return 'Không đạt yêu cầu';
     case 'completed':
-      return 'Qua môn';
+      return 'Đạt yêu cầu';
     default:
       return status;
   }
@@ -635,7 +635,7 @@ function HomePage() {
               value={search}
               onChange={handleSearchChange}
               type="text"
-              placeholder="Tìm kiếm vi phạm"
+              placeholder="Tìm kiếm điểm "
               className="appearance-none border rounded-lg py-2 pl-10 pr-3 w-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 border-(--border-color)"
             />
           </div>
