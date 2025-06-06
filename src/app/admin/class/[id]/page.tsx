@@ -61,9 +61,9 @@ function convertStatus(status: string): string {
         case 'enrolled':
             return 'Chưa có điểm';
         case 'failed':
-            return 'Trượt môn';
+            return 'Không đạt yêu cầu';
         case 'completed':
-            return 'Qua môn';
+            return 'Đạt yêu cầu';
         default:
             return status;
     }

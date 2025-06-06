@@ -35,7 +35,7 @@ export const managerCurrentPractice='/api/manager/fitness/current-session'
 export const managerAssessmentsPractice='/api/manager/fitness/sessions'
 export const managerAssessments='/api/manager/fitness/assessments'
 export const managerAssessmentsBatch='/api/manager/fitness/assessments/batch'
-
+export const managerStudentProfile='/api/manager/students'
 //student
 export const updateImage='/api/auth/update-image'
 export const studentProfile='/api/student/profile'
