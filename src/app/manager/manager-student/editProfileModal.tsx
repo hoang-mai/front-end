@@ -24,7 +24,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import WorkIcon from '@mui/icons-material/Work';
 import { uploadImage } from "@/app/Services/uploadImage";
 import { post, put } from "@/app/Services/callApi";
-import { adminStudentProfile, adminStudentUpdateImage, managerStudentProfile } from "@/app/Services/api";
+import { managerStudentProfile } from "@/app/Services/api";
 import { format } from "date-fns/format";
 
 

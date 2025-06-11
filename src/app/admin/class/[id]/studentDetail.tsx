@@ -34,9 +34,9 @@ function StudentDetail({
     useEffect(() => {
         if (student?.status.includes('Chưa có điểm')) {
             setStatusColor('text-gray-500');
-        } else if (student?.status.includes('Hoàn thành')) {
+        } else if (student?.status.includes('Đạt yêu cầu')) {
             setStatusColor('text-green-500');
-        } else if (student?.status.includes('Trượt')) {
+        } else if (student?.status.includes('Không đạt yêu cầu')) {
             setStatusColor('text-red-500');
         } else {
             setStatusColor('text-gray-500');
@@ -44,9 +44,9 @@ function StudentDetail({
     }, [student]);
 
     const getStatusIcon = () => {
-        if (student?.status.includes('Hoàn thành')) {
+        if (student?.status.includes('Đạt yêu cầu')) {
             return faCircleCheck;
-        } else if (student?.status.includes('Trượt')) {
+        } else if (student?.status.includes('Không đạt yêu cầu')) {
             return faTimesCircle;
         }
         return faGraduationCap;

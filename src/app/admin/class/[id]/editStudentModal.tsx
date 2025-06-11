@@ -99,7 +99,7 @@ function EditStudentModal({
                 const final = Number(finalGrade);
                 const weight = Number(midTermWeight);
                 const total = (weight * midterm + (1 - weight) * final).toFixed(2);
-                const status = Number(total) >= 4 ? 'Hoàn thành' : 'Trượt';
+                const status = Number(finalGrade) < 3 ? 'Không đạt yêu cầu' : (Number(total) >= 4 ? 'Đạt yêu cầu' : 'Không đạt yêu cầu');
 
                 return {
                     ...student,

@@ -42,9 +42,9 @@ function GradeDetail({
     React.useEffect(() => {
         if (grade?.status.includes('Chưa có điểm')) {
             setStatusColor('text-gray-500');
-        } else if (grade?.status.includes('Qua môn')) {
+        } else if (grade?.status.includes('Đạt yêu cầu')) {
             setStatusColor('text-green-500');
-        } else if (grade?.status.includes('Trượt môn')) {
+        } else if (grade?.status.includes('Không đạt yêu cầu')) {
             setStatusColor('text-red-500');
         } else {
             setStatusColor('text-gray-500');
@@ -52,9 +52,9 @@ function GradeDetail({
     }, [grade]);
 
     const getStatusIcon = () => {
-        if (grade?.status.includes('Qua môn')) {
+        if (grade?.status.includes('Đạt yêu cầu')) {
             return faCheckCircle;
-        } else if (grade?.status.includes('Trượt môn')) {
+        } else if (grade?.status.includes('Không đạt yêu cầu')) {
             return faTimesCircle;
         }
         return faGraduationCap;

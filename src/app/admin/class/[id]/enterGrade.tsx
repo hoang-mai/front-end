@@ -187,7 +187,7 @@ const EnterGradeModal: React.FC<EnterGradeModalProps> = ({
                 midtermGrade: midtermGrades[index],
                 finalGrade: finalGrades[index],
                 totalGrade: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))).toFixed(2),
-                status: (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))) >= 4 ? 'Qua môn' : 'Trượt môn',
+                status: Number(finalGrades[index]) < 3 ? 'Không đạt yêu cầu' : (Number(midtermGrades[index]) * Number(midtermWeight) + Number(finalGrades[index]) * (1 - Number(midtermWeight))) >= 4 ? 'Đạt yêu cầu' : 'Không đạt yêu cầu',
             })));
         }).catch((err) => {
 

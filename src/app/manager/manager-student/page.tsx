@@ -1,7 +1,7 @@
 'use client'
 import LoaderSpinner from "@/app/Components/Loader/loaderSpinner";
 import useDebounce from "@/app/hooks/useDebounce";
-import { adminStudentProfile, managerSearchStudent, managerStudentProfile, searchStudent } from "@/app/Services/api";
+import { managerSearchStudent, managerStudentProfile } from "@/app/Services/api";
 import { get, post } from "@/app/Services/callApi";
 import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
